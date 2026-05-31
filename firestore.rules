@@ -1,0 +1,73 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global Safety Net (default-deny)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Reusable Global Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.uid == "TCJDTGcaTZRcBo9jC1JZBOAnWgo2" ||
+        request.auth.token.email == "erzeddd@gmail.com" ||
+        request.auth.token.email_verified == true && request.auth.token.email == "erzeddd@gmail.com"
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // 2. User Profiles
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      
+      // Permit creation if owner registers with 'user' role first, and pending payment/approval
+      allow create: if isOwner(userId) && 
+        request.resource.data.uid == userId &&
+        request.resource.data.role == "user" &&
+        request.resource.data.paymentStatus == "pending" &&
+        request.resource.data.approvalStatus == "pending";
+
+      // Permit updates: Admins can modify everything; owners can update profile info but cannot modify core roles/statuses themselves
+      allow update: if isAdmin() || (
+        isOwner(userId) && 
+        request.resource.data.role == resource.data.role &&
+        request.resource.data.paymentStatus == resource.data.paymentStatus &&
+        request.resource.data.approvalStatus == resource.data.approvalStatus
+      );
+
+      allow delete: if isAdmin();
+
+      // 3. Subcollections (Wedding Checklist, Vendors, Seserahan/Mahar, Guests)
+      match /checklist/{itemId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+
+      match /vendors/{vendorId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+
+      match /mahar/{maharId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+
+      match /guests/{guestId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+
+      match /files/{fileId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", ui-serif, Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Let's redefine the emerald palette scale to neutral grays with Luxe Rose Gold strictly reserved for accents (600, 700) */
+  --color-emerald-50: #FCFAFA;   /* Off-white warm alabaster (neutral, not pink) */
+  --color-emerald-100: #F4F3F2;  /* Soft neutral light gray-stone */
+  --color-emerald-200: #E6E4E2;  /* Muted warm gray */
+  --color-emerald-300: #D4D1CE;  /* Neutral border shade */
+  --color-emerald-400: #A8A29E;  /* Muted stone label */
+  --color-emerald-500: #78716C;  /* Muted dark stone */
+  --color-emerald-600: #B76E79;  /* Perfect Solid Rose Gold Metallic Accent */
+  --color-emerald-700: #B76E79;  /* Perfect Solid Rose Gold Metallic Accent */
+  --color-emerald-800: #9E5661;  /* Deeper burnished rose gold hover */
+  --color-emerald-900: #2D2D2D;  /* Dark charcoal (Premium, replaces harsh black) */
+  --color-emerald-950: #171717;  /* Neutral deep obsidian */
+}
+

@@ -1,0 +1,114 @@
+{
+  "entities": {
+    "userProfile": {
+      "title": "UserProfile",
+      "description": "The profile of the user, containing wedding metadata and payment/approval states",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "The Firebase Auth user ID" },
+        "email": { "type": "string", "description": "The email address" },
+        "fullName": { "type": "string", "description": "The user's full name" },
+        "partnerName": { "type": "string", "description": "The partner's full name" },
+        "weddingDate": { "type": "string", "description": "The wedding date in YYYY-MM-DD format" },
+        "role": { "type": "string", "description": "User role: user or admin" },
+        "paymentStatus": { "type": "string", "description": "Payment status: pending or paid" },
+        "approvalStatus": { "type": "string", "description": "Admin approval status: pending, approved, or rejected" },
+        "totalBudget": { "type": "number", "description": "Estimated target budget in IDR" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "The creation timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "The last update timestamp" }
+      },
+      "required": ["uid", "email", "fullName", "weddingDate", "role", "paymentStatus", "approvalStatus", "totalBudget", "createdAt", "updatedAt"]
+    },
+    "weddingChecklistItem": {
+      "title": "WeddingChecklistItem",
+      "description": "An item in the wedding preparation checklist with budget and responsibilities",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Document ID" },
+        "name": { "type": "string", "description": "Checklist item name" },
+        "category": { "type": "string", "description": "Category of the item (e.g., Venue, Catering, Kebaya/Jas)" },
+        "budgetEstimate": { "type": "number", "description": "Budget estimate in IDR" },
+        "budgetActual": { "type": "number", "description": "Actual spend in IDR" },
+        "isGroomChecked": { "type": "boolean", "description": "Whether CPP has checked" },
+        "isBrideChecked": { "type": "boolean", "description": "Whether CPW has checked" },
+        "isDone": { "type": "boolean", "description": "Whether the item is fully done" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "category", "budgetEstimate", "budgetActual", "isGroomChecked", "isBrideChecked", "isDone", "createdAt", "updatedAt"]
+    },
+    "vendorItem": {
+      "title": "VendorItem",
+      "description": "A vendor stored in the user's vendor directory",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "description": "Vendor name" },
+        "category": { "type": "string", "description": "Vendor type" },
+        "contact": { "type": "string", "description": "WhatsApp or Phone number" },
+        "socialMedia": { "type": "string", "description": "Instagram, TikTok, or Website link" },
+        "notes": { "type": "string", "description": "Additional notes" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "category", "contact", "socialMedia", "createdAt", "updatedAt"]
+    },
+    "maharItem": {
+      "title": "MaharItem",
+      "description": "An item in the seserahan & mahar checklist",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "description": "Item description" },
+        "brand": { "type": "string", "description": "Brand/Vendor" },
+        "ecommerceLink": { "type": "string", "description": "Link to e-commerce if applicable" },
+        "price": { "type": "number", "description": "Price/cost of item in IDR" },
+        "isJewelry": { "type": "boolean", "description": "Whether this is jewelry" },
+        "jewelryWeight": { "type": "number", "description": "Jewelry weight in grams (optional/conditional)" },
+        "jewelryPricePerGram": { "type": "number", "description": "Jewelry price per gram in IDR (optional/conditional)" },
+        "isPurchased": { "type": "boolean", "description": "Whether purchased" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "brand", "ecommerceLink", "price", "isJewelry", "jewelryWeight", "jewelryPricePerGram", "isPurchased", "createdAt", "updatedAt"]
+    },
+    "guestItem": {
+      "title": "GuestItem",
+      "description": "A wedding invitation guest entry",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "description": "Guest name" },
+        "relationship": { "type": "string", "description": "Relationship: Keluarga, Sahabat, Rekan Kerja, Tetangga" },
+        "invitationType": { "type": "string", "description": "Invitation Type: Digital or Cetak" },
+        "isRsvp": { "type": "boolean", "description": "Whether RSVP is confirmed" },
+        "notes": { "type": "string", "description": "Dietary or greeting notes" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "relationship", "invitationType", "isRsvp", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "userProfile",
+      "description": "The root document for a user profile detailing onboarding config"
+    },
+    "/users/{userId}/checklist/{itemId}": {
+      "schema": "weddingChecklistItem",
+      "description": "Specific wedding checklist items for the user"
+    },
+    "/users/{userId}/vendors/{vendorId}": {
+      "schema": "vendorItem",
+      "description": "The user's list of contacts for different wedding vendors"
+    },
+    "/users/{userId}/mahar/{maharId}": {
+      "schema": "maharItem",
+      "description": "Seserahan & Mahar checklist details"
+    },
+    "/users/{userId}/guests/{guestId}": {
+      "schema": "guestItem",
+      "description": "Guest invitation list with RSVP statuses"
+    }
+  }
+}
