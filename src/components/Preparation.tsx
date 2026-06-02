@@ -8,7 +8,8 @@ import {
   ChevronDown,
   ChevronUp,
   Edit2,
-  FolderPlus
+  FolderPlus,
+  Check
 } from "lucide-react";
 
 interface PreparationProps {
@@ -17,9 +18,17 @@ interface PreparationProps {
   onDeleteItem: (id: string) => Promise<void>;
   onClearAll: () => Promise<void>;
   onResetDefaults: () => Promise<void>;
+  isUpdating?: boolean;
 }
 
-export default function Preparation({ items, onSaveItem, onDeleteItem, onClearAll, onResetDefaults }: PreparationProps) {
+export default function Preparation({ 
+  items, 
+  onSaveItem, 
+  onDeleteItem, 
+  onClearAll, 
+  onResetDefaults,
+  isUpdating = false 
+}: PreparationProps) {
   // Preset default blueprint category list
   const defaultCategories = [
     "Persiapan Awal",
@@ -60,6 +69,7 @@ export default function Preparation({ items, onSaveItem, onDeleteItem, onClearAl
   const [inlineTaskActuals, setInlineTaskActuals] = useState<Record<string, string>>({});
   const [requiresDualCheckInput, setRequiresDualCheckInput] = useState<Record<string, boolean>>({});
   const [activeAddFormCat, setActiveAddFormCat] = useState<string | null>(null);
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
 
   // Dynamic Category Forms
   const [showAddCatForm, setShowAddCatForm] = useState(false);
@@ -257,7 +267,8 @@ export default function Preparation({ items, onSaveItem, onDeleteItem, onClearAl
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setShowAddCatForm(!showAddCatForm)}
-            className="px-3.5 py-1.5 bg-[#B76E79] hover:bg-[#9E5661] text-white text-xs font-semibold rounded-lg flex items-center shadow-xs cursor-pointer transition-colors"
+            disabled={isUpdating}
+            className="px-3.5 py-1.5 bg-[#af7661] hover:bg-[#915c4a] text-white text-xs font-semibold rounded-lg flex items-center shadow-xs cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <FolderPlus size={14} className="mr-1.5" />
             Tambah Kategori
@@ -270,16 +281,18 @@ export default function Preparation({ items, onSaveItem, onDeleteItem, onClearAl
                 setCategories(defaultCategories);
               }
             }}
-            className="px-3 py-1.5 border border-stone-200 text-stone-700 bg-white hover:bg-stone-50 text-xs font-semibold rounded-lg flex items-center cursor-pointer transition-colors"
+            disabled={isUpdating}
+            className="px-3 py-1.5 border border-stone-200 text-stone-700 bg-white hover:bg-stone-50 text-xs font-semibold rounded-lg flex items-center cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             title="Muat ulang seluruh item default Sharia"
           >
             <RotateCcw size={13} className="mr-1.5 text-stone-400" />
-            Muat Default
+            {isUpdating ? "Memproses..." : "Muat Default"}
           </button>
 
           <button
             onClick={onClearAll}
-            className="px-3 py-1.5 border border-stone-200 text-stone-500 hover:text-red-650 bg-white hover:bg-red-50 text-xs font-semibold rounded-lg flex items-center cursor-pointer transition-colors"
+            disabled={isUpdating}
+            className="px-3 py-1.5 border border-stone-200 text-stone-500 hover:text-red-650 bg-white hover:bg-red-50 text-xs font-semibold rounded-lg flex items-center cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             title="Kosongkan seluruh data pada checklist"
           >
             <Trash2 size={13} className="mr-1.5 text-stone-400" />
@@ -288,7 +301,8 @@ export default function Preparation({ items, onSaveItem, onDeleteItem, onClearAl
 
           <button
             onClick={handleResetToPresetCategories}
-            className="px-2 py-1.5 text-stone-400 hover:text-stone-700 text-xs font-medium rounded-lg"
+            disabled={isUpdating}
+            className="px-2 py-1.5 text-stone-400 hover:text-stone-700 text-xs font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
             title="Kembalikan nama-nama kategori ke standar"
           >
             Reset Kategori
@@ -310,11 +324,11 @@ export default function Preparation({ items, onSaveItem, onDeleteItem, onClearAl
               placeholder="Contoh: Mahar & Cincin, Transportasi dsb"
               value={newCatName}
               onChange={(e) => setNewCatName(e.target.value)}
-              className="flex-1 px-3 py-1.5 text-xs bg-stone-50 rounded-lg border border-stone-250 focus:outline-none focus:ring-1 focus:ring-[#B76E79]"
+              className="flex-1 px-3 py-1.5 text-xs bg-stone-50 rounded-lg border border-stone-250 focus:outline-none focus:ring-1 focus:ring-[#af7661]"
             />
             <button
               type="submit"
-              className="px-4 py-1.5 bg-[#B76E79] hover:bg-[#9E5661] text-white text-xs font-semibold rounded-lg transition-colors"
+              className="px-4 py-1.5 bg-[#af7661] hover:bg-[#915c4a] text-white text-xs font-semibold rounded-lg transition-colors"
             >
               Tambah
             </button>
@@ -329,10 +343,10 @@ export default function Preparation({ items, onSaveItem, onDeleteItem, onClearAl
         <div className="flex-1 min-w-[200px] space-y-1.5">
           <div className="flex items-center justify-between text-xs">
             <span className="font-medium text-stone-700">Kemajuan Persiapan Nikah</span>
-            <span className="font-mono font-bold text-[#B76E79]">{completionRate}%</span>
+            <span className="font-mono font-bold text-[#af7661]">{completionRate}%</span>
           </div>
           <div className="w-full bg-stone-200 h-1.5 rounded-full overflow-hidden">
-            <div className={`h-full rounded-full transition-all duration-300 ${completionRate === 100 ? "bg-emerald-600" : "bg-[#B76E79]"}`} style={{ width: `${completionRate}%` }}></div>
+            <div className={`h-full rounded-full transition-all duration-300 ${completionRate === 100 ? "bg-emerald-600" : "bg-[#af7661]"}`} style={{ width: `${completionRate}%` }}></div>
           </div>
           <p className="text-[10px] text-stone-500">
             Alhamdulillah, {completedCount} dari {totalCount} kebutuhan dan persiapan tercatat selesai.
@@ -436,7 +450,7 @@ export default function Preparation({ items, onSaveItem, onDeleteItem, onClearAl
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => handleStartEditCategory(cat)}
-                      className="p-1 text-stone-400 hover:text-[#B76E79] hover:bg-stone-100 rounded transition-colors"
+                      className="p-1 text-stone-400 hover:text-[#af7661] hover:bg-stone-100 rounded transition-colors"
                       title="Edit Nama Kategori"
                     >
                       <Edit2 size={12} />
@@ -468,141 +482,223 @@ export default function Preparation({ items, onSaveItem, onDeleteItem, onClearAl
                       {catItems.map((item) => {
                         const isSelesaiStatus = item.status === "Selesai" || item.isDone;
                         const isProsesStatus = item.status === "Dalam Proses";
+                        const isEditing = editingTaskId === item.id;
 
                         return (
-                          <div 
-                            key={item.id} 
-                            className="py-2 flex flex-col xl:flex-row xl:items-center justify-between gap-2 text-stone-750 first:pt-0 last:pb-0"
-                          >
-                            
-                            {/* Task Name Column - COMPACT AND CLEAN */}
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2">
-                                <span className={`inline-block w-1.5 h-1.5 rounded-full shrink-0 ${
-                                  isSelesaiStatus ? "bg-emerald-500" : isProsesStatus ? "bg-amber-400" : "bg-stone-300"
-                                }`}></span>
-                                <h4 className={`text-xs md:text-[13px] font-medium leading-tight ${isSelesaiStatus ? "text-stone-400 line-through font-normal" : "text-stone-850"}`}>
-                                  {item.name}
-                                </h4>
-                              </div>
-                              {isAdministrasi && item.requiresDualCheck && (
-                                <p className="text-[9px] text-stone-400 italic ml-3.5">Setiap pihak wajib menyerahkan dokumen terkait</p>
-                              )}
-                            </div>
-
-                            {/* Dynamic Action Controls (Spreadsheet style layout!) */}
-                            <div className="flex flex-wrap items-center gap-3 sm:gap-4 shrink-0 justify-between xl:justify-end">
+                          <div key={item.id} className="py-2.5 first:pt-0 last:pb-0 flex flex-col border-b border-stone-50 last:border-b-0">
+                            {/* COLLAPSED / SIMPLE VIEW */}
+                            <div className="flex items-center justify-between gap-3 text-stone-750">
                               
-                              {/* 1. Clickable Status Badge Dropdown */}
-                              <div className="flex flex-col">
-                                <span className="text-[8px] text-stone-400 uppercase font-bold tracking-wider mb-0.5">Status</span>
-                                <select
-                                  value={item.status || (item.isDone ? "Selesai" : "Belum")}
-                                  onChange={async (e) => {
-                                    const val = e.target.value as "Belum" | "Dalam Proses" | "Selesai";
-                                    const updated = {
-                                      ...item,
-                                      status: val,
-                                      isDone: val === "Selesai",
-                                      isGroomChecked: val === "Selesai" ? true : item.isGroomChecked,
-                                      isBrideChecked: val === "Selesai" ? true : item.isBrideChecked,
-                                      updatedAt: new Date().toISOString()
-                                    };
-                                    await onSaveItem(updated);
-                                  }}
-                                  className={`text-[11px] font-semibold px-2 py-0.5 rounded-md border focus:outline-none transition-colors cursor-pointer ${
-                                    isSelesaiStatus
-                                      ? "bg-emerald-50 text-emerald-700 border-emerald-250 font-medium"
-                                      : isProsesStatus
-                                      ? "bg-amber-50 text-amber-700 border-amber-250"
-                                      : "bg-stone-50 text-stone-600 border-stone-200"
-                                  }`}
-                                >
-                                  <option value="Belum">Belum</option>
-                                  <option value="Dalam Proses">Proses</option>
-                                  <option value="Selesai">Selesai</option>
-                                </select>
-                              </div>
-
-                              {/* 2. Avatar Checkboxes CPP & CPW (Conditional Dual-Check) */}
-                              {item.requiresDualCheck && (
-                                <div className="flex items-center gap-2 border-l border-stone-200 pl-3">
-                                  
-                                  {/* CPP Checkbox */}
-                                  <div className="flex flex-col items-center">
-                                    <span className="text-[8px] text-stone-400 uppercase font-bold tracking-wider mb-0.5">CPP (Pria)</span>
+                              {/* Left: Checkbox (or Dual Checkboxes) */}
+                              <div className="flex items-center gap-1.5 shrink-0">
+                                {item.requiresDualCheck ? (
+                                  <div className="flex items-center gap-1">
                                     <button
                                       onClick={() => handleToggleCheck(item, "cpp")}
-                                      className={`w-6 h-6 rounded-md flex items-center justify-center transition-all border text-[9px] font-semibold ${
+                                      disabled={isUpdating}
+                                      className={`w-6 h-6 rounded-md flex items-center justify-center border text-[9px] font-bold transition-all shrink-0 ${
                                         item.isGroomChecked 
-                                          ? "bg-[#B76E79]/15 border-[#B76E79] text-[#B76E79]" 
-                                          : "bg-stone-50 border-stone-250 hover:border-stone-400 text-stone-400"
-                                      }`}
+                                          ? "bg-[#af7661]/15 border-[#af7661] text-[#af7661]" 
+                                          : "bg-stone-50 border-stone-250 text-stone-400 hover:border-stone-400"
+                                      } ${isUpdating ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                                       title="Kelengkapan dokumen CPP (Pria)"
                                     >
                                       L
                                     </button>
-                                  </div>
-
-                                  {/* CPW Checkbox */}
-                                  <div className="flex flex-col items-center">
-                                    <span className="text-[8px] text-stone-400 uppercase font-bold tracking-wider mb-0.5">CPW (Wanita)</span>
                                     <button
                                       onClick={() => handleToggleCheck(item, "cpw")}
-                                      className={`w-6 h-6 rounded-md flex items-center justify-center transition-all border text-[9px] font-semibold ${
+                                      disabled={isUpdating}
+                                      className={`w-6 h-6 rounded-md flex items-center justify-center transition-all border text-[9px] font-bold shrink-0 ${
                                         item.isBrideChecked 
-                                          ? "bg-[#B76E79]/15 border-[#B76E79] text-[#B76E79]" 
+                                          ? "bg-[#af7661]/15 border-[#af7661] text-[#af7661]" 
                                           : "bg-stone-50 border-stone-250 hover:border-stone-400 text-stone-400"
-                                      }`}
+                                      } ${isUpdating ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                                       title="Kelengkapan dokumen CPW (Wanita)"
                                     >
                                       W
                                     </button>
                                   </div>
+                                ) : (
+                                  <button
+                                    onClick={async () => {
+                                      const nextDone = !isSelesaiStatus;
+                                      const updated = {
+                                        ...item,
+                                        isDone: nextDone,
+                                        isGroomChecked: nextDone,
+                                        isBrideChecked: nextDone,
+                                        status: nextDone ? "Selesai" as const : "Belum" as const,
+                                        updatedAt: new Date().toISOString()
+                                      };
+                                      await onSaveItem(updated);
+                                    }}
+                                    disabled={isUpdating}
+                                    className={`w-6 h-6 rounded-md border flex items-center justify-center transition-all shrink-0 ${
+                                      isSelesaiStatus
+                                        ? "bg-[#af7661] border-[#af7661] text-white"
+                                        : "bg-white border-stone-250 hover:border-[#af7661]/60 text-stone-400"
+                                    } ${isUpdating ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                                  >
+                                    {isSelesaiStatus && <Check size={14} className="stroke-[3px]" />}
+                                  </button>
+                                )}
+                              </div>
 
-                                </div>
-                              )}
-
-                              {/* 3. Budget Inputs */}
-                              <div className="flex flex-col">
-                                <span className="text-[8px] text-stone-400 uppercase font-bold tracking-wider mb-0.5">Est. Budget</span>
-                                <div className="relative">
-                                  <span className="absolute left-1.5 top-0.5 text-[9px] text-stone-400">Rp</span>
-                                  <input
-                                    type="number"
-                                    placeholder="0"
-                                    value={item.budgetEstimate || ""}
-                                    onChange={(e) => handleCostChange(item, e.target.value, "estimate")}
-                                    className="w-[90px] pl-5 pr-1 py-0.5 text-[11px] bg-stone-50 rounded border border-stone-200 font-mono text-stone-700 focus:outline-none focus:ring-1 focus:ring-[#B76E79]"
-                                  />
+                              {/* Middle: Title & Compact Budget Display */}
+                              <div className="flex-1 min-w-0" onClick={() => setEditingTaskId(isEditing ? null : item.id)}>
+                                <h4 className={`text-xs md:text-sm font-semibold leading-snug truncate cursor-pointer hover:text-[#af7661] transition-colors ${
+                                  isSelesaiStatus ? "text-stone-400 line-through font-normal" : "text-stone-850"
+                                }`}>
+                                  {item.name}
+                                </h4>
+                                <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-0.5">
+                                  {isAdministrasi && item.requiresDualCheck && (
+                                    <span className="text-[8px] bg-stone-100 text-stone-500 font-bold uppercase px-1 rounded">Dual Check</span>
+                                  )}
+                                  {(item.budgetEstimate > 0 || item.budgetActual > 0) && (
+                                    <span className="text-[9px] font-mono text-stone-450 leading-none">
+                                      Est: {formatIDR(item.budgetEstimate)} {item.budgetActual > 0 && `| Riil: ${formatIDR(item.budgetActual)}`}
+                                    </span>
+                                  )}
                                 </div>
                               </div>
 
-                              <div className="flex flex-col">
-                                <span className="text-[8px] text-stone-400 uppercase font-bold tracking-wider mb-0.5">Riil Spent</span>
-                                <div className="relative">
-                                  <span className="absolute left-1.5 top-0.5 text-[9px] text-stone-400">Rp</span>
-                                  <input
-                                    type="number"
-                                    placeholder="0"
-                                    value={item.budgetActual || ""}
-                                    onChange={(e) => handleCostChange(item, e.target.value, "actual")}
-                                    className="w-[90px] pl-5 pr-1 py-0.5 text-[11px] bg-stone-50 rounded border border-stone-200 font-mono text-stone-700 focus:outline-none focus:ring-1 focus:ring-[#B76E79]"
-                                  />
-                                </div>
+                              {/* Right: Status Badge & Actions */}
+                              <div className="flex items-center gap-1.5 shrink-0">
+                                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                                  isSelesaiStatus
+                                    ? "bg-emerald-50 text-emerald-700 border border-emerald-200/50"
+                                    : isProsesStatus
+                                    ? "bg-amber-50 text-amber-700 border border-amber-250/50"
+                                    : "bg-stone-50 text-stone-500 border border-stone-200/50"
+                                }`}>
+                                  {item.status || (item.isDone ? "Selesai" : "Belum")}
+                                </span>                                 <button
+                                  onClick={() => setEditingTaskId(isEditing ? null : item.id)}
+                                  disabled={isUpdating}
+                                  className={`p-1 text-stone-405 hover:text-[#af7661] rounded transition-colors ${
+                                    isEditing ? "bg-stone-100 text-[#af7661]" : "hover:bg-stone-50"
+                                  } ${isUpdating ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}
+                                  title="Edit detail item"
+                                >
+                                  <Edit2 size={12} />
+                                </button>
+                                <button
+                                  onClick={() => onDeleteItem(item.id)}
+                                  disabled={isUpdating}
+                                  className={`p-1 text-stone-400 hover:text-red-650 hover:bg-red-50 rounded transition-colors ${isUpdating ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}
+                                  title="Hapus item"
+                                >
+                                  <Trash2 size={12} />
+                                </button>
                               </div>
-
-                              {/* 4. Row Delete */}
-                              <button
-                                onClick={() => onDeleteItem(item.id)}
-                                className="self-end p-1 text-stone-400 hover:text-red-500 hover:bg-stone-50 rounded transition-colors mt-2"
-                                title="Hapus baris kebutuhan"
-                              >
-                                <Trash2 size={12} />
-                              </button>
 
                             </div>
 
+                            {/* DYNAMIC EDIT DRAWER PANEL */}
+                            {isEditing && (
+                              <div className="mt-2.5 bg-stone-50/80 border border-stone-200 rounded-xl p-3.5 animate-fade-in space-y-3">
+                                <div className="flex items-center justify-between border-b border-stone-200 pb-1.5">
+                                  <span className="text-[9px] font-bold text-stone-500 uppercase tracking-wider">Detail Anggaran & Pengaturan</span>
+                                  <button 
+                                    onClick={() => setEditingTaskId(null)} 
+                                    className="text-[10px] text-[#af7661] font-bold hover:underline bg-transparent border-0 cursor-pointer"
+                                  >
+                                    Simpan & Selesai
+                                  </button>
+                                </div>
+                                
+                                <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+                                  {/* Task Name Edit */}
+                                  <div className="md:col-span-6">
+                                    <label className="block text-[8px] uppercase font-bold text-stone-500 mb-1">Nama Keperluan / Kegiatan</label>
+                                    <input
+                                      type="text"
+                                      value={item.name}
+                                      onChange={async (e) => {
+                                        const updated = { ...item, name: e.target.value, updatedAt: new Date().toISOString() };
+                                        await onSaveItem(updated);
+                                      }}
+                                      className="w-full px-2.5 py-1 text-xs bg-white rounded border border-stone-250 focus:outline-none focus:ring-1 focus:ring-[#af7661]"
+                                    />
+                                  </div>
+
+                                  {/* Status Select */}
+                                  <div className="md:col-span-3">
+                                    <label className="block text-[8px] uppercase font-bold text-stone-500 mb-1">Status Progres</label>
+                                    <select
+                                      value={item.status || "Belum"}
+                                      onChange={async (e) => {
+                                        const val = e.target.value as "Belum" | "Dalam Proses" | "Selesai";
+                                        const updated = {
+                                          ...item,
+                                          status: val,
+                                          isDone: val === "Selesai",
+                                          isGroomChecked: val === "Selesai" ? true : item.isGroomChecked,
+                                          isBrideChecked: val === "Selesai" ? true : item.isBrideChecked,
+                                          updatedAt: new Date().toISOString()
+                                        };
+                                        await onSaveItem(updated);
+                                      }}
+                                      className="w-full px-2 py-1 text-xs bg-white rounded border border-stone-250 text-stone-750 focus:outline-none cursor-pointer"
+                                    >
+                                      <option value="Belum">Belum</option>
+                                      <option value="Dalam Proses">Proses</option>
+                                      <option value="Selesai">Selesai</option>
+                                    </select>
+                                  </div>
+
+                                  {/* Dual Check Requirement */}
+                                  <div className="md:col-span-3 flex items-center h-8">
+                                    <label className="flex items-center gap-2 cursor-pointer text-xs text-stone-600 select-none">
+                                      <input
+                                        type="checkbox"
+                                        checked={item.requiresDualCheck}
+                                        onChange={async (e) => {
+                                          const checked = e.target.checked;
+                                          const updated = { ...item, requiresDualCheck: checked, updatedAt: new Date().toISOString() };
+                                          await onSaveItem(updated);
+                                        }}
+                                        className="rounded border-stone-300 text-[#af7661] focus:ring-[#af7661] w-3.5 h-3.5 cursor-pointer"
+                                      />
+                                      <span className="text-[10px] font-bold uppercase tracking-wider text-stone-550">Dual Check (CPP & CPW)</span>
+                                    </label>
+                                  </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-3 pt-1">
+                                  {/* Est. Budget */}
+                                  <div>
+                                    <label className="block text-[8px] uppercase font-bold text-stone-500 mb-1">Est. Anggaran (Rp)</label>
+                                    <div className="relative">
+                                      <span className="absolute left-2 top-1 text-[10px] text-stone-400">Rp</span>
+                                      <input
+                                        type="number"
+                                        placeholder="0"
+                                        value={item.budgetEstimate || ""}
+                                        onChange={async (e) => await handleCostChange(item, e.target.value, "estimate")}
+                                        className="w-full pl-7 pr-2.5 py-1 text-xs bg-white rounded border border-stone-250 font-mono text-stone-700 focus:outline-none"
+                                      />
+                                    </div>
+                                  </div>
+
+                                  {/* Actual Spent */}
+                                  <div>
+                                    <label className="block text-[8px] uppercase font-bold text-stone-500 mb-1">Riil Terpakai (Rp)</label>
+                                    <div className="relative">
+                                      <span className="absolute left-2 top-1 text-[10px] text-stone-400">Rp</span>
+                                      <input
+                                        type="number"
+                                        placeholder="0"
+                                        value={item.budgetActual || ""}
+                                        onChange={async (e) => await handleCostChange(item, e.target.value, "actual")}
+                                        className="w-full pl-7 pr-2.5 py-1 text-xs bg-white rounded border border-stone-250 font-mono text-stone-700 focus:outline-none"
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         );
                       })}
@@ -625,7 +721,13 @@ export default function Preparation({ items, onSaveItem, onDeleteItem, onClearAl
                                 const v = e.target.value;
                                 setInlineTaskNames(prev => ({ ...prev, [cat]: v }));
                               }}
-                              className="w-full px-2.5 py-1 text-xs bg-white rounded border border-stone-250 focus:outline-none focus:ring-1 focus:ring-[#B76E79]"
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                  handleAddNewTask(cat);
+                                }
+                              }}
+                              className="w-full px-2.5 py-1 text-xs bg-white rounded border border-stone-250 focus:outline-none focus:ring-1 focus:ring-[#af7661]"
                             />
                           </div>
 
@@ -640,7 +742,7 @@ export default function Preparation({ items, onSaveItem, onDeleteItem, onClearAl
                                   const v = e.target.value;
                                   setInlineTaskEstimates(prev => ({ ...prev, [cat]: v }));
                                 }}
-                                className="w-full md:w-24 px-2 py-1 text-xs bg-white rounded border border-stone-250 font-mono focus:outline-none focus:ring-1 focus:ring-[#B76E79]"
+                                className="w-full md:w-24 px-2 py-1 text-xs bg-white rounded border border-stone-250 font-mono focus:outline-none focus:ring-1 focus:ring-[#af7661]"
                               />
                             </div>
 
@@ -654,7 +756,7 @@ export default function Preparation({ items, onSaveItem, onDeleteItem, onClearAl
                                   const v = e.target.value;
                                   setInlineTaskActuals(prev => ({ ...prev, [cat]: v }));
                                 }}
-                                className="w-full md:w-24 px-2 py-1 text-xs bg-white rounded border border-stone-250 font-mono focus:outline-none focus:ring-1 focus:ring-[#B76E79]"
+                                className="w-full md:w-24 px-2 py-1 text-xs bg-white rounded border border-stone-250 font-mono focus:outline-none focus:ring-1 focus:ring-[#af7661]"
                               />
                             </div>
                           </div>
@@ -670,26 +772,28 @@ export default function Preparation({ items, onSaveItem, onDeleteItem, onClearAl
                                 const checked = e.target.checked;
                                 setRequiresDualCheckInput(prev => ({ ...prev, [cat]: checked }));
                               }}
-                              className="rounded border-stone-300 text-[#B76E79] focus:ring-[#B76E79] w-3.5 h-3.5"
+                              className="rounded border-stone-300 text-[#af7661] focus:ring-[#af7661] w-3.5 h-3.5"
                             />
                             <span>Apakah item ini butuh checklist CPP & CPW terpisah? (Misal: Berkas KTP, KK, dsb)</span>
                           </label>
 
-                          <div className="flex gap-2 self-end">
+                           <div className="flex gap-2 self-end">
                             <button
                               type="button"
                               onClick={() => {
                                 setRequiresDualCheckInput(prev => ({ ...prev, [cat]: false }));
                                 setActiveAddFormCat(null);
                               }}
-                              className="px-2.5 py-1 border border-stone-250 text-stone-500 rounded bg-white text-xs hover:bg-stone-50 transition-colors"
+                              disabled={isUpdating}
+                              className="px-2.5 py-1 border border-stone-250 text-stone-500 rounded bg-white text-xs hover:bg-stone-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               Batal
                             </button>
                             <button
                               type="button"
                               onClick={() => handleAddNewTask(cat)}
-                              className="px-3.5 py-1 bg-[#B76E79] hover:bg-[#9E5661] text-white text-xs font-bold rounded transition-colors"
+                              disabled={!inlineTaskNames[cat]?.trim() || isUpdating}
+                              className="px-3.5 py-1 bg-[#af7661] hover:bg-[#915c4a] text-white text-xs font-bold rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                             >
                               Simpan Item
                             </button>
@@ -703,7 +807,8 @@ export default function Preparation({ items, onSaveItem, onDeleteItem, onClearAl
                           // open and set to empty
                           setActiveAddFormCat(cat);
                         }}
-                        className="py-1 px-3 border border-stone-200 hover:border-[#B76E79] hover:bg-[#B76E79]/5 text-stone-600 hover:text-[#B76E79] text-xs font-semibold rounded flex items-center cursor-pointer transition-all gap-1.5 mr-auto"
+                        disabled={isUpdating}
+                        className="py-1 px-3 border border-stone-200 hover:border-[#af7661] hover:bg-[#af7661]/5 text-stone-600 hover:text-[#af7661] text-xs font-semibold rounded flex items-center transition-all gap-1.5 mr-auto disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Plus size={12} />
                         Tambah Item Kebutuhan Baru

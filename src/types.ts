@@ -64,6 +64,8 @@ export interface GuestItem {
   invitationType: "Digital" | "Cetak";
   isRsvp: boolean;
   notes?: string;
+  phoneNumber?: string;
+  address?: string;
   createdAt: string;
   updatedAt: string;
 }

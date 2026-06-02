@@ -74,7 +74,7 @@ export default function Vendors({ vendors, onSaveVendor, onDeleteVendor, onClear
     if (cleanPhone.startsWith("0")) {
       cleanPhone = "62" + cleanPhone.slice(1);
     }
-    return `https://wa.me/${cleanPhone}?text=Bismillah,%20Halo%20Zawwaja.id%20Vendor%20Partnership.%20Saya%20tertarik%20dengan%20layanan%20Anda.`;
+    return `https://wa.me/${cleanPhone}?text=Bismillah,%20Halo%20Zawwaja%20Vendor%20Partnership.%20Saya%20tertarik%20dengan%20layanan%20Anda.`;
   };
 
   return (

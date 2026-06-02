@@ -11,7 +11,7 @@ import {
   Settings,
   PanelLeftClose,
   PanelLeft,
-  FileText
+  Mail
 } from "lucide-react";
 import { UserProfile } from "../types";
 
@@ -37,8 +37,7 @@ export default function Sidebar({
     { id: "checklist", label: "Persiapan Nikah", icon: CheckSquare },
     { id: "vendors", label: "Manajemen Vendor", icon: Building },
     { id: "mahar", label: "Seserahan & Mahar", icon: Gift },
-    { id: "guests", label: "Daftar Tamu", icon: Users },
-    { id: "files", label: "Berkas & Dokumen", icon: FileText },
+    { id: "undangan", label: "Undangan Pernikahan", icon: Mail },
   ];
 
   const isAdmin = profile?.role === "admin" || profile?.email === "erzeddd@gmail.com";
@@ -60,19 +59,29 @@ export default function Sidebar({
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive = currentTab === item.id;
+          
+          let shortLabel = item.label;
+          if (item.id === "checklist") shortLabel = "Persiapan";
+          if (item.id === "vendors") shortLabel = "Vendor";
+          if (item.id === "mahar") shortLabel = "Mahar";
+          if (item.id === "undangan") shortLabel = "Undangan";
+          
           return (
             <button
               key={item.id}
               onClick={() => setCurrentTab(item.id)}
-              className={`flex items-center justify-center p-2.5 rounded-xl transition-all cursor-pointer ${
+              className={`flex flex-col items-center justify-center py-1 flex-1 transition-all cursor-pointer ${
                 isActive 
-                  ? "text-[#B76E79] bg-[#B76E79]/10 scale-105" 
-                  : "text-stone-500 hover:text-[#B76E79]"
+                  ? "text-[#af7661] scale-105" 
+                  : "text-stone-500 hover:text-[#af7661]"
               }`}
               title={item.label}
               id={`nav-item-mobile-${item.id}`}
             >
-              <Icon size={20} />
+              <Icon size={18} className="mb-0.5" />
+              <span className={`text-[9px] font-sans font-medium tracking-tight ${isActive ? "text-[#af7661] font-bold" : "text-stone-400"}`}>
+                {shortLabel}
+              </span>
             </button>
           );
         })}
@@ -81,15 +90,18 @@ export default function Sidebar({
         {isAdmin && (
           <button
             onClick={() => setCurrentTab("admin")}
-            className={`flex items-center justify-center p-2.5 rounded-xl transition-all cursor-pointer ${
+            className={`flex flex-col items-center justify-center py-1 flex-1 transition-all cursor-pointer ${
               currentTab === "admin" 
-                ? "text-[#B76E79] bg-[#B76E79]/10 scale-105" 
-                : "text-amber-600 hover:text-[#B76E79]"
+                ? "text-amber-700 scale-105" 
+                : "text-stone-550 hover:text-amber-700"
             }`}
             title="Portal Admin"
             id="nav-item-mobile-admin"
           >
-            <UserCheck size={20} />
+            <UserCheck size={18} className="mb-0.5" />
+            <span className={`text-[9px] font-sans font-medium tracking-tight ${currentTab === "admin" ? "text-amber-700 font-bold" : "text-stone-400"}`}>
+              Admin
+            </span>
           </button>
         )}
       </div>
@@ -109,15 +121,15 @@ export default function Sidebar({
             {!isCollapsed ? (
               <>
                 <div className="flex items-center space-x-2.5 min-w-0">
-                  <img src="/favicon.svg" alt="Zawwaja" className="w-8 h-8 rounded-lg shadow-sm shrink-0 object-cover border border-[#B76E79]/20" />
+                  <img src="/logo.png" alt="Zawwaja" className="w-8 h-8 rounded-lg shadow-sm shrink-0 object-cover border border-[#af7661]/20" />
                   <div className="min-w-0">
-                    <h1 className="text-stone-850 font-bold font-serif tracking-wide text-xs truncate">Zawwaja.id</h1>
-                    <p className="text-[8px] text-[#B76E79] uppercase tracking-wider font-semibold leading-none truncate">Sharia Planner</p>
+                    <h1 className="text-stone-850 font-bold font-serif tracking-wide text-xs truncate">Zawwaja</h1>
+                    <p className="text-[8px] text-[#af7661] uppercase tracking-wider font-semibold leading-none truncate">Sharia Planner</p>
                   </div>
                 </div>
                 <button 
                   onClick={() => setIsCollapsed(true)}
-                  className="p-1.5 rounded-lg text-stone-500 hover:text-[#B76E79] hover:bg-stone-100 transition-colors cursor-pointer shrink-0"
+                  className="p-1.5 rounded-lg text-stone-500 hover:text-[#af7661] hover:bg-stone-100 transition-colors cursor-pointer shrink-0"
                   title="Collapse Sidebar"
                 >
                   <PanelLeftClose size={18} />
@@ -126,10 +138,10 @@ export default function Sidebar({
             ) : (
               <button 
                 onClick={() => setIsCollapsed(false)}
-                className="p-1.5 rounded-lg text-stone-500 hover:text-[#B76E79] hover:bg-stone-100 transition-colors cursor-pointer flex items-center justify-center"
-                title="Expand Sidebar"
+                className="w-10 h-10 rounded-xl overflow-hidden hover:scale-105 hover:bg-stone-100/60 active:scale-95 transition-all flex items-center justify-center border border-[#af7661]/15 shadow-sm cursor-pointer bg-white"
+                title="Buka Sidebar"
               >
-                <PanelLeft size={18} />
+                <img src="/logo.png" alt="Zawwaja" className="w-8 h-8 rounded-lg object-cover" />
               </button>
             )}
           </div>
@@ -160,12 +172,12 @@ export default function Sidebar({
                     isCollapsed ? "justify-center p-3" : "justify-start px-4 py-3"
                   } ${
                     isActive 
-                      ? "bg-[#B76E79]/10 text-[#B76E79] font-bold border-r-2 border-[#B76E79]" 
+                      ? "bg-[#af7661]/10 text-[#af7661] font-bold border-r-2 border-[#af7661]" 
                       : "text-stone-600 hover:bg-stone-100/60 hover:text-stone-900"
                   }`}
                   title={item.label}
                 >
-                  <Icon size={16} className={`shrink-0 ${isActive ? "text-[#B76E79]" : "text-[#B76E79]/60 group-hover:text-[#B76E79]"}`} />
+                  <Icon size={16} className={`shrink-0 ${isActive ? "text-[#af7661]" : "text-[#af7661]/60 group-hover:text-[#af7661]"}`} />
                   {!isCollapsed && <span className="ml-3 truncate font-sans">{item.label}</span>}
                 </button>
               );
@@ -179,12 +191,12 @@ export default function Sidebar({
                   isCollapsed ? "justify-center p-3" : "justify-start px-4 py-3"
                 } ${
                   currentTab === "admin" 
-                    ? "bg-[#B76E79]/10 text-[#B76E79] font-bold border-r-2 border-[#B76E79]" 
+                    ? "bg-[#af7661]/10 text-[#af7661] font-bold border-r-2 border-[#af7661]" 
                     : "text-amber-700 hover:bg-stone-100/60 hover:text-amber-800"
                 }`}
                 title="Portal Admin"
               >
-                <UserCheck size={16} className={`shrink-0 ${currentTab === "admin" ? "text-[#B76E79]" : "text-amber-600/70"}`} />
+                <UserCheck size={16} className={`shrink-0 ${currentTab === "admin" ? "text-[#af7661]" : "text-amber-600/70"}`} />
                 {!isCollapsed && <span className="ml-3 truncate font-sans">Portal Admin</span>}
               </button>
             )}
@@ -195,7 +207,7 @@ export default function Sidebar({
         {!isCollapsed ? (
           <div className="p-3 border-t border-stone-200/60 bg-white/70 flex items-center justify-between shadow-[0_-2px_6px_rgba(0,0,0,0.01)]">
             <div className="flex items-center gap-2.5 min-w-0 flex-1">
-              <div className="w-8 h-8 rounded-full bg-[#B76E79]/10 text-[#B76E79] flex items-center justify-center font-extrabold text-[11px] shrink-0 border border-[#B76E79]/20 uppercase">
+              <div className="w-8 h-8 rounded-full bg-[#af7661]/10 text-[#af7661] flex items-center justify-center font-extrabold text-[11px] shrink-0 border border-[#af7661]/20 uppercase">
                 {getInitials(profile?.fullName)}
               </div>
               <div className="min-w-0 flex-1 text-left">
@@ -210,7 +222,7 @@ export default function Sidebar({
             <div className="flex items-center gap-1 shrink-0">
               <button 
                 onClick={onOpenSettings} 
-                className="p-1.5 rounded-lg text-stone-500 hover:text-[#B76E79] hover:bg-stone-100 transition-colors cursor-pointer"
+                className="p-1.5 rounded-lg text-stone-500 hover:text-[#af7661] hover:bg-stone-100 transition-colors cursor-pointer"
                 title="Kelola Pengaturan Rencana Akad"
               >
                 <Settings size={16} />
@@ -229,7 +241,7 @@ export default function Sidebar({
             {/* Settings gear icon directly above profile avatar */}
             <button 
               onClick={onOpenSettings} 
-              className="p-1.5 rounded-lg text-stone-500 hover:text-[#B76E79] hover:bg-stone-100/60 transition-colors cursor-pointer flex items-center justify-center"
+              className="p-1.5 rounded-lg text-stone-500 hover:text-[#af7661] hover:bg-stone-100/60 transition-colors cursor-pointer flex items-center justify-center"
               title="Kelola Pengaturan Rencana Akad"
             >
               <Settings size={16} />
@@ -237,7 +249,7 @@ export default function Sidebar({
             
             <button 
               onClick={onLogout}
-              className="w-8 h-8 rounded-full bg-[#B76E79]/10 text-[#B76E79] flex items-center justify-center font-extrabold text-[10px] border border-[#B76E79]/20 cursor-pointer shadow-sm hover:bg-rose-50 hover:border-rose-200 hover:text-rose-600 transition-all duration-200 uppercase"
+              className="w-8 h-8 rounded-full bg-[#af7661]/10 text-[#af7661] flex items-center justify-center font-extrabold text-[10px] border border-[#af7661]/20 cursor-pointer shadow-sm hover:bg-rose-50 hover:border-rose-200 hover:text-rose-600 transition-all duration-200 uppercase"
               title="Klik untuk Keluar (Logout)"
             >
               {getInitials(profile?.fullName)}

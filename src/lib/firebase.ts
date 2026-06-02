@@ -7,7 +7,8 @@ import {
   onAuthStateChanged, 
   User as FirebaseUser,
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail
 } from 'firebase/auth';
 import { 
   getFirestore, 
@@ -19,7 +20,8 @@ import {
   deleteDoc, 
   collection, 
   getDocs,
-  onSnapshot
+  onSnapshot,
+  writeBatch
 } from 'firebase/firestore';
 import { 
   getStorage, 
@@ -122,10 +124,10 @@ const MOCK_GUESTS_KEY = "zawwaja_mock_guests";
 // Initialize mock data if not present
 export const defaultWeddingChecklist = [
   // PERSIAPAN AWAL
-  { category: "Persiapan Awal", taskName: "Pertemuan dan Persetujuan Keluarga", status: "Selesai", requiresDualCheck: false },
-  { category: "Persiapan Awal", taskName: "Tanggal Pernikahan", status: "Selesai", requiresDualCheck: false },
-  { category: "Persiapan Awal", taskName: "Prepare Budgeting", status: "Dalam Proses", requiresDualCheck: false },
-  { category: "Persiapan Awal", taskName: "Tema Wedding", status: "Dalam Proses", requiresDualCheck: false },
+  { category: "Persiapan Awal", taskName: "Pertemuan dan Persetujuan Keluarga", status: "Belum", requiresDualCheck: false },
+  { category: "Persiapan Awal", taskName: "Tanggal Pernikahan", status: "Belum", requiresDualCheck: false },
+  { category: "Persiapan Awal", taskName: "Prepare Budgeting", status: "Belum", requiresDualCheck: false },
+  { category: "Persiapan Awal", taskName: "Tema Wedding", status: "Belum", requiresDualCheck: false },
 
   // ADMINISTRASI PERSIAPAN MENIKAH
   { category: "Administrasi Persiapan Menikah", taskName: "Surat Pengantar dari RT/RW", status: "Belum", requiresDualCheck: true },
@@ -141,23 +143,23 @@ export const defaultWeddingChecklist = [
   { category: "Administrasi Persiapan Menikah", taskName: "Fotocopy KTP Wali Nikah", status: "Belum", requiresDualCheck: false },
   { category: "Administrasi Persiapan Menikah", taskName: "Fotocopy KTP 2 orang saksi Nikah", status: "Belum", requiresDualCheck: false },
   { category: "Administrasi Persiapan Menikah", taskName: "Keterangan sudah Vaksin TT", status: "Belum", requiresDualCheck: true },
-  { category: "Administrasi Persiapan Menikah", taskName: "Daftar ke KUA", status: "Selesai", requiresDualCheck: false },
-  { category: "Administrasi Persiapan Menikah", taskName: "Bimbingan Pra-nikah dari KUA", status: "Dalam Proses", requiresDualCheck: false },
+  { category: "Administrasi Persiapan Menikah", taskName: "Daftar ke KUA", status: "Belum", requiresDualCheck: false },
+  { category: "Administrasi Persiapan Menikah", taskName: "Bimbingan Pra-nikah dari KUA", status: "Belum", requiresDualCheck: false },
 
   // TEMPAT
   { category: "Tempat", taskName: "Layout Venue", status: "Belum", requiresDualCheck: false },
   { category: "Tempat", taskName: "Decoration", status: "Belum", requiresDualCheck: false },
 
   // MAHAR DAN CINCIN
-  { category: "Mahar dan Cincin", taskName: "Mahar", status: "Selesai", requiresDualCheck: false },
-  { category: "Mahar dan Cincin", taskName: "Cincin lamaran dan nikah", status: "Selesai", requiresDualCheck: false },
-  { category: "Mahar dan Cincin", taskName: "Seserahan", status: "Selesai", requiresDualCheck: false },
+  { category: "Mahar dan Cincin", taskName: "Mahar", status: "Belum", requiresDualCheck: false },
+  { category: "Mahar dan Cincin", taskName: "Cincin lamaran dan nikah", status: "Belum", requiresDualCheck: false },
+  { category: "Mahar dan Cincin", taskName: "Seserahan", status: "Belum", requiresDualCheck: false },
   { category: "Mahar dan Cincin", taskName: "Tempat cincin nikah dan mahar", status: "Belum", requiresDualCheck: false },
-  { category: "Mahar dan Cincin", taskName: "Kotak Seserahan", status: "Selesai", requiresDualCheck: false },
+  { category: "Mahar dan Cincin", taskName: "Kotak Seserahan", status: "Belum", requiresDualCheck: false },
 
   // MAKE UP DAN BUSANA
-  { category: "Make up dan Busana", taskName: "Rias Pengantin", status: "Selesai", requiresDualCheck: false },
-  { category: "Make up dan Busana", taskName: "Hijabdo", status: "Selesai", requiresDualCheck: false },
+  { category: "Make up dan Busana", taskName: "Rias Pengantin", status: "Belum", requiresDualCheck: false },
+  { category: "Make up dan Busana", taskName: "Hijabdo", status: "Belum", requiresDualCheck: false },
   { category: "Make up dan Busana", taskName: "Rias Orang Tua dan Besan", status: "Belum", requiresDualCheck: false },
   { category: "Make up dan Busana", taskName: "Rias Pager Ayu", status: "Belum", requiresDualCheck: false },
   { category: "Make up dan Busana", taskName: "Rias Buku Tamu", status: "Belum", requiresDualCheck: false },
@@ -237,7 +239,7 @@ function getMockCollection<T>(key: string, defaults: Partial<T>[] = [], userId: 
   if (!all || JSON.parse(all).length === 0) {
     const formatted = defaults.map((item, idx) => ({
       ...item,
-      id: `mock-id-${idx + 1}`,
+      id: (item as any).id || `mock-id-${idx + 1}`,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     })) as T[];
@@ -363,7 +365,7 @@ export async function registerUserProfile(
     window.dispatchEvent(new Event("mock-auth-changed"));
 
     // Trigger WhatsApp notification for new payments
-    triggerMockWhatsAppAlert(`Notifikasi Zawwaja.id: Calon Pengantin Baru ${fullName} mendaftar untuk tanggal akad ${weddingDate}. Menunggu verifikasi QRIS!`);
+    triggerMockWhatsAppAlert(`Notifikasi Zawwaja: Calon Pengantin Baru ${fullName} mendaftar untuk tanggal akad ${weddingDate}. Menunggu verifikasi QRIS!`);
     
     return newProfile;
   } else {
@@ -371,7 +373,7 @@ export async function registerUserProfile(
       const docRef = doc(db, "users", uid);
       await setDoc(docRef, newProfile);
       
-      triggerMockWhatsAppAlert(`Notifikasi Zawwaja.id: Calon Pengantin Baru ${fullName} mendaftar untuk tanggal akad ${weddingDate} via Live Firestore.`);
+      triggerMockWhatsAppAlert(`Notifikasi Zawwaja: Calon Pengantin Baru ${fullName} mendaftar untuk tanggal akad ${weddingDate} via Live Firestore.`);
       return newProfile;
     } catch (error) {
       handleFirestoreError(error, OperationType.CREATE, `users/${uid}`);
@@ -411,6 +413,38 @@ export async function updatePaymentStatusToPaid(uid: string): Promise<void> {
   }
 }
 
+// Auto-activate user (Instant trust activation)
+export async function autoActivateUser(uid: string): Promise<void> {
+  if (isMockMode) {
+    const allProfilesStr = localStorage.getItem(MOCK_USERS_KEY) || "[]";
+    const allProfiles: UserProfile[] = JSON.parse(allProfilesStr);
+    const updated = allProfiles.map(p => {
+      if (p.uid === uid) {
+        return { 
+          ...p, 
+          paymentStatus: "paid" as const, 
+          approvalStatus: "approved" as const, 
+          updatedAt: new Date().toISOString() 
+        };
+      }
+      return p;
+    });
+    localStorage.setItem(MOCK_USERS_KEY, JSON.stringify(updated));
+    window.dispatchEvent(new Event("mock-auth-changed"));
+  } else {
+    try {
+      const docRef = doc(db, "users", uid);
+      await updateDoc(docRef, { 
+        paymentStatus: "paid", 
+        approvalStatus: "approved", 
+        updatedAt: new Date().toISOString() 
+      });
+    } catch (error) {
+      handleFirestoreError(error, OperationType.UPDATE, `users/${uid}`);
+    }
+  }
+}
+
 // Approve account by Admin
 export async function approveUserProfile(uid: string, approve: boolean): Promise<void> {
   const newStatus: ApprovalStatus = approve ? "approved" : "rejected";
@@ -434,7 +468,7 @@ export async function approveUserProfile(uid: string, approve: boolean): Promise
 
     const user = updated.find(p => p.uid === uid);
     if (user) {
-      triggerMockWhatsAppAlert(`WhatsApp User (${user.fullName}): Akun Anda di Zawwaja.id telah aktif! Silakan masuk kembali untuk mulai menyusun pernikahan barakah Anda.`, true);
+      triggerMockWhatsAppAlert(`WhatsApp User (${user.fullName}): Akun Anda di Zawwaja telah aktif! Silakan masuk kembali untuk mulai menyusun pernikahan barakah Anda.`, true);
     }
   } else {
     try {
@@ -448,13 +482,31 @@ export async function approveUserProfile(uid: string, approve: boolean): Promise
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const data = docSnap.data();
-        triggerMockWhatsAppAlert(`WhatsApp User (${data.fullName}): Akun Anda di Zawwaja.id telah Aktif setelah verifikasi Live Firestore!`, true);
       }
     } catch (error) {
       handleFirestoreError(error, OperationType.UPDATE, `users/${uid}`);
     }
   }
 }
+
+// Delete user profile
+export async function deleteUserProfile(uid: string): Promise<void> {
+  if (isMockMode) {
+    const allProfilesStr = localStorage.getItem(MOCK_USERS_KEY) || "[]";
+    const allProfiles: UserProfile[] = JSON.parse(allProfilesStr);
+    const updated = allProfiles.filter(p => p.uid !== uid);
+    localStorage.setItem(MOCK_USERS_KEY, JSON.stringify(updated));
+    window.dispatchEvent(new Event("mock-auth-changed"));
+  } else {
+    try {
+      const docRef = doc(db, "users", uid);
+      await deleteDoc(docRef);
+    } catch (error) {
+      handleFirestoreError(error, OperationType.DELETE, `users/${uid}`);
+    }
+  }
+}
+
 
 // Read all profiles for Admin Dashboard
 export async function getAllUserProfiles(): Promise<UserProfile[]> {
@@ -519,18 +571,10 @@ export async function getChecklistItems(userId: string): Promise<WeddingChecklis
         const seededList: WeddingChecklistItem[] = [];
         for (let i = 0; i < defaultChecklistItems.length; i++) {
           const item = defaultChecklistItems[i];
-          const newId = `db-item-${i + 1}-${Math.random().toString(36).substring(2, 6)}`;
+          const newId = item.id;
           const fullItem: WeddingChecklistItem = {
+            ...item,
             id: newId,
-            name: item.name || "",
-            category: item.category || "Persiapan Lainnya",
-            budgetEstimate: item.budgetEstimate || 0,
-            budgetActual: item.budgetActual || 0,
-            isGroomChecked: item.isGroomChecked || false,
-            isBrideChecked: item.isBrideChecked || false,
-            status: item.status || "Belum",
-            requiresDualCheck: item.requiresDualCheck || false,
-            isDone: item.isDone || false,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
           };
@@ -540,8 +584,22 @@ export async function getChecklistItems(userId: string): Promise<WeddingChecklis
         return seededList;
       }
       
-      // Sort by date or id to keep consistent
-      return list.sort((a,b) => a.createdAt.localeCompare(b.createdAt));
+      // Stable sort: default items sorted numerically by ID index, custom items sorted by createdAt
+      return list.sort((a, b) => {
+        const aIsDefault = a.id.startsWith("default-item-");
+        const bIsDefault = b.id.startsWith("default-item-");
+        
+        if (aIsDefault && bIsDefault) {
+          const aNum = parseInt(a.id.replace("default-item-", ""), 10);
+          const bNum = parseInt(b.id.replace("default-item-", ""), 10);
+          return aNum - bNum;
+        }
+        
+        if (aIsDefault && !bIsDefault) return -1;
+        if (!aIsDefault && bIsDefault) return 1;
+        
+        return a.createdAt.localeCompare(b.createdAt);
+      });
     } catch (error) {
       handleFirestoreError(error, OperationType.LIST, `users/${userId}/checklist`);
       return [];
@@ -591,35 +649,53 @@ export async function resetChecklistToDefault(userId: string): Promise<WeddingCh
     try {
       const qRef = collection(db, "users", userId, "checklist");
       const querySnapshot = await getDocs(qRef);
-      for (const docSnap of querySnapshot.docs) {
-        await deleteDoc(doc(db, "users", userId, "checklist", docSnap.id));
-      }
+      
+      const batch = writeBatch(db);
+      
+      // Delete all existing documents
+      querySnapshot.docs.forEach((docSnapshot) => {
+        batch.delete(docSnapshot.ref);
+      });
       
       const seededList: WeddingChecklistItem[] = [];
       for (let i = 0; i < defaultChecklistItems.length; i++) {
         const item = defaultChecklistItems[i];
-        const newId = `db-item-${i + 1}-${Math.random().toString(36).substring(2, 6)}`;
+        const newId = item.id;
         const fullItem: WeddingChecklistItem = {
+          ...item,
           id: newId,
-          name: item.name || "",
-          category: item.category || "Persiapan Lainnya",
-          budgetEstimate: item.budgetEstimate || 0,
-          budgetActual: item.budgetActual || 0,
-          isGroomChecked: item.isGroomChecked || false,
-          isBrideChecked: item.isBrideChecked || false,
-          status: item.status || "Belum",
-          requiresDualCheck: item.requiresDualCheck || false,
-          isDone: item.isDone || false,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
         };
-        await setDoc(doc(db, "users", userId, "checklist", newId), fullItem);
+        const docRef = doc(db, "users", userId, "checklist", newId);
+        batch.set(docRef, fullItem);
         seededList.push(fullItem);
       }
+      
+      // Commit atomically
+      await batch.commit();
       return seededList;
     } catch (error) {
       handleFirestoreError(error, OperationType.WRITE, `users/${userId}/checklist/reset`);
       return defaultChecklistItems;
+    }
+  }
+}
+
+export async function clearChecklist(userId: string): Promise<void> {
+  if (isMockMode) {
+    setMockCollection(MOCK_CHECKLIST_KEY, [], userId);
+  } else {
+    try {
+      const qRef = collection(db, "users", userId, "checklist");
+      const querySnapshot = await getDocs(qRef);
+      const batch = writeBatch(db);
+      querySnapshot.docs.forEach((docSnapshot) => {
+        batch.delete(docSnapshot.ref);
+      });
+      await batch.commit();
+    } catch (error) {
+      handleFirestoreError(error, OperationType.DELETE, `users/${userId}/checklist/clear`);
     }
   }
 }
@@ -789,6 +865,69 @@ export async function deleteGuestItem(userId: string, guestId: string): Promise<
   }
 }
 
+const MOCK_INVITATION_KEY = "zawwaja_mock_invitation";
+
+export async function getInvitationConfig(userId: string): Promise<any> {
+  if (isMockMode) {
+    const data = localStorage.getItem(`${MOCK_INVITATION_KEY}_${userId}`);
+    if (!data) {
+      const defaults = {
+        title: "Website Undangan Pernikahan",
+        couple: {
+          male: { name: "Wahyu Pratama", shortName: "Wahyu", parents: { father: "Bapak Budi Pratama", mother: "Ibu Siti Aminah" }, photo: "./assets/images/cowo.png" },
+          female: { name: "Riski Amelia", shortName: "Riski", parents: { father: "Bapak Heri Amelia", mother: "Ibu Ani Lestari" }, photo: "./assets/images/cewe.png" }
+        },
+        schedule: {
+          dateString: "Rabu, 15 Maret 2028",
+          countdownDate: "2028-03-15 10:00:00",
+          akad: { time: "Pukul 10.00 WIB - Selesai" },
+          resepsi: { time: "Pukul 13.00 WIB - Selesai" },
+          calendarLink: "https://calendar.google.com/calendar/render?action=TEMPLATE&text=The%20Wedding%20of%20Wahyu%20and%20Riski"
+        },
+        location: {
+          venue: "Kediaman Mempelai Wanita",
+          address: "RT 10 RW 02, Desa Pajerukan, Kec. Kalibagor, Kab. Banyumas, Jawa Tengah 53191",
+          mapsLink: "https://goo.gl/maps/ALZR6FJZU3kxVwN86"
+        },
+        gifts: [
+          { bank: "BNI", logo: "https://upload.wikimedia.org/wikipedia/id/thumb/5/55/BNI_logo.svg/640px-BNI_logo.svg.png", accountNumber: "987654321", accountHolder: "Wahyu Pratama" },
+          { bank: "BRI", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/BANK_BRI_logo.svg/640px-BANK_BRI_logo.svg.png", accountNumber: "123456789", accountHolder: "Riski Amelia" }
+        ],
+        music: { url: "./assets/music/sound.mp3" },
+        useFirebase: false
+      };
+      localStorage.setItem(`${MOCK_INVITATION_KEY}_${userId}`, JSON.stringify(defaults));
+      return defaults;
+    }
+    return JSON.parse(data);
+  } else {
+    try {
+      const docRef = doc(db, "users", userId, "config", "invitation");
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        return docSnap.data();
+      }
+      return null;
+    } catch (error) {
+      handleFirestoreError(error, OperationType.GET, `users/${userId}/config/invitation`);
+      return null;
+    }
+  }
+}
+
+export async function saveInvitationConfig(userId: string, data: any): Promise<void> {
+  if (isMockMode) {
+    localStorage.setItem(`${MOCK_INVITATION_KEY}_${userId}`, JSON.stringify(data));
+  } else {
+    try {
+      const docRef = doc(db, "users", userId, "config", "invitation");
+      await setDoc(docRef, data);
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, `users/${userId}/config/invitation`);
+    }
+  }
+}
+
 // Developer testing login hook
 export async function loginAsAdminMock(): Promise<void> {
   const adminProfile: UserProfile = {
@@ -866,6 +1005,24 @@ export async function loginWithEmail(email: string, password: string): Promise<a
   }
 }
 
+export async function resetUserPassword(email: string): Promise<void> {
+  if (isMockMode) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        triggerMockWhatsAppAlert(`WhatsApp Admin [Mock Reset]: Email reset password disimulasikan dikirim ke ${email}.`, true);
+        resolve();
+      }, 1000);
+    });
+  } else {
+    try {
+      await sendPasswordResetEmail(auth, email);
+    } catch (error: any) {
+      console.error("Firebase Password Reset Error:", error);
+      throw new Error(error.message || "Gagal mengirim email reset kata sandi. Pastikan email Anda benar.");
+    }
+  }
+}
+
 export async function signUpWithEmail(email: string, password: string): Promise<any> {
   if (isMockMode) {
     const passwordsStr = localStorage.getItem("zawwaja_mock_passwords") || "{}";
@@ -906,11 +1063,22 @@ export async function signUpOrSignInWithGoogle(): Promise<any> {
   } else {
     try {
       const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
       const userCredential = await signInWithPopup(auth, provider);
       return userCredential.user;
     } catch (error: any) {
       console.error("Firebase Google Auth error:", error);
-      throw new Error(error.message || "Gagal masuk menggunakan Google.");
+      let errorMsg = "Gagal masuk menggunakan Google.";
+      if (error.code === "auth/popup-blocked") {
+        errorMsg = "Popup masuk diblokir oleh browser. Harap izinkan popup di pengaturan browser Anda.";
+      } else if (error.code === "auth/configuration-not-found" || error.code === "auth/operation-not-allowed") {
+        errorMsg = "Metode masuk Google belum diaktifkan di Firebase Console Anda. Harap aktifkan Google Provider di menu Authentication -> Sign-in method.";
+      } else if (error.code === "auth/unauthorized-domain") {
+        errorMsg = "Domain ini (localhost atau domain kustom Anda) belum terdaftar di Firebase Console -> Authentication -> Settings -> Authorized Domains.";
+      } else if (error.message) {
+        errorMsg = `Gagal masuk Google: ${error.message}`;
+      }
+      throw new Error(errorMsg);
     }
   }
 }
@@ -921,13 +1089,42 @@ export async function initializeEmptyProfile(uid: string, email: string, display
   if (isMockMode) {
     const allProfilesStr = localStorage.getItem(MOCK_USERS_KEY) || "[]";
     const allProfiles: UserProfile[] = JSON.parse(allProfilesStr);
-    existingProfile = allProfiles.find(p => p.uid === uid) || null;
+    existingProfile = allProfiles.find(p => p.uid === uid || p.email.toLowerCase() === email.toLowerCase()) || null;
+
+    if (existingProfile && existingProfile.uid !== uid) {
+      existingProfile.uid = uid;
+      const updated = allProfiles.map(p => p.email.toLowerCase() === email.toLowerCase() ? existingProfile! : p);
+      localStorage.setItem(MOCK_USERS_KEY, JSON.stringify(updated));
+      window.dispatchEvent(new Event("mock-auth-changed"));
+    }
   } else {
     try {
       const docRef = doc(db, "users", uid);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         existingProfile = docSnap.data() as UserProfile;
+      } else {
+        // Fallback: Search by email in Firestore
+        const qRef = collection(db, "users");
+        const querySnapshot = await getDocs(qRef);
+        let foundProfile: UserProfile | null = null;
+        querySnapshot.forEach((docSnap) => {
+          const data = docSnap.data() as UserProfile;
+          if (data.email && data.email.toLowerCase() === email.toLowerCase()) {
+            foundProfile = data;
+          }
+        });
+
+        if (foundProfile) {
+          existingProfile = foundProfile;
+          if (existingProfile.uid !== uid) {
+            const oldUid = existingProfile.uid;
+            existingProfile.uid = uid;
+            existingProfile.updatedAt = new Date().toISOString();
+            await setDoc(doc(db, "users", uid), existingProfile);
+            await deleteDoc(doc(db, "users", oldUid));
+          }
+        }
       }
     } catch (e) {
       console.error("Error reading profile details to check existence", e);
@@ -942,12 +1139,12 @@ export async function initializeEmptyProfile(uid: string, email: string, display
   const newProfile: UserProfile = {
     uid,
     email,
-    fullName: "", // Marked empty so WelcomeModal is triggered in the Dashboard
+    fullName: displayName || "", // Initialize with Google display name if available
     partnerName: "",
     weddingDate: "",
-    role: email === "erzeddd@gmail.com" ? "admin" : "user",
-    paymentStatus: email === "erzeddd@gmail.com" ? "paid" : "pending",
-    approvalStatus: email === "erzeddd@gmail.com" ? "approved" : "pending",
+    role: (email === "erzeddd@gmail.com" || uid === "TCJDTGcaTZRcBo9jC1JZBOAnWgo2") ? "admin" : "user",
+    paymentStatus: (email === "erzeddd@gmail.com" || uid === "TCJDTGcaTZRcBo9jC1JZBOAnWgo2") ? "paid" : "pending",
+    approvalStatus: (email === "erzeddd@gmail.com" || uid === "TCJDTGcaTZRcBo9jC1JZBOAnWgo2") ? "approved" : "pending",
     totalBudget: 0,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()

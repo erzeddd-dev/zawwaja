@@ -5,10 +5,10 @@ import BudgetSummary from "./components/BudgetSummary";
 import Preparation from "./components/Preparation";
 import Vendors from "./components/Vendors";
 import Mahar from "./components/Mahar";
-import Guests from "./components/Guests";
 import AdminPortal from "./components/AdminPortal";
 import AdminDashboard from "./components/AdminDashboard";
-import UserFiles from "./components/UserFiles";
+import Undangan from "./components/Undangan";
+
 import { 
   subscribeToAuth, 
   logoutUser, 
@@ -16,15 +16,13 @@ import {
   saveChecklistItem, 
   deleteChecklistItem,
   resetChecklistToDefault,
+  clearChecklist,
   getVendorItems,
   saveVendorItem,
   deleteVendorItem,
   getMaharItems,
   saveMaharItem,
   deleteMaharItem,
-  getGuestItems,
-  saveGuestItem,
-  deleteGuestItem,
   updateProfileSettings,
   isMockMode,
   defaultChecklistItems
@@ -33,8 +31,7 @@ import {
   UserProfile, 
   WeddingChecklistItem, 
   VendorItem, 
-  MaharItem, 
-  GuestItem 
+  MaharItem 
 } from "./types";
 import { 
   Heart, 
@@ -59,7 +56,7 @@ export default function App() {
   const [checklistItems, setChecklistItems] = useState<WeddingChecklistItem[]>(defaultChecklistItems);
   const [vendors, setVendors] = useState<VendorItem[]>([]);
   const [maharItems, setMaharItems] = useState<MaharItem[]>([]);
-  const [guests, setGuests] = useState<GuestItem[]>([]);
+
 
   // Settings / Update states
   const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -68,6 +65,7 @@ export default function App() {
   const [settingsWeddingDate, setSettingsWeddingDate] = useState("");
   const [settingsTotalBudget, setSettingsTotalBudget] = useState(0);
   const [isUpdatingSettings, setIsUpdatingSettings] = useState(false);
+  const [showMobileProfileMenu, setShowMobileProfileMenu] = useState(false);
 
   // Subscribe to Auth changes
   useEffect(() => {
@@ -97,12 +95,11 @@ export default function App() {
         const check = await getChecklistItems(pUid);
         const vend = await getVendorItems(pUid);
         const mahar = await getMaharItems(pUid);
-        const gues = await getGuestItems(pUid);
+
 
         setChecklistItems(check && check.length > 0 ? check : defaultChecklistItems);
         setVendors(vend || []);
         setMaharItems(mahar || []);
-        setGuests(gues || []);
 
         // Load settings inputs
         setSettingsFullName(profile.fullName || "");
@@ -124,6 +121,15 @@ export default function App() {
     setUser(null);
     setProfile(null);
     setCurrentTab("dashboard");
+  };
+
+  const getInitials = (name?: string) => {
+    if (!name) return "P";
+    const parts = name.trim().split(/\s+/);
+    if (parts.length >= 2 && parts[0] && parts[1]) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return parts[0] ? parts[0][0].toUpperCase() : "P";
   };
 
   const handleOnboardingSuccess = (newProfile: UserProfile) => {
@@ -176,10 +182,15 @@ export default function App() {
   const handleClearChecklist = async () => {
     if (!profile?.uid) return;
     if (window.confirm("Bismillah, yakin ingin mengosongkan seluruh daftar persiapan nikah Anda?")) {
-      for (const item of checklistItems) {
-        await deleteChecklistItem(profile.uid, item.id);
+      setIsUpdatingSettings(true);
+      try {
+        await clearChecklist(profile.uid);
+        setChecklistItems([]);
+      } catch (err) {
+        console.error("Gagal mengosongkan checklist:", err);
+      } finally {
+        setIsUpdatingSettings(false);
       }
-      setChecklistItems([]);
     }
   };
 
@@ -311,58 +322,7 @@ export default function App() {
   };
 
 
-  // --- 4. Operations: Guest List ---
-  const handleSaveGuest = async (guest: GuestItem) => {
-    if (!profile?.uid) return;
-    await saveGuestItem(profile.uid, guest);
-    const data = await getGuestItems(profile.uid);
-    setGuests(data);
-  };
 
-  const handleDeleteGuest = async (id: string) => {
-    if (!profile?.uid) return;
-    await deleteGuestItem(profile.uid, id);
-    const data = await getGuestItems(profile.uid);
-    setGuests(data);
-  };
-
-  const handleClearGuests = async () => {
-    if (!profile?.uid) return;
-    if (window.confirm("Bismillah, yakin ingin menghapus seluruh daftar tamu undangan?")) {
-      for (const g of guests) {
-        await deleteGuestItem(profile.uid, g.id);
-      }
-      setGuests([]);
-    }
-  };
-
-  const handleResetGuestDefaults = async () => {
-    if (!profile?.uid) return;
-    const defaults = [
-      { name: "Ustadz Hanan Attaki LLC & Keluarga", relationship: "Keluarga" as const, invitationType: "Digital" as const, notes: "Khutbah Nikah & Tausiyah khusus akad" },
-      { name: "Muhammad Ridwan (Sahabat Kuliah CPP)", relationship: "Sahabat" as const, invitationType: "Digital" as const, notes: "Di Depok, mohon hadir panitia Walimah" },
-      { name: "Bapak Maryanto & Keluarga (Ketua RT)", relationship: "Tetangga" as const, invitationType: "Cetak" as const, notes: "Tetangga kavling ujung dekat masjid" },
-      { name: "Aulia Rahma (Rekan Kantor CPW)", relationship: "Rekan Kerja" as const, invitationType: "Digital" as const, notes: "Rekan divisi Marketing" }
-    ];
-
-    setIsUpdatingSettings(true);
-    for (const g of defaults) {
-      const item: GuestItem = {
-        id: "default-g-" + Math.random().toString(36).substring(2, 9),
-        name: g.name,
-        relationship: g.relationship,
-        invitationType: g.invitationType,
-        isRsvp: false,
-        notes: g.notes,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-      await saveGuestItem(profile.uid, item);
-    }
-    const data = await getGuestItems(profile.uid);
-    setGuests(data);
-    setIsUpdatingSettings(false);
-  };
 
 
   // --- 5. Operations: Profile Settings update ---
@@ -401,8 +361,8 @@ export default function App() {
   if (!authReady) {
     return (
       <div className="min-h-screen bg-stone-50 flex flex-col items-center justify-center space-y-3" id="app-loading">
-        <Heart size={44} className="text-emerald-700 animate-pulse fill-emerald-100" />
-        <h3 className="font-serif font-bold text-emerald-950 text-md">Bismillah, Zawwaja.id Memuat...</h3>
+        <img src="/logo.png" alt="Zawwaja" className="w-16 h-16 object-contain animate-pulse mb-1" />
+        <h3 className="font-serif font-bold text-emerald-950 text-md">Bismillah, Zawwaja Memuat...</h3>
         <p className="text-xs text-stone-400">Menyisir konfigurasi Syari'at & Database Islami</p>
       </div>
     );
@@ -445,7 +405,7 @@ export default function App() {
       <div className="flex-1 flex flex-col overflow-hidden">
         
         {/* Workspace Top Header */}
-        <header className="bg-white border-b border-stone-200 px-4 py-3.5 md:px-8 md:py-5 flex flex-row items-center justify-between z-10 transition-all">
+        <header className="bg-white border-b border-stone-200 px-4 h-16 md:px-8 flex flex-row items-center justify-between z-30 shrink-0 transition-all">
           <div className="flex items-center space-x-2 animate-fade-in min-w-0">
             <h2 className="text-stone-800 font-serif font-semibold text-base sm:text-xl md:text-2xl tracking-wide truncate">
               {currentTab === "dashboard" && "Dashboard Pelacak Akad"}
@@ -453,12 +413,62 @@ export default function App() {
               {currentTab === "vendors" && "Direktori Rekanan Vendor"}
               {currentTab === "mahar" && "Daftar Mahar & Seserahan"}
               {currentTab === "guests" && "Daftar Tamu & RSVP"}
-              {currentTab === "files" && "Berkas & Dokumen Anda"}
               {currentTab === "admin" && "Panel Verifikasi Administratif"}
             </h2>
           </div>
 
           <div className="flex items-center space-x-2 shrink-0">
+            <div className="relative">
+              <button
+                onClick={() => setShowMobileProfileMenu(!showMobileProfileMenu)}
+                className="w-9 h-9 rounded-full bg-[#af7661]/10 text-[#af7661] border border-[#af7661]/20 flex items-center justify-center font-extrabold text-[11px] uppercase cursor-pointer hover:bg-[#af7661]/20 transition-all shadow-xs shrink-0"
+                title="Menu Profil & Setelan"
+              >
+                {getInitials(profile?.fullName)}
+              </button>
+
+              {showMobileProfileMenu && (
+                <>
+                  {/* Backdrop to close dropdown when clicking outside */}
+                  <div 
+                    className="fixed inset-0 z-40" 
+                    onClick={() => setShowMobileProfileMenu(false)}
+                  />
+                  <div className="absolute right-0 mt-2 w-56 bg-white border border-stone-200 rounded-xl shadow-xl z-50 p-3.5 animate-in fade-in slide-in-from-top-3 duration-150">
+                    <div className="pb-2.5 border-b border-stone-150 mb-2 text-left">
+                      <p className="text-xs font-bold text-stone-850 truncate">{profile?.fullName || "Pengantin Baru"}</p>
+                      <p className="text-[10px] text-stone-450 mt-0.5 truncate">{profile?.email || user?.email}</p>
+                      <span className="inline-block text-[8px] bg-stone-100 text-stone-500 font-bold uppercase px-2 py-0.5 rounded-full mt-1.5 leading-none">
+                        {profile?.role === "admin" ? "Syar'i Admin" : "Pasangan Akad"}
+                      </span>
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <button
+                        onClick={() => {
+                          setShowMobileProfileMenu(false);
+                          setShowSettingsModal(true);
+                        }}
+                        className="w-full text-left px-2.5 py-2 text-xs text-stone-700 hover:bg-stone-50 hover:text-[#af7661] rounded-lg transition-colors font-medium flex items-center gap-2 cursor-pointer border-0 bg-transparent"
+                      >
+                        <Settings size={14} className="text-stone-400 shrink-0" />
+                        Ubah Rencana Akad
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowMobileProfileMenu(false);
+                          handleLogout();
+                        }}
+                        className="w-full text-left px-2.5 py-2 text-xs text-rose-600 hover:bg-rose-50 rounded-lg transition-colors font-medium flex items-center gap-2 cursor-pointer border-0 bg-transparent"
+                      >
+                        <LogOut size={14} className="text-rose-400 shrink-0" />
+                        Keluar / Logout
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </header>
 
@@ -472,7 +482,6 @@ export default function App() {
                 profile={profile}
                 checklistItems={checklistItems}
                 maharItems={maharItems}
-                guests={guests}
                 onNavigate={(tab) => setCurrentTab(tab)}
                 onSaveProfile={handleSaveProfileFromDashboardOnboard}
               />
@@ -485,6 +494,7 @@ export default function App() {
                 onDeleteItem={handleDeleteChecklistItem}
                 onClearAll={handleClearChecklist}
                 onResetDefaults={handleResetChecklistDefaults}
+                isUpdating={isUpdatingSettings}
               />
             )}
 
@@ -508,19 +518,13 @@ export default function App() {
               />
             )}
 
-            {currentTab === "guests" && (
-              <Guests
-                guests={guests}
-                onSaveGuest={handleSaveGuest}
-                onDeleteGuest={handleDeleteGuest}
-                onClearAll={handleClearGuests}
-                onResetDefaults={handleResetGuestDefaults}
+            {currentTab === "undangan" && (
+              <Undangan
+                profile={profile}
               />
             )}
 
-            {currentTab === "files" && (
-              <UserFiles userId={profile.uid} />
-            )}
+
 
             {currentTab === "admin" && isAdminUser && (
               <AdminPortal 
@@ -541,7 +545,7 @@ export default function App() {
       {showSettingsModal && (
         <div className="fixed inset-0 bg-stone-950/40 backdrop-blur-xs flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl border border-stone-200 shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="bg-[#B76E79] p-4 text-white flex justify-between items-center">
+            <div className="bg-[#af7661] p-4 text-white flex justify-between items-center">
               <h3 className="font-serif font-bold text-sm">Ubah Rencana Onboarding Akad</h3>
               <button 
                 onClick={() => setShowSettingsModal(false)}
@@ -559,7 +563,7 @@ export default function App() {
                   required
                   value={settingsFullName}
                   onChange={(e) => setSettingsFullName(e.target.value)}
-                  className="w-full px-3 py-2 bg-stone-50 rounded-xl border border-stone-200 focus:outline-none focus:ring-1 focus:ring-[#B76E79] text-stone-750"
+                  className="w-full px-3 py-2 bg-stone-50 rounded-xl border border-stone-200 focus:outline-none focus:ring-1 focus:ring-[#af7661] text-stone-750"
                 />
               </div>
 
@@ -570,7 +574,7 @@ export default function App() {
                   required
                   value={settingsPartnerName}
                   onChange={(e) => setSettingsPartnerName(e.target.value)}
-                  className="w-full px-3 py-2 bg-stone-50 rounded-xl border border-stone-200 focus:outline-none focus:ring-1 focus:ring-[#B76E79] text-stone-750"
+                  className="w-full px-3 py-2 bg-stone-50 rounded-xl border border-stone-200 focus:outline-none focus:ring-1 focus:ring-[#af7661] text-stone-750"
                 />
               </div>
 
@@ -581,7 +585,7 @@ export default function App() {
                   required
                   value={settingsWeddingDate}
                   onChange={(e) => setSettingsWeddingDate(e.target.value)}
-                  className="w-full px-3 py-2 bg-stone-50 rounded-xl border border-stone-200 focus:outline-none focus:ring-1 focus:ring-[#B76E79] text-stone-750"
+                  className="w-full px-3 py-2 bg-stone-50 rounded-xl border border-stone-200 focus:outline-none focus:ring-1 focus:ring-[#af7661] text-stone-750"
                 />
               </div>
 
@@ -593,7 +597,7 @@ export default function App() {
                   min={100000}
                   value={settingsTotalBudget}
                   onChange={(e) => setSettingsTotalBudget(Number(e.target.value))}
-                  className="w-full px-3 py-2 bg-stone-50 rounded-xl border border-stone-200 focus:outline-none focus:ring-1 focus:ring-[#B76E79] font-mono text-[#4A1F16]"
+                  className="w-full px-3 py-2 bg-stone-50 rounded-xl border border-stone-200 focus:outline-none focus:ring-1 focus:ring-[#af7661] font-mono text-[#4A1F16]"
                 />
               </div>
 
@@ -608,7 +612,7 @@ export default function App() {
                 <button
                   type="submit"
                   disabled={isUpdatingSettings}
-                  className="px-4 py-2 bg-gradient-to-r from-[#B76E79] to-[#D4A5A5] text-white rounded-xl font-bold hover:opacity-90 transition-opacity cursor-pointer shadow-sm"
+                  className="px-4 py-2 bg-gradient-to-r from-[#af7661] to-[#D4A5A5] text-white rounded-xl font-bold hover:opacity-90 transition-opacity cursor-pointer shadow-sm"
                 >
                   {isUpdatingSettings ? "Menyimpan..." : "Simpan Perubahan"}
                 </button>

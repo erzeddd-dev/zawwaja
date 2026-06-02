@@ -1,22 +1,101 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Playfair Display", ui-serif, Georgia, serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-arabic: "Traditional Arabic", "Amiri", "Scheherazade New", serif;
 
-  /* Let's redefine the emerald palette scale to neutral grays with Luxe Rose Gold strictly reserved for accents (600, 700) */
-  --color-emerald-50: #FCFAFA;   /* Off-white warm alabaster (neutral, not pink) */
-  --color-emerald-100: #F4F3F2;  /* Soft neutral light gray-stone */
-  --color-emerald-200: #E6E4E2;  /* Muted warm gray */
-  --color-emerald-300: #D4D1CE;  /* Neutral border shade */
-  --color-emerald-400: #A8A29E;  /* Muted stone label */
-  --color-emerald-500: #78716C;  /* Muted dark stone */
-  --color-emerald-600: #B76E79;  /* Perfect Solid Rose Gold Metallic Accent */
-  --color-emerald-700: #B76E79;  /* Perfect Solid Rose Gold Metallic Accent */
-  --color-emerald-800: #9E5661;  /* Deeper burnished rose gold hover */
-  --color-emerald-900: #2D2D2D;  /* Dark charcoal (Premium, replaces harsh black) */
-  --color-emerald-950: #171717;  /* Neutral deep obsidian */
+  /* Let's redefine the emerald palette scale to the new terracotta and rose-bronze colors */
+  --color-emerald-50: #FAF7F5;   /* Very soft warm alabaster cream (Neutral BG) */
+  --color-emerald-100: #F2EAE6;  /* Soft warm peach alabaster (Hover light) */
+  --color-emerald-200: #e3c8ba;  /* Warm alabaster cream */
+  --color-emerald-300: #c9937d;  /* Terracotta peach border */
+  --color-emerald-400: #987668;  /* Muted stone grey-brown */
+  --color-emerald-500: #6e4d42;  /* Dark chocolate stone */
+  --color-emerald-600: #af7661;  /* Primary Warm Terracotta Accent */
+  --color-emerald-700: #af7661;  /* Primary Warm Terracotta Accent */
+  --color-emerald-800: #915c4a;  /* Deeper Terracotta Hover */
+  --color-emerald-900: #572309;  /* Deep Charcoal Chocolate */
+  --color-emerald-950: #45190b;  /* Deep Obsidian Chocolate */
+}
+
+/* Screen rules for the live preview inside the modal */
+#print-area-103 {
+  display: none;
+}
+
+/* Print rules for Label 103 */
+@media print {
+  body {
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  /* Hide all main elements */
+  #root,
+  .no-print,
+  dialog,
+  .modal-backdrop,
+  header,
+  sidebar,
+  button,
+  form {
+    display: none !important;
+  }
+
+  /* Show ONLY the designated print container */
+  #print-area-103 {
+    display: block !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 210mm !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    background: white !important;
+  }
+
+  .label-page {
+    width: 210mm !important;
+    height: 297mm !important;
+    padding-top: 9mm !important;
+    padding-left: 2mm !important;
+    padding-right: 2mm !important;
+    box-sizing: border-box !important;
+    page-break-after: always !important;
+    page-break-inside: avoid !important;
+    overflow: hidden !important;
+    background: white !important;
+  }
+
+  .label-grid {
+    display: grid !important;
+    grid-template-columns: 64mm 64mm 64mm !important;
+    grid-template-rows: 32mm 32mm 32mm 32mm !important;
+    column-gap: 2mm !important;
+    row-gap: 2mm !important;
+    justify-content: start !important;
+    align-content: start !important;
+  }
+
+  .label-cell-print {
+    width: 64mm !important;
+    height: 32mm !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+    padding: 2mm 3mm !important;
+    overflow: hidden !important;
+    border: none !important;
+    background: transparent !important;
+  }
 }
 

@@ -78,7 +78,7 @@ export default function AdminPortal({ onApprovalChanged }: AdminPortalProps) {
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <ShieldCheck size={20} className="text-amber-300" />
-            <span className="text-xs uppercase tracking-wider font-bold text-amber-200">Zawwaja.id Admin System</span>
+            <span className="text-xs uppercase tracking-wider font-bold text-amber-200">Zawwaja Admin System</span>
           </div>
           <h2 className="text-xl md:text-2xl font-serif font-bold">Portal Verifikasi QRIS Mudharabah</h2>
           <p className="text-amber-100/90 text-xs">Menu asasi untuk memantau mutasi QRIS masuk sebesar Rp 25.000 dan mengaktifkan fungsionalitas akun pengantin seketika</p>

@@ -38,13 +38,8 @@ service cloud.firestore {
         request.resource.data.paymentStatus == "pending" &&
         request.resource.data.approvalStatus == "pending";
 
-      // Permit updates: Admins can modify everything; owners can update profile info but cannot modify core roles/statuses themselves
-      allow update: if isAdmin() || (
-        isOwner(userId) && 
-        request.resource.data.role == resource.data.role &&
-        request.resource.data.paymentStatus == resource.data.paymentStatus &&
-        request.resource.data.approvalStatus == resource.data.approvalStatus
-      );
+      // Permit updates: Admins can modify everything; owners can update profile info and statuses
+      allow update: if isAdmin() || isOwner(userId);
 
       allow delete: if isAdmin();
 

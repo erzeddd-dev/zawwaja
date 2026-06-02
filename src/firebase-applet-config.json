@@ -1,10 +1,10 @@
 {
-  "apiKey": "mock-api-key-for-local-fallback",
-  "authDomain": "zawwaja-mock.firebaseapp.com",
-  "projectId": "zawwaja-mock",
-  "storageBucket": "zawwaja-mock.appspot.com",
-  "messagingSenderId": "000000000000",
-  "appId": "1:000000000000:web:0000000000000000000000",
-  "measurementId": "G-MOCKID123",
-  "firestoreDatabaseId": "(default)"
+  "projectId": "stately-setting-1pp0d",
+  "appId": "1:590473832123:web:79d676d294d531e2a5eb9e",
+  "apiKey": "AIzaSyANvHp3P4A4cki1wCCc4Kcbo5LLtEI-878",
+  "authDomain": "stately-setting-1pp0d.firebaseapp.com",
+  "firestoreDatabaseId": "ai-studio-310117d6-1ac2-4773-a4a1-388b0c3171ad",
+  "storageBucket": "stately-setting-1pp0d.firebasestorage.app",
+  "messagingSenderId": "590473832123",
+  "measurementId": ""
 }
