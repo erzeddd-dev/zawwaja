@@ -313,7 +313,7 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
                     </button>
                   </div>
                 ) : (
-                  <form onSubmit={handleForgotPasswordSubmit} className="space-y-4">
+                  <form onSubmit={handleForgotPasswordSubmit} className="space-y-4" autoComplete="off">
                     <div>
                       <label className="block text-[10px] font-bold uppercase tracking-wider text-text-secondary mb-1 font-sans">
                         Surel / Alamat Email
@@ -324,6 +324,7 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
                         placeholder="nama.anda@gmail.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        autoComplete="off"
                         className="w-full px-4 py-2.5 rounded-xl border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600 font-sans text-text-primary"
                       />
                     </div>
@@ -414,7 +415,7 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
                   </div>
                 )}
 
-                <form onSubmit={handleAuthSubmit} className="space-y-4">
+                <form onSubmit={handleAuthSubmit} className="space-y-4" autoComplete="off">
                   <div>
                     <label className="block text-[10px] font-bold uppercase tracking-wider text-text-secondary mb-1 font-sans">
                       Surel / Alamat Email
@@ -425,6 +426,7 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
                       placeholder="nama.anda@gmail.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
+                      autoComplete="off"
                       className="w-full px-4 py-2.5 rounded-xl bg-white/40 border border-white/50 focus:outline-none focus:ring-1 focus:ring-brand-600 font-sans text-text-primary placeholder-stone-500 backdrop-blur-sm"
                     />
                   </div>
@@ -452,6 +454,7 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
                       placeholder="••••••••"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
+                      autoComplete="new-password"
                       className="w-full px-4 py-2.5 rounded-xl bg-white/40 border border-white/50 focus:outline-none focus:ring-1 focus:ring-brand-600 text-text-primary font-sans placeholder-stone-500 backdrop-blur-sm"
                     />
                   </div>
