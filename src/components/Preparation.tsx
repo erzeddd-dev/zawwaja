@@ -9,8 +9,10 @@ import {
   ChevronUp,
   Edit2,
   FolderPlus,
-  Check
+  Check,
+  CheckCircle
 } from "lucide-react";
+import { PreparationRow } from "./PreparationRow";
 
 interface PreparationProps {
   items: WeddingChecklistItem[];
@@ -21,7 +23,7 @@ interface PreparationProps {
   isUpdating?: boolean;
 }
 
-export default function Preparation({ 
+export default React.memo(function Preparation({ 
   items, 
   onSaveItem, 
   onDeleteItem, 
@@ -54,14 +56,8 @@ export default function Preparation({
     localStorage.setItem("zawwaja_checklist_categories", JSON.stringify(categories));
   }, [categories]);
 
-  // Accordion open/close state. First category is open by default.
-  const [expandedCats, setExpandedCats] = useState<Record<string, boolean>>(() => {
-    const initial: Record<string, boolean> = {};
-    if (categories.length > 0) {
-      initial[categories[0]] = true; // First one is expanded initially
-    }
-    return initial;
-  });
+  // Accordion open/close state. All categories are closed by default.
+  const [expandedCats, setExpandedCats] = useState<Record<string, boolean>>({});
 
   // Track inline task inputs for each category
   const [inlineTaskNames, setInlineTaskNames] = useState<Record<string, string>>({});
@@ -191,7 +187,7 @@ export default function Preparation({
   };
 
   // Empathetic check-status-sync
-  const handleToggleCheck = async (item: WeddingChecklistItem, field: "cpp" | "cpw") => {
+  const handleToggleCheck = React.useCallback(async (item: WeddingChecklistItem, field: "cpp" | "cpw") => {
     const updatedItem = { ...item };
     if (field === "cpp") {
       updatedItem.isGroomChecked = !item.isGroomChecked;
@@ -214,9 +210,9 @@ export default function Preparation({
     updatedItem.updatedAt = new Date().toISOString();
     
     await onSaveItem(updatedItem);
-  };
+  }, [onSaveItem]);
 
-  const handleCostChange = async (item: WeddingChecklistItem, value: string, type: "estimate" | "actual") => {
+  const handleCostChange = React.useCallback(async (item: WeddingChecklistItem, value: string, type: "estimate" | "actual") => {
     const val = Number(value) || 0;
     const updated = { 
       ...item, 
@@ -225,7 +221,7 @@ export default function Preparation({
       updatedAt: new Date().toISOString()
     };
     await onSaveItem(updated);
-  };
+  }, [onSaveItem]);
 
   // Hardreset back to default preset list
   const handleResetToPresetCategories = () => {
@@ -259,8 +255,8 @@ export default function Preparation({
       {/* Title Header with dynamic category tool adds */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl md:text-2xl font-serif font-bold text-stone-900">Daftar Persiapan Nikah Syar'i</h2>
-          <p className="text-stone-500 text-xs mt-0.5">Kelola kebutuhan administrasi & logistik pernikahan khidmat secara terperinci.</p>
+          <h2 className="text-xl md:text-2xl font-serif font-bold text-text-primary">Daftar Persiapan Nikah Syar'i</h2>
+          <p className="text-text-secondary text-xs mt-0.5">Kelola kebutuhan administrasi & logistik pernikahan khidmat secara terperinci.</p>
         </div>
 
         {/* Global Toolbar */}
@@ -268,7 +264,7 @@ export default function Preparation({
           <button
             onClick={() => setShowAddCatForm(!showAddCatForm)}
             disabled={isUpdating}
-            className="px-3.5 py-1.5 bg-[#af7661] hover:bg-[#915c4a] text-white text-xs font-semibold rounded-lg flex items-center shadow-xs cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-3.5 py-1.5 bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold rounded-lg flex items-center shadow-xs cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <FolderPlus size={14} className="mr-1.5" />
             Tambah Kategori
@@ -282,27 +278,27 @@ export default function Preparation({
               }
             }}
             disabled={isUpdating}
-            className="px-3 py-1.5 border border-stone-200 text-stone-700 bg-white hover:bg-stone-50 text-xs font-semibold rounded-lg flex items-center cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-3 py-1.5 border border-surface-border text-text-secondary bg-surface-raised hover:bg-surface-sunken text-xs font-semibold rounded-lg flex items-center cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             title="Muat ulang seluruh item default Sharia"
           >
-            <RotateCcw size={13} className="mr-1.5 text-stone-400" />
+            <RotateCcw size={13} className="mr-1.5 text-text-tertiary" />
             {isUpdating ? "Memproses..." : "Muat Default"}
           </button>
 
           <button
             onClick={onClearAll}
             disabled={isUpdating}
-            className="px-3 py-1.5 border border-stone-200 text-stone-500 hover:text-red-650 bg-white hover:bg-red-50 text-xs font-semibold rounded-lg flex items-center cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-3 py-1.5 border border-surface-border text-text-secondary hover:text-red-650 bg-surface-raised hover:bg-red-50 text-xs font-semibold rounded-lg flex items-center cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             title="Kosongkan seluruh data pada checklist"
           >
-            <Trash2 size={13} className="mr-1.5 text-stone-400" />
+            <Trash2 size={13} className="mr-1.5 text-text-tertiary" />
             Kosongkan Checklist
           </button>
 
           <button
             onClick={handleResetToPresetCategories}
             disabled={isUpdating}
-            className="px-2 py-1.5 text-stone-400 hover:text-stone-700 text-xs font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-2 py-1.5 text-text-tertiary hover:text-text-secondary text-xs font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
             title="Kembalikan nama-nama kategori ke standar"
           >
             Reset Kategori
@@ -312,10 +308,10 @@ export default function Preparation({
 
       {/* Dynamic Category Addition Form Inline */}
       {showAddCatForm && (
-        <form onSubmit={handleAddCategory} className="bg-white p-4 rounded-xl border border-stone-200 shadow-xs max-w-md animate-fade-in space-y-3">
-          <div className="flex items-center justify-between border-b border-stone-100 pb-2">
-            <h4 className="text-xs font-bold text-stone-700 uppercase tracking-wider">Tambah Kategori Baru</h4>
-            <button type="button" onClick={() => setShowAddCatForm(false)} className="text-stone-400 hover:text-stone-600 text-xs">Batal</button>
+        <form onSubmit={handleAddCategory} className="bg-surface-raised p-4 rounded-xl border border-surface-border shadow-xs max-w-md animate-fade-in space-y-3">
+          <div className="flex items-center justify-between border-b border-surface-border pb-2">
+            <h4 className="text-xs font-bold text-text-secondary uppercase tracking-wider">Tambah Kategori Baru</h4>
+            <button type="button" onClick={() => setShowAddCatForm(false)} className="text-text-tertiary hover:text-stone-600 text-xs">Batal</button>
           </div>
           <div className="flex gap-2">
             <input
@@ -324,11 +320,11 @@ export default function Preparation({
               placeholder="Contoh: Mahar & Cincin, Transportasi dsb"
               value={newCatName}
               onChange={(e) => setNewCatName(e.target.value)}
-              className="flex-1 px-3 py-1.5 text-xs bg-stone-50 rounded-lg border border-stone-250 focus:outline-none focus:ring-1 focus:ring-[#af7661]"
+              className="flex-1 px-3 py-1.5 text-xs bg-surface-sunken rounded-lg border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
             />
             <button
               type="submit"
-              className="px-4 py-1.5 bg-[#af7661] hover:bg-[#915c4a] text-white text-xs font-semibold rounded-lg transition-colors"
+              className="px-4 py-1.5 bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold rounded-lg transition-colors"
             >
               Tambah
             </button>
@@ -337,34 +333,34 @@ export default function Preparation({
       )}
 
       {/* Soft and Compact Summary Card (Anti-Overwhelm Layout) */}
-      <div className="bg-stone-50/50 border border-stone-200 rounded-xl p-4 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-surface-sunken/50 border border-surface-border rounded-xl p-4 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         
         {/* Progress Display (Empathy Focus) */}
         <div className="flex-1 min-w-[200px] space-y-1.5">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-medium text-stone-700">Kemajuan Persiapan Nikah</span>
-            <span className="font-mono font-bold text-[#af7661]">{completionRate}%</span>
+            <span className="font-medium text-text-secondary">Kemajuan Persiapan Nikah</span>
+            <span className="font-mono font-bold text-brand-600">{completionRate}%</span>
           </div>
           <div className="w-full bg-stone-200 h-1.5 rounded-full overflow-hidden">
-            <div className={`h-full rounded-full transition-all duration-300 ${completionRate === 100 ? "bg-emerald-600" : "bg-[#af7661]"}`} style={{ width: `${completionRate}%` }}></div>
+            <div className={`h-full rounded-full transition-all duration-300 ${completionRate === 100 ? "bg-emerald-600" : "bg-brand-600"}`} style={{ width: `${completionRate}%` }}></div>
           </div>
-          <p className="text-[10px] text-stone-500">
+          <p className="text-[10px] text-text-secondary">
             Alhamdulillah, {completedCount} dari {totalCount} kebutuhan dan persiapan tercatat selesai.
           </p>
         </div>
 
         {/* Small Budget Metrics */}
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 md:border-l border-stone-200 md:pl-6 shrink-0">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 md:border-l border-surface-border md:pl-6 shrink-0">
           <div className="space-y-0.5">
-            <p className="text-[10px] text-stone-400 uppercase font-semibold tracking-wider">Est. Total Anggaran</p>
-            <p className="text-xs font-semibold font-mono text-stone-700">{formatIDR(tEstimate)}</p>
+            <p className="text-[10px] text-text-tertiary uppercase font-semibold tracking-wider">Est. Total Anggaran</p>
+            <p className="text-xs font-semibold font-mono text-text-secondary">{formatIDR(tEstimate)}</p>
           </div>
           <div className="space-y-0.5">
-            <p className="text-[10px] text-stone-400 uppercase font-semibold tracking-wider">Riil Terpakai</p>
+            <p className="text-[10px] text-text-tertiary uppercase font-semibold tracking-wider">Riil Terpakai</p>
             <p className="text-xs font-semibold font-mono text-stone-800">{formatIDR(tActual)}</p>
           </div>
           <div className="space-y-0.5">
-            <p className="text-[10px] text-stone-400 uppercase font-semibold tracking-wider">Selisih Sisa</p>
+            <p className="text-[10px] text-text-tertiary uppercase font-semibold tracking-wider">Selisih Sisa</p>
             <p className={`text-xs font-bold font-mono ${variance < 0 ? "text-rose-600" : "text-emerald-700"}`}>
               {formatIDR(variance)}
             </p>
@@ -385,14 +381,15 @@ export default function Preparation({
           // Inline category aggregations (Estimates & Actuals)
           const catEstimate = catItems.reduce((acc, curr) => acc + (curr.budgetEstimate || 0), 0);
           const catActual = catItems.reduce((acc, curr) => acc + (curr.budgetActual || 0), 0);
+          const isCategoryFullyDone = catItems.length > 0 && catItems.every(i => i.status === "Selesai" || i.isDone);
 
           return (
-            <div key={cat} className="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-xs">
+            <div key={cat} className="bg-surface-raised border border-surface-border rounded-xl overflow-hidden shadow-xs">
               
               {/* Accordion Item Header Trigger */}
               <div 
                 className={`p-3 flex items-center justify-between gap-4 cursor-pointer select-none transition-colors ${
-                  isExpanded ? "bg-stone-50/50 border-b border-stone-200" : "hover:bg-stone-50/30"
+                  isExpanded ? "bg-surface-sunken/50 border-b border-surface-border" : "hover:bg-surface-sunken/30"
                 }`}
                 onClick={() => toggleAccordion(cat)}
               >
@@ -409,7 +406,7 @@ export default function Preparation({
                         type="text"
                         value={editedCatName}
                         onChange={(e) => setEditedCatName(e.target.value)}
-                        className="px-2 py-0.5 text-xs font-medium border border-stone-250 bg-white rounded focus:outline-none"
+                        className="px-2 py-0.5 text-xs font-medium border border-surface-border bg-surface-raised rounded focus:outline-none"
                       />
                       <button 
                         onClick={() => handleSaveCategoryName(cat)}
@@ -419,17 +416,22 @@ export default function Preparation({
                       </button>
                       <button 
                         onClick={() => setEditingCat(null)}
-                        className="text-stone-400 text-[10px]"
+                        className="text-text-tertiary text-[10px]"
                       >
                         Batal
                       </button>
                     </div>
                   ) : (
                     <div className="flex items-center gap-2 min-w-0">
-                      <h3 className="text-xs md:text-sm font-semibold text-stone-850 truncate">
+                      <h3 className="text-xs md:text-sm font-semibold text-text-primary truncate">
                         {cat}
                       </h3>
-                      <span className="px-1.5 py-0.2 text-[9px] font-bold bg-stone-100 rounded-full text-stone-600 text-center shrink-0">
+                      {isCategoryFullyDone && (
+                        <CheckCircle size={14} className="text-emerald-600 shrink-0" />
+                      )}
+                      <span className={`px-1.5 py-0.2 text-[9px] font-bold rounded-full text-center shrink-0 ${
+                        isCategoryFullyDone ? "bg-emerald-100 text-emerald-700" : "bg-stone-100 text-stone-600"
+                      }`}>
                         {catItems.length}
                       </span>
                     </div>
@@ -440,7 +442,7 @@ export default function Preparation({
                 <div className="flex items-center gap-3 text-xs shrink-0 font-sans" onClick={(e) => e.stopPropagation()}>
                   
                   {/* Category sums */}
-                  <div className="hidden sm:flex items-center gap-2 text-[11px] text-stone-400 pr-1">
+                  <div className="hidden sm:flex items-center gap-2 text-[11px] text-text-tertiary pr-1">
                     <span>Est: <strong className="text-stone-600 font-mono font-medium">{formatIDR(catEstimate)}</strong></span>
                     <span>•</span>
                     <span>Spent: <strong className="text-stone-600 font-mono font-medium">{formatIDR(catActual)}</strong></span>
@@ -450,14 +452,14 @@ export default function Preparation({
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => handleStartEditCategory(cat)}
-                      className="p-1 text-stone-400 hover:text-[#af7661] hover:bg-stone-100 rounded transition-colors"
+                      className="p-1 text-text-tertiary hover:text-brand-600 hover:bg-stone-100 rounded transition-colors"
                       title="Edit Nama Kategori"
                     >
                       <Edit2 size={12} />
                     </button>
                     <button
                       onClick={() => handleDeleteCategory(cat)}
-                      className="p-1 text-stone-400 hover:text-red-600 hover:bg-stone-100 rounded transition-colors"
+                      className="p-1 text-text-tertiary hover:text-red-600 hover:bg-stone-100 rounded transition-colors"
                       title="Hapus Kategori"
                     >
                       <Trash2 size={12} />
@@ -474,244 +476,35 @@ export default function Preparation({
                   
                   {/* Task list details */}
                   {catItems.length === 0 ? (
-                    <div className="py-6 text-center text-stone-400 text-xs">
+                    <div className="py-6 text-center text-text-tertiary text-xs">
                       <p>Kategori kosong. Tekan "Tambah Item Kebutuhan Baru" di bawah ini untuk memulai.</p>
                     </div>
                   ) : (
                     <div className="divide-y divide-stone-100">
-                      {catItems.map((item) => {
-                        const isSelesaiStatus = item.status === "Selesai" || item.isDone;
-                        const isProsesStatus = item.status === "Dalam Proses";
-                        const isEditing = editingTaskId === item.id;
-
-                        return (
-                          <div key={item.id} className="py-2.5 first:pt-0 last:pb-0 flex flex-col border-b border-stone-50 last:border-b-0">
-                            {/* COLLAPSED / SIMPLE VIEW */}
-                            <div className="flex items-center justify-between gap-3 text-stone-750">
-                              
-                              {/* Left: Checkbox (or Dual Checkboxes) */}
-                              <div className="flex items-center gap-1.5 shrink-0">
-                                {item.requiresDualCheck ? (
-                                  <div className="flex items-center gap-1">
-                                    <button
-                                      onClick={() => handleToggleCheck(item, "cpp")}
-                                      disabled={isUpdating}
-                                      className={`w-6 h-6 rounded-md flex items-center justify-center border text-[9px] font-bold transition-all shrink-0 ${
-                                        item.isGroomChecked 
-                                          ? "bg-[#af7661]/15 border-[#af7661] text-[#af7661]" 
-                                          : "bg-stone-50 border-stone-250 text-stone-400 hover:border-stone-400"
-                                      } ${isUpdating ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
-                                      title="Kelengkapan dokumen CPP (Pria)"
-                                    >
-                                      L
-                                    </button>
-                                    <button
-                                      onClick={() => handleToggleCheck(item, "cpw")}
-                                      disabled={isUpdating}
-                                      className={`w-6 h-6 rounded-md flex items-center justify-center transition-all border text-[9px] font-bold shrink-0 ${
-                                        item.isBrideChecked 
-                                          ? "bg-[#af7661]/15 border-[#af7661] text-[#af7661]" 
-                                          : "bg-stone-50 border-stone-250 hover:border-stone-400 text-stone-400"
-                                      } ${isUpdating ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
-                                      title="Kelengkapan dokumen CPW (Wanita)"
-                                    >
-                                      W
-                                    </button>
-                                  </div>
-                                ) : (
-                                  <button
-                                    onClick={async () => {
-                                      const nextDone = !isSelesaiStatus;
-                                      const updated = {
-                                        ...item,
-                                        isDone: nextDone,
-                                        isGroomChecked: nextDone,
-                                        isBrideChecked: nextDone,
-                                        status: nextDone ? "Selesai" as const : "Belum" as const,
-                                        updatedAt: new Date().toISOString()
-                                      };
-                                      await onSaveItem(updated);
-                                    }}
-                                    disabled={isUpdating}
-                                    className={`w-6 h-6 rounded-md border flex items-center justify-center transition-all shrink-0 ${
-                                      isSelesaiStatus
-                                        ? "bg-[#af7661] border-[#af7661] text-white"
-                                        : "bg-white border-stone-250 hover:border-[#af7661]/60 text-stone-400"
-                                    } ${isUpdating ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
-                                  >
-                                    {isSelesaiStatus && <Check size={14} className="stroke-[3px]" />}
-                                  </button>
-                                )}
-                              </div>
-
-                              {/* Middle: Title & Compact Budget Display */}
-                              <div className="flex-1 min-w-0" onClick={() => setEditingTaskId(isEditing ? null : item.id)}>
-                                <h4 className={`text-xs md:text-sm font-semibold leading-snug truncate cursor-pointer hover:text-[#af7661] transition-colors ${
-                                  isSelesaiStatus ? "text-stone-400 line-through font-normal" : "text-stone-850"
-                                }`}>
-                                  {item.name}
-                                </h4>
-                                <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-0.5">
-                                  {isAdministrasi && item.requiresDualCheck && (
-                                    <span className="text-[8px] bg-stone-100 text-stone-500 font-bold uppercase px-1 rounded">Dual Check</span>
-                                  )}
-                                  {(item.budgetEstimate > 0 || item.budgetActual > 0) && (
-                                    <span className="text-[9px] font-mono text-stone-450 leading-none">
-                                      Est: {formatIDR(item.budgetEstimate)} {item.budgetActual > 0 && `| Riil: ${formatIDR(item.budgetActual)}`}
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-
-                              {/* Right: Status Badge & Actions */}
-                              <div className="flex items-center gap-1.5 shrink-0">
-                                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
-                                  isSelesaiStatus
-                                    ? "bg-emerald-50 text-emerald-700 border border-emerald-200/50"
-                                    : isProsesStatus
-                                    ? "bg-amber-50 text-amber-700 border border-amber-250/50"
-                                    : "bg-stone-50 text-stone-500 border border-stone-200/50"
-                                }`}>
-                                  {item.status || (item.isDone ? "Selesai" : "Belum")}
-                                </span>                                 <button
-                                  onClick={() => setEditingTaskId(isEditing ? null : item.id)}
-                                  disabled={isUpdating}
-                                  className={`p-1 text-stone-405 hover:text-[#af7661] rounded transition-colors ${
-                                    isEditing ? "bg-stone-100 text-[#af7661]" : "hover:bg-stone-50"
-                                  } ${isUpdating ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}
-                                  title="Edit detail item"
-                                >
-                                  <Edit2 size={12} />
-                                </button>
-                                <button
-                                  onClick={() => onDeleteItem(item.id)}
-                                  disabled={isUpdating}
-                                  className={`p-1 text-stone-400 hover:text-red-650 hover:bg-red-50 rounded transition-colors ${isUpdating ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}
-                                  title="Hapus item"
-                                >
-                                  <Trash2 size={12} />
-                                </button>
-                              </div>
-
-                            </div>
-
-                            {/* DYNAMIC EDIT DRAWER PANEL */}
-                            {isEditing && (
-                              <div className="mt-2.5 bg-stone-50/80 border border-stone-200 rounded-xl p-3.5 animate-fade-in space-y-3">
-                                <div className="flex items-center justify-between border-b border-stone-200 pb-1.5">
-                                  <span className="text-[9px] font-bold text-stone-500 uppercase tracking-wider">Detail Anggaran & Pengaturan</span>
-                                  <button 
-                                    onClick={() => setEditingTaskId(null)} 
-                                    className="text-[10px] text-[#af7661] font-bold hover:underline bg-transparent border-0 cursor-pointer"
-                                  >
-                                    Simpan & Selesai
-                                  </button>
-                                </div>
-                                
-                                <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
-                                  {/* Task Name Edit */}
-                                  <div className="md:col-span-6">
-                                    <label className="block text-[8px] uppercase font-bold text-stone-500 mb-1">Nama Keperluan / Kegiatan</label>
-                                    <input
-                                      type="text"
-                                      value={item.name}
-                                      onChange={async (e) => {
-                                        const updated = { ...item, name: e.target.value, updatedAt: new Date().toISOString() };
-                                        await onSaveItem(updated);
-                                      }}
-                                      className="w-full px-2.5 py-1 text-xs bg-white rounded border border-stone-250 focus:outline-none focus:ring-1 focus:ring-[#af7661]"
-                                    />
-                                  </div>
-
-                                  {/* Status Select */}
-                                  <div className="md:col-span-3">
-                                    <label className="block text-[8px] uppercase font-bold text-stone-500 mb-1">Status Progres</label>
-                                    <select
-                                      value={item.status || "Belum"}
-                                      onChange={async (e) => {
-                                        const val = e.target.value as "Belum" | "Dalam Proses" | "Selesai";
-                                        const updated = {
-                                          ...item,
-                                          status: val,
-                                          isDone: val === "Selesai",
-                                          isGroomChecked: val === "Selesai" ? true : item.isGroomChecked,
-                                          isBrideChecked: val === "Selesai" ? true : item.isBrideChecked,
-                                          updatedAt: new Date().toISOString()
-                                        };
-                                        await onSaveItem(updated);
-                                      }}
-                                      className="w-full px-2 py-1 text-xs bg-white rounded border border-stone-250 text-stone-750 focus:outline-none cursor-pointer"
-                                    >
-                                      <option value="Belum">Belum</option>
-                                      <option value="Dalam Proses">Proses</option>
-                                      <option value="Selesai">Selesai</option>
-                                    </select>
-                                  </div>
-
-                                  {/* Dual Check Requirement */}
-                                  <div className="md:col-span-3 flex items-center h-8">
-                                    <label className="flex items-center gap-2 cursor-pointer text-xs text-stone-600 select-none">
-                                      <input
-                                        type="checkbox"
-                                        checked={item.requiresDualCheck}
-                                        onChange={async (e) => {
-                                          const checked = e.target.checked;
-                                          const updated = { ...item, requiresDualCheck: checked, updatedAt: new Date().toISOString() };
-                                          await onSaveItem(updated);
-                                        }}
-                                        className="rounded border-stone-300 text-[#af7661] focus:ring-[#af7661] w-3.5 h-3.5 cursor-pointer"
-                                      />
-                                      <span className="text-[10px] font-bold uppercase tracking-wider text-stone-550">Dual Check (CPP & CPW)</span>
-                                    </label>
-                                  </div>
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-3 pt-1">
-                                  {/* Est. Budget */}
-                                  <div>
-                                    <label className="block text-[8px] uppercase font-bold text-stone-500 mb-1">Est. Anggaran (Rp)</label>
-                                    <div className="relative">
-                                      <span className="absolute left-2 top-1 text-[10px] text-stone-400">Rp</span>
-                                      <input
-                                        type="number"
-                                        placeholder="0"
-                                        value={item.budgetEstimate || ""}
-                                        onChange={async (e) => await handleCostChange(item, e.target.value, "estimate")}
-                                        className="w-full pl-7 pr-2.5 py-1 text-xs bg-white rounded border border-stone-250 font-mono text-stone-700 focus:outline-none"
-                                      />
-                                    </div>
-                                  </div>
-
-                                  {/* Actual Spent */}
-                                  <div>
-                                    <label className="block text-[8px] uppercase font-bold text-stone-500 mb-1">Riil Terpakai (Rp)</label>
-                                    <div className="relative">
-                                      <span className="absolute left-2 top-1 text-[10px] text-stone-400">Rp</span>
-                                      <input
-                                        type="number"
-                                        placeholder="0"
-                                        value={item.budgetActual || ""}
-                                        onChange={async (e) => await handleCostChange(item, e.target.value, "actual")}
-                                        className="w-full pl-7 pr-2.5 py-1 text-xs bg-white rounded border border-stone-250 font-mono text-stone-700 focus:outline-none"
-                                      />
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
+                      {catItems.map((item) => (
+                        <PreparationRow
+                          key={item.id}
+                          item={item}
+                          isEditing={editingTaskId === item.id}
+                          isAdministrasi={isAdministrasi}
+                          isUpdating={isUpdating}
+                          onSaveItem={onSaveItem}
+                          onDeleteItem={onDeleteItem}
+                          handleToggleCheck={handleToggleCheck}
+                          setEditingTaskId={setEditingTaskId}
+                          handleCostChange={handleCostChange}
+                        />
+                      ))}
                     </div>
                   )}
 
                   {/* Micro Inline add form customized inside each category accordion */}
-                  <div className="pt-2.5 border-t border-stone-200 flex flex-col sm:flex-row items-center gap-3">
+                  <div className="pt-2.5 border-t border-surface-border flex flex-col sm:flex-row items-center gap-3">
                     {activeAddFormCat === cat ? (
-                      <div className="w-full bg-stone-50 p-3 rounded-lg border border-stone-200 flex flex-col gap-3">
+                      <div className="w-full bg-surface-sunken p-3 rounded-lg border border-surface-border flex flex-col gap-3">
                         <div className="flex flex-col md:flex-row gap-3 items-end">
                           <div className="flex-1 min-w-0 w-full">
-                            <label className="block text-[8px] uppercase font-bold text-stone-550 mb-1">Nama Keperluan / Kegiatan</label>
+                            <label className="block text-[8px] uppercase font-bold text-text-tertiary mb-1">Nama Keperluan / Kegiatan</label>
                             <input
                               type="text"
                               required
@@ -727,13 +520,13 @@ export default function Preparation({
                                   handleAddNewTask(cat);
                                 }
                               }}
-                              className="w-full px-2.5 py-1 text-xs bg-white rounded border border-stone-250 focus:outline-none focus:ring-1 focus:ring-[#af7661]"
+                              className="w-full px-2.5 py-1 text-xs bg-surface-raised rounded border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
                             />
                           </div>
 
                           <div className="flex gap-2 shrink-0 w-full md:w-auto">
                             <div className="flex-1 md:flex-none">
-                              <label className="block text-[8px] uppercase font-bold text-stone-550 mb-1">Est. Budget (Rp)</label>
+                              <label className="block text-[8px] uppercase font-bold text-text-tertiary mb-1">Est. Budget (Rp)</label>
                               <input
                                 type="number"
                                 placeholder="0"
@@ -742,12 +535,12 @@ export default function Preparation({
                                   const v = e.target.value;
                                   setInlineTaskEstimates(prev => ({ ...prev, [cat]: v }));
                                 }}
-                                className="w-full md:w-24 px-2 py-1 text-xs bg-white rounded border border-stone-250 font-mono focus:outline-none focus:ring-1 focus:ring-[#af7661]"
+                                className="w-full md:w-24 px-2 py-1 text-xs bg-surface-raised rounded border border-surface-border font-mono focus:outline-none focus:ring-1 focus:ring-brand-600"
                               />
                             </div>
 
                             <div className="flex-1 md:flex-none">
-                              <label className="block text-[8px] uppercase font-bold text-stone-550 mb-1">Riil Budget (Rp)</label>
+                              <label className="block text-[8px] uppercase font-bold text-text-tertiary mb-1">Riil Budget (Rp)</label>
                               <input
                                 type="number"
                                 placeholder="0"
@@ -756,14 +549,14 @@ export default function Preparation({
                                   const v = e.target.value;
                                   setInlineTaskActuals(prev => ({ ...prev, [cat]: v }));
                                 }}
-                                className="w-full md:w-24 px-2 py-1 text-xs bg-white rounded border border-stone-250 font-mono focus:outline-none focus:ring-1 focus:ring-[#af7661]"
+                                className="w-full md:w-24 px-2 py-1 text-xs bg-surface-raised rounded border border-surface-border font-mono focus:outline-none focus:ring-1 focus:ring-brand-600"
                               />
                             </div>
                           </div>
                         </div>
 
                         {/* Dual-check toggle switch inline custom item assignment support */}
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-stone-200">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-surface-border">
                           <label className="flex items-center gap-2 cursor-pointer text-xs text-stone-605 select-none font-medium">
                             <input
                               type="checkbox"
@@ -772,7 +565,7 @@ export default function Preparation({
                                 const checked = e.target.checked;
                                 setRequiresDualCheckInput(prev => ({ ...prev, [cat]: checked }));
                               }}
-                              className="rounded border-stone-300 text-[#af7661] focus:ring-[#af7661] w-3.5 h-3.5"
+                              className="rounded border-stone-300 text-brand-600 focus:ring-brand-600 w-3.5 h-3.5"
                             />
                             <span>Apakah item ini butuh checklist CPP & CPW terpisah? (Misal: Berkas KTP, KK, dsb)</span>
                           </label>
@@ -785,7 +578,7 @@ export default function Preparation({
                                 setActiveAddFormCat(null);
                               }}
                               disabled={isUpdating}
-                              className="px-2.5 py-1 border border-stone-250 text-stone-500 rounded bg-white text-xs hover:bg-stone-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="px-2.5 py-1 border border-surface-border text-text-secondary rounded bg-surface-raised text-xs hover:bg-surface-sunken transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               Batal
                             </button>
@@ -793,7 +586,7 @@ export default function Preparation({
                               type="button"
                               onClick={() => handleAddNewTask(cat)}
                               disabled={!inlineTaskNames[cat]?.trim() || isUpdating}
-                              className="px-3.5 py-1 bg-[#af7661] hover:bg-[#915c4a] text-white text-xs font-bold rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                              className="px-3.5 py-1 bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                             >
                               Simpan Item
                             </button>
@@ -808,7 +601,7 @@ export default function Preparation({
                           setActiveAddFormCat(cat);
                         }}
                         disabled={isUpdating}
-                        className="py-1 px-3 border border-stone-200 hover:border-[#af7661] hover:bg-[#af7661]/5 text-stone-600 hover:text-[#af7661] text-xs font-semibold rounded flex items-center transition-all gap-1.5 mr-auto disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="py-1 px-3 border border-surface-border hover:border-brand-600 hover:bg-brand-600/5 text-stone-600 hover:text-brand-600 text-xs font-semibold rounded flex items-center transition-all gap-1.5 mr-auto disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Plus size={12} />
                         Tambah Item Kebutuhan Baru
@@ -826,4 +619,4 @@ export default function Preparation({
 
     </div>
   );
-}
+});

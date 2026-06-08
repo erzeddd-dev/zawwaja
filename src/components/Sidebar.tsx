@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useTransition, memo } from "react";
 import { 
   LayoutDashboard, 
   CheckSquare, 
@@ -19,7 +19,7 @@ interface SidebarProps {
   onOpenSettings: () => void;
 }
 
-export default function Sidebar({ 
+export default memo(function Sidebar({ 
   currentTab, 
   setCurrentTab, 
   profile, 
@@ -27,6 +27,7 @@ export default function Sidebar({
   onOpenSettings 
 }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
+  const [isPending, startTransition] = useTransition();
 
   const menuItems = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -65,7 +66,7 @@ export default function Sidebar({
           return (
             <button
               key={item.id}
-              onClick={() => setCurrentTab(item.id)}
+              onClick={() => startTransition(() => setCurrentTab(item.id))}
               className={`flex flex-col items-center justify-center py-1 flex-1 transition-all cursor-pointer relative ${
                 isActive 
                   ? "text-brand-600" 
@@ -89,7 +90,7 @@ export default function Sidebar({
         {/* Render Admin entry if user is admin */}
         {isAdmin && (
           <button
-            onClick={() => setCurrentTab("admin")}
+            onClick={() => startTransition(() => setCurrentTab("admin"))}
             className={`flex flex-col items-center justify-center py-1 flex-1 transition-all cursor-pointer relative ${
               currentTab === "admin" 
                 ? "text-amber-700" 
@@ -171,7 +172,7 @@ export default function Sidebar({
               return (
                 <button
                   key={item.id}
-                  onClick={() => setCurrentTab(item.id)}
+                  onClick={() => startTransition(() => setCurrentTab(item.id))}
                   className={`w-full flex items-center rounded-xl text-xs font-semibold tracking-wide transition-all group cursor-pointer ${
                     isCollapsed ? "justify-center p-3" : "justify-start px-4 py-3"
                   } ${
@@ -190,7 +191,7 @@ export default function Sidebar({
             {/* Admin Portal Nav Item (visible only for admins) */}
             {isAdmin && (
               <button
-                onClick={() => setCurrentTab("admin")}
+                onClick={() => startTransition(() => setCurrentTab("admin"))}
                 className={`w-full flex items-center rounded-xl text-xs font-semibold tracking-wide transition-all group cursor-pointer ${
                   isCollapsed ? "justify-center p-3" : "justify-start px-4 py-3"
                 } ${
@@ -263,4 +264,4 @@ export default function Sidebar({
       </div>
     </>
   );
-}
+});

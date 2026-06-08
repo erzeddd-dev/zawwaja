@@ -74,20 +74,20 @@ export default function AdminPortal({ onApprovalChanged }: AdminPortalProps) {
     <div className="space-y-6" id="admin-view">
       
       {/* Admin header */}
-      <div className="bg-amber-900 text-white p-6 rounded-2xl shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4 border border-amber-800">
+      <div className="bg-brand-900 text-white p-6 rounded-2xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 border border-brand-800">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <ShieldCheck size={20} className="text-amber-300" />
-            <span className="text-xs uppercase tracking-wider font-bold text-amber-200">Zawwaja Admin System</span>
+            <ShieldCheck size={20} className="text-brand-300" />
+            <span className="text-xs uppercase tracking-wider font-bold text-brand-200">Zawwaja Admin System</span>
           </div>
           <h2 className="text-xl md:text-2xl font-serif font-bold">Portal Verifikasi QRIS Mudharabah</h2>
-          <p className="text-amber-100/90 text-xs">Menu asasi untuk memantau mutasi QRIS masuk sebesar Rp 25.000 dan mengaktifkan fungsionalitas akun pengantin seketika</p>
+          <p className="text-brand-100/90 text-xs">Menu asasi untuk memantau mutasi QRIS masuk sebesar Rp 25.000 dan mengaktifkan fungsionalitas akun pengantin seketika</p>
         </div>
 
         <button
           onClick={fetchProfiles}
           disabled={isLoading}
-          className="px-4 py-2 bg-amber-950/70 hover:bg-amber-950 text-amber-100 text-xs font-bold rounded-lg border border-amber-7000 flex items-center gap-2 self-start md:self-auto transition-colors cursor-pointer"
+          className="px-4 py-2 bg-brand-950/70 hover:bg-brand-950 text-brand-100 text-xs font-bold rounded-lg border border-brand-700 flex items-center gap-2 self-start md:self-auto transition-colors cursor-pointer"
         >
           <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} />
           Segarkan Mutasi
@@ -114,30 +114,30 @@ export default function AdminPortal({ onApprovalChanged }: AdminPortalProps) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* Module A: New paid registrations awaiting verification */}
-        <div className="bg-white border border-stone-200 rounded-2xl shadow-sm p-4 space-y-4">
-          <div className="flex items-center justify-between border-b pb-3 border-stone-100">
+        <div className="bg-surface-raised border border-surface-border rounded-2xl shadow-sm p-4 space-y-4">
+          <div className="flex items-center justify-between border-b pb-3 border-surface-border">
             <div className="flex items-center gap-2">
-              <Clock className="text-amber-600" size={18} />
-              <h3 className="font-bold text-stone-900 text-sm font-serif">Menunggu Aktivasi (Sudah Bayar QRIS)</h3>
+              <Clock className="text-brand-600" size={18} />
+              <h3 className="font-bold text-text-primary text-sm font-serif">Menunggu Aktivasi (Sudah Bayar QRIS)</h3>
             </div>
-            <span className="bg-amber-100 text-amber-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full">
+            <span className="bg-brand-100 text-brand-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full">
               {pendingCouples.length} Antrian
             </span>
           </div>
 
           {pendingCouples.length === 0 ? (
-            <div className="text-center text-stone-400 py-12 text-xs">
+            <div className="text-center text-text-tertiary py-12 text-xs">
               Tidak ada antrian pengantin yang melampirkan bukti lunas QRIS Rp 25.000 baru saat ini.
             </div>
           ) : (
-            <div className="divide-y divide-stone-100">
+            <div className="divide-y divide-surface-border">
               {pendingCouples.map(couple => (
                 <div key={couple.uid} className="py-4 space-y-3">
                   <div className="flex justify-between items-start gap-2">
                     <div className="space-y-0.5">
-                      <h4 className="font-bold text-stone-900 text-sm">{couple.fullName} & {couple.partnerName}</h4>
-                      <p className="text-[11px] text-stone-500">Email: {couple.email}</p>
-                      <p className="text-[10px] text-stone-400">Akad: {new Date(couple.weddingDate).toLocaleDateString("id-ID")}</p>
+                      <h4 className="font-bold text-text-primary text-sm">{couple.fullName} & {couple.partnerName}</h4>
+                      <p className="text-[11px] text-text-secondary">Email: {couple.email}</p>
+                      <p className="text-[10px] text-text-tertiary">Akad: {new Date(couple.weddingDate).toLocaleDateString("id-ID")}</p>
                     </div>
                     <span className="text-[10px] font-mono bg-blue-50 border border-blue-200 text-blue-700 font-bold px-2 py-0.5 rounded">
                       Rp 25.000 Lunas
@@ -145,8 +145,8 @@ export default function AdminPortal({ onApprovalChanged }: AdminPortalProps) {
                   </div>
 
                   {couple.paymentProofUrl && (
-                    <div className="border border-stone-200 rounded-lg p-2 bg-stone-50 flex items-center gap-3">
-                      <div className="w-10 h-10 rounded bg-stone-200 border border-stone-300 overflow-hidden shrink-0 flex items-center justify-center">
+                    <div className="border border-surface-border rounded-lg p-2 bg-surface-sunken flex items-center gap-3">
+                      <div className="w-10 h-10 rounded bg-surface-border border border-surface-border overflow-hidden shrink-0 flex items-center justify-center">
                         {couple.paymentProofUrl.includes('.pdf') ? (
                           <div className="w-full h-full flex items-center justify-center bg-rose-50 text-rose-800 text-[10px] font-bold">PDF</div>
                         ) : (
@@ -159,12 +159,12 @@ export default function AdminPortal({ onApprovalChanged }: AdminPortalProps) {
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[10px] font-bold text-stone-700">Lampiran Bukti Bayar QRIS</p>
+                        <p className="text-[10px] font-bold text-text-secondary">Lampiran Bukti Bayar QRIS</p>
                         <a 
                           href={couple.paymentProofUrl} 
                           target="_blank" 
                           rel="noopener noreferrer" 
-                          className="text-[10px] text-emerald-700 hover:underline font-bold flex items-center gap-0.5"
+                          className="text-[10px] text-brand-700 hover:underline font-bold flex items-center gap-0.5"
                         >
                           Buka di Tab Baru ↗
                         </a>
@@ -172,7 +172,7 @@ export default function AdminPortal({ onApprovalChanged }: AdminPortalProps) {
                     </div>
                   )}
 
-                  <div className="bg-amber-50/50 p-2.5 rounded border border-amber-100 text-[10px] text-amber-900 font-sans leading-relaxed">
+                  <div className="bg-brand-50/50 p-2.5 rounded border border-brand-100 text-[10px] text-brand-900 font-sans leading-relaxed">
                     📝 <span className="font-bold">Panduan Verifikasi Admin:</span><br />
                     Harap tinjau lampiran bukti transaksi QRIS pasangan {couple.fullName} di atas dengan teliti sebelum menekan tombol "Aktifkan Akun (Approve)" di bawah ini.
                   </div>
@@ -186,7 +186,7 @@ export default function AdminPortal({ onApprovalChanged }: AdminPortalProps) {
                     </button>
                     <button
                       onClick={() => handleDeny(couple.uid, couple.fullName)}
-                      className="px-3.5 py-1.5 border border-stone-200 text-stone-500 hover:text-rose-600 rounded text-xs transition-colors cursor-pointer"
+                      className="px-3.5 py-1.5 border border-surface-border text-text-secondary hover:text-text-secondary rounded text-xs transition-colors cursor-pointer"
                       title="Tolak Verifikasi"
                     >
                       Tolak
@@ -199,11 +199,11 @@ export default function AdminPortal({ onApprovalChanged }: AdminPortalProps) {
         </div>
 
         {/* Module B: Already Approved Couples */}
-        <div className="bg-white border border-stone-200 rounded-2xl shadow-sm p-4 space-y-4">
-          <div className="flex items-center justify-between border-b pb-3 border-stone-100">
+        <div className="bg-surface-raised border border-surface-border rounded-2xl shadow-sm p-4 space-y-4">
+          <div className="flex items-center justify-between border-b pb-3 border-surface-border">
             <div className="flex items-center gap-2">
               <UserCheck className="text-emerald-700" size={18} />
-              <h3 className="font-bold text-stone-900 text-sm font-serif">Alumni & Akun Aktif Premium</h3>
+              <h3 className="font-bold text-text-primary text-sm font-serif">Alumni & Akun Aktif Premium</h3>
             </div>
             <span className="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full">
               {approvedCouples.length} Pasangan
@@ -211,16 +211,16 @@ export default function AdminPortal({ onApprovalChanged }: AdminPortalProps) {
           </div>
 
           {approvedCouples.length === 0 ? (
-            <div className="text-center text-stone-400 py-12 text-xs">
+            <div className="text-center text-text-tertiary py-12 text-xs">
               Belum ada pasangan premium terdaftar yang disetujui lunas.
             </div>
           ) : (
-            <div className="divide-y divide-stone-100 max-h-96 overflow-y-auto">
+            <div className="divide-y divide-surface-border max-h-96 overflow-y-auto">
               {approvedCouples.map(couple => (
                 <div key={couple.uid} className="py-3 flex justify-between items-center gap-2 text-xs">
                   <div>
-                    <h4 className="font-bold text-stone-900">{couple.fullName} & {couple.partnerName}</h4>
-                    <p className="text-[10px] text-stone-400">{couple.email}</p>
+                    <h4 className="font-bold text-text-primary">{couple.fullName} & {couple.partnerName}</h4>
+                    <p className="text-[10px] text-text-tertiary">{couple.email}</p>
                   </div>
 
                   <div className="flex items-center gap-2 shrink-0">
@@ -229,7 +229,7 @@ export default function AdminPortal({ onApprovalChanged }: AdminPortalProps) {
                     </span>
                     <button
                       onClick={() => handleDeny(couple.uid, couple.fullName)}
-                      className="p-1 border border-stone-100 hover:border-rose-200 text-stone-400 hover:text-rose-500 rounded transition-colors"
+                      className="p-1 border border-surface-border hover:border-brand-500 text-text-tertiary hover:text-rose-500 rounded transition-colors"
                       title="Tangguhkan Akun"
                     >
                       <UserX size={14} />
@@ -244,23 +244,23 @@ export default function AdminPortal({ onApprovalChanged }: AdminPortalProps) {
       </div>
 
       {/* Module C: Registered in platform but unpaid */}
-      <div className="bg-white border border-stone-200 p-5 rounded-2xl shadow-sm space-y-3">
-        <h3 className="font-serif font-bold text-stone-950 text-sm border-b pb-2.5 border-stone-100">
+      <div className="bg-surface-raised border border-surface-border p-5 rounded-2xl shadow-sm space-y-3">
+        <h3 className="font-serif font-bold text-text-primary text-sm border-b pb-2.5 border-surface-border">
           User Terdaftar - Belum Menuntaskan Pembayaran QRIS (Membuka QRIS Screen)
         </h3>
         
         {unpaidCouples.length === 0 ? (
-          <p className="text-xs text-stone-400 py-3 text-center">Seluruh pendaftar di platform telah menuntaskan kewajiban iuran QRIS.</p>
+          <p className="text-xs text-text-tertiary py-3 text-center">Seluruh pendaftar di platform telah menuntaskan kewajiban iuran QRIS.</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
             {unpaidCouples.map(couple => (
-              <div key={couple.uid} className="p-3 border rounded-xl bg-stone-50/50 flex justify-between items-center text-xs gap-3">
+              <div key={couple.uid} className="p-3 border rounded-xl bg-surface-sunken/50 flex justify-between items-center text-xs gap-3">
                 <div>
-                  <h4 className="font-bold text-stone-900">{couple.fullName || "Pengantin Baru"} & {couple.partnerName || "Pasangan"}</h4>
-                  <p className="text-[10px] text-stone-400">{couple.email}</p>
+                  <h4 className="font-bold text-text-primary">{couple.fullName || "Pengantin Baru"} & {couple.partnerName || "Pasangan"}</h4>
+                  <p className="text-[10px] text-text-tertiary">{couple.email}</p>
                 </div>
                 <div className="flex items-center gap-1.5 shrink-0">
-                  <span className="text-[9px] bg-stone-100 border text-stone-500 px-1.5 py-0.5 rounded font-mono">Pending QRIS</span>
+                  <span className="text-[9px] bg-stone-100 border text-text-secondary px-1.5 py-0.5 rounded font-mono">Pending QRIS</span>
                   <button
                     onClick={() => handleApprove(couple.uid, couple.fullName || "Pengantin Baru")}
                     className="px-2 py-0.5 bg-amber-600 hover:bg-amber-700 text-white rounded font-bold text-[9px] transition-all cursor-pointer"

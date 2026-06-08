@@ -83,14 +83,14 @@ export default function Vendors({ vendors, onSaveVendor, onDeleteVendor, onClear
       {/* Page Title & Actions */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-serif font-bold text-stone-900">Manajemen Kontak Vendor</h2>
-          <p className="text-stone-500 text-xs mt-0.5">Pendataan terpusat portofolio vendor, akun media sosial, dan negosiasi kontrak akad pernikahan</p>
+          <h2 className="text-2xl font-serif font-bold text-text-primary">Manajemen Kontak Vendor</h2>
+          <p className="text-text-secondary text-xs mt-0.5">Pendataan terpusat portofolio vendor, akun media sosial, dan negosiasi kontrak akad pernikahan</p>
         </div>
 
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setShowAddForm(!showAddForm)}
-            className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold rounded-lg flex items-center shadow-sm cursor-pointer"
+            className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold rounded-lg flex items-center shadow-sm cursor-pointer"
           >
             <Plus size={16} className="mr-1.5" />
             Tambah Kontak Vendor
@@ -98,7 +98,7 @@ export default function Vendors({ vendors, onSaveVendor, onDeleteVendor, onClear
           
           <button
             onClick={onResetDefaults}
-            className="px-3.5 py-2 border border-emerald-200 text-emerald-800 bg-emerald-100/30 hover:bg-emerald-100 text-xs font-semibold rounded-lg flex items-center cursor-pointer"
+            className="px-3.5 py-2 border border-brand-200 text-brand-800 bg-brand-50 hover:bg-brand-100 text-xs font-semibold rounded-lg flex items-center cursor-pointer"
           >
             <RotateCcw size={14} className="mr-1.5" />
             Muat Default
@@ -116,27 +116,27 @@ export default function Vendors({ vendors, onSaveVendor, onDeleteVendor, onClear
 
       {/* Add Custom Vendor Form inline panel */}
       {showAddForm && (
-        <form onSubmit={handleAddNewVendor} className="bg-white p-5 rounded-2xl border border-emerald-200 shadow-md space-y-4">
-          <h3 className="font-bold text-emerald-950 text-sm font-serif">Simpan Detail Rekanan Vendor</h3>
+        <form onSubmit={handleAddNewVendor} className="bg-surface-raised p-5 rounded-2xl border border-surface-border shadow-md space-y-4">
+          <h3 className="font-bold text-brand-900 text-sm font-serif">Simpan Detail Rekanan Vendor</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="md:col-span-2">
-              <label className="block text-[10px] uppercase font-bold text-stone-500 mb-1">Nama Perusahaan/Vendor</label>
+              <label className="block text-[10px] uppercase font-bold text-text-secondary mb-1">Nama Perusahaan/Vendor</label>
               <input
                 type="text"
                 required
                 placeholder="Contoh: Sakinah Catering & Co"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-3 py-1.5 text-xs bg-stone-50 rounded border border-stone-200 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                className="w-full px-3 py-1.5 text-xs bg-surface-sunken rounded border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
               />
             </div>
             <div>
-              <label className="block text-[10px] uppercase font-bold text-stone-500 mb-1">Kategori</label>
+              <label className="block text-[10px] uppercase font-bold text-text-secondary mb-1">Kategori</label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full px-3 py-1.5 text-xs bg-stone-50 rounded border border-stone-200 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                className="w-full px-3 py-1.5 text-xs bg-surface-sunken rounded border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
               >
                 {categories.filter(c => c !== "Semua").map(cat => (
                   <option key={cat} value={cat}>{cat}</option>
@@ -144,52 +144,52 @@ export default function Vendors({ vendors, onSaveVendor, onDeleteVendor, onClear
               </select>
             </div>
             <div>
-              <label className="block text-[10px] uppercase font-bold text-stone-500 mb-1">Kontak Telp/WA</label>
+              <label className="block text-[10px] uppercase font-bold text-text-secondary mb-1">Kontak Telp/WA</label>
               <input
                 type="text"
                 required
                 placeholder="081xxxxxxxxxx"
                 value={contact}
                 onChange={(e) => setContact(e.target.value)}
-                className="w-full px-3 py-1.5 text-xs bg-stone-50 rounded border border-stone-200 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                className="w-full px-3 py-1.5 text-xs bg-surface-sunken rounded border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-              <label className="block text-[10px] uppercase font-bold text-stone-500 mb-1">Instagram (@) atau website link</label>
+              <label className="block text-[10px] uppercase font-bold text-text-secondary mb-1">Instagram (@) atau website link</label>
               <input
                 type="text"
                 placeholder="Ketik username @sakinah_catering"
                 value={socialMedia}
                 onChange={(e) => setSocialMedia(e.target.value)}
-                className="w-full px-3 py-1.5 text-xs bg-stone-50 rounded border border-stone-200 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                className="w-full px-3 py-1.5 text-xs bg-surface-sunken rounded border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
               />
             </div>
             <div className="md:col-span-3">
-              <label className="block text-[10px] uppercase font-bold text-stone-500 mb-1">Catatan Tambahan (Ketentuan DP, Menu, Paket)</label>
+              <label className="block text-[10px] uppercase font-bold text-text-secondary mb-1">Catatan Tambahan (Ketentuan DP, Menu, Paket)</label>
               <input
                 type="text"
                 placeholder="Tulis negosiasi pembayaran, tanggal pelunasan, diskon tambahan..."
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                className="w-full px-3 py-1.5 text-xs bg-stone-50 rounded border border-stone-200 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                className="w-full px-3 py-1.5 text-xs bg-surface-sunken rounded border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
               />
             </div>
           </div>
 
-          <div className="flex justify-end gap-2 pt-2 border-t border-stone-100">
+          <div className="flex justify-end gap-2 pt-2 border-t border-surface-border">
             <button
               type="button"
               onClick={() => setShowAddForm(false)}
-              className="px-4 py-1.5 border border-stone-200 text-stone-500 rounded text-xs hover:bg-stone-50 cursor-pointer"
+              className="px-4 py-1.5 border border-surface-border text-text-secondary rounded text-xs hover:bg-surface-sunken cursor-pointer"
             >
               Batal
             </button>
             <button
               type="submit"
-              className="px-4 py-1.5 bg-emerald-700 text-white rounded text-xs font-semibold hover:bg-emerald-800 cursor-pointer"
+              className="px-4 py-1.5 bg-brand-700 text-white rounded text-xs font-semibold hover:bg-brand-800 cursor-pointer"
             >
               Simpan Vendor
             </button>
@@ -200,26 +200,26 @@ export default function Vendors({ vendors, onSaveVendor, onDeleteVendor, onClear
       {/* Filter and Search parameters */}
       <div className="flex flex-col md:flex-row gap-3">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-2.5 text-stone-400" size={16} />
+          <Search className="absolute left-3 top-2.5 text-text-tertiary" size={16} />
           <input
             type="text"
             placeholder="Cari nama vendor atau catatan nego..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 bg-white text-xs rounded-xl border border-stone-200 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+            className="w-full pl-9 pr-4 py-2 bg-surface-raised text-xs rounded-xl border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
           />
         </div>
 
         <div className="flex items-center gap-1.5 overflow-x-auto py-0.5 shrink-0">
-          <Filter size={14} className="text-stone-400 shrink-0" />
+          <Filter size={14} className="text-text-tertiary shrink-0" />
           {categories.map(cat => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
               className={`px-3 py-1 rounded-full text-xs font-semibold select-none transition-all cursor-pointer ${
                 activeCategory === cat 
-                  ? "bg-emerald-700 text-white" 
-                  : "bg-white text-stone-600 hover:bg-stone-100 border border-stone-200"
+                  ? "bg-brand-700 text-white" 
+                  : "bg-surface-raised text-text-secondary hover:bg-surface-sunken border border-surface-border"
               }`}
             >
               {cat}
@@ -230,19 +230,19 @@ export default function Vendors({ vendors, onSaveVendor, onDeleteVendor, onClear
 
       {/* Grid of vendors */}
       {filteredVendors.length === 0 ? (
-        <div className="bg-white border border-stone-200 p-12 rounded-2xl text-center text-stone-400 space-y-2">
-          <Building size={36} className="mx-auto text-stone-200" />
-          <h4 className="font-semibold text-stone-900 text-sm">Direktori Vendor Masih Kosong</h4>
+        <div className="bg-surface-raised border border-surface-border p-12 rounded-2xl text-center text-text-tertiary space-y-2">
+          <Building size={36} className="mx-auto text-surface-border" />
+          <h4 className="font-semibold text-text-primary text-sm">Direktori Vendor Masih Kosong</h4>
           <p className="text-xs">Silakan muat vendor default Islami atau tambahkan secara manual milik Anda.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredVendors.map(vendor => (
-            <div key={vendor.id} className="bg-white border border-stone-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between hover:border-emerald-500 hover:shadow transition-all relative group">
+            <div key={vendor.id} className="bg-surface-raised border border-surface-border rounded-2xl p-5 shadow-sm flex flex-col justify-between hover:border-brand-500 hover:shadow transition-all relative group">
               
               <button
                 onClick={() => onDeleteVendor(vendor.id)}
-                className="absolute top-4 right-4 text-stone-300 hover:text-rose-600 transition-colors p-1 rounded"
+                className="absolute top-4 right-4 text-text-tertiary hover:text-rose-600 transition-colors p-1 rounded"
                 title="Hapus Kontak Vendor"
               >
                 <Trash2 size={16} />
@@ -250,19 +250,19 @@ export default function Vendors({ vendors, onSaveVendor, onDeleteVendor, onClear
 
               <div className="space-y-3">
                 <div className="space-y-1 pr-6">
-                  <span className="text-[9px] uppercase font-bold tracking-wide px-2 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded">
+                  <span className="text-[9px] uppercase font-bold tracking-wide px-2 py-0.5 bg-brand-50 text-brand-800 border border-brand-200 rounded">
                     {vendor.category}
                   </span>
-                  <h4 className="font-bold text-stone-950 text-base font-serif mt-1">{vendor.name}</h4>
+                  <h4 className="font-bold text-text-primary text-base font-serif mt-1">{vendor.name}</h4>
                 </div>
 
                 {vendor.notes && (
-                  <p className="text-stone-600 text-xs bg-stone-50 p-2.5 rounded-lg border border-stone-100 italic">
+                  <p className="text-text-secondary text-xs bg-surface-sunken p-2.5 rounded-lg border border-surface-border italic">
                     "{vendor.notes}"
                   </p>
                 )}
 
-                <div className="space-y-1.5 text-xs text-stone-500 border-t border-stone-100 pt-3">
+                <div className="space-y-1.5 text-xs text-text-secondary border-t border-surface-border pt-3">
                   <div className="flex items-center gap-2">
                     <MessageSquare size={14} className="text-emerald-600 shrink-0" />
                     <span className="truncate">{vendor.contact}</span>
@@ -294,7 +294,7 @@ export default function Vendors({ vendors, onSaveVendor, onDeleteVendor, onClear
                     href={`https://instagram.com/${vendor.socialMedia.replace("@", "")}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="px-3 bg-stone-100 hover:bg-amber-100 hover:text-amber-900 text-stone-600 rounded-lg flex items-center justify-center cursor-pointer"
+                    className="px-3 bg-stone-100 hover:bg-amber-100 hover:text-amber-900 text-text-secondary rounded-lg flex items-center justify-center cursor-pointer"
                     title="Buka Instagram Vendor"
                   >
                     <Instagram size={14} />

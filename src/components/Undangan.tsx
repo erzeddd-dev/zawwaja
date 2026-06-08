@@ -422,10 +422,10 @@ export default function Undangan({ profile }: UndanganProps) {
   const themeColors = {
     terracotta: {
       bg: "bg-[#FAF7F5]",
-      primary: "bg-[#af7661]",
-      hover: "hover:bg-[#915c4a]",
-      text: "text-[#572309]",
-      lightAccent: "bg-[#e3c8ba]/20",
+      primary: "bg-brand-600",
+      hover: "hover:bg-brand-500",
+      text: "text-text-primary",
+      lightAccent: "bg-brand-200/20",
       borderAccent: "border-[#c9937d]/35",
       buttonText: "text-white"
     },
@@ -440,12 +440,12 @@ export default function Undangan({ profile }: UndanganProps) {
     },
     obsidian: {
       bg: "bg-[#1C1917]",
-      primary: "bg-[#c9937d]",
-      hover: "hover:bg-[#af7661]",
+      primary: "bg-brand-500",
+      hover: "hover:bg-brand-600",
       text: "text-white",
       lightAccent: "bg-[#44403C]/70",
       borderAccent: "border-[#78716C]/50",
-      buttonText: "text-stone-900 font-bold"
+      buttonText: "text-text-primary font-bold"
     }
   }[config.theme];
 
@@ -467,24 +467,24 @@ export default function Undangan({ profile }: UndanganProps) {
     <div className="flex flex-col lg:flex-row gap-8 items-start my-4 w-full" id="invitation-engine">
       
       {/* LEFT SIDEBAR: DASHBOARD EDITOR (60% Width) */}
-      <div className="w-full lg:w-3/5 bg-white rounded-2xl border border-stone-200 shadow-sm p-6 space-y-6">
+      <div className="w-full lg:w-3/5 bg-surface-raised rounded-2xl border border-surface-border shadow-sm p-6 space-y-6">
         
         {/* Header Branding */}
-        <div className="flex justify-between items-center pb-4 border-b border-stone-100">
+        <div className="flex justify-between items-center pb-4 border-b border-surface-border">
           <div className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#af7661]/10 flex items-center justify-center text-[#af7661]">
+            <div className="w-8 h-8 rounded-lg bg-brand-600/10 flex items-center justify-center text-brand-600">
               <Mail size={18} className="stroke-[2]" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-stone-900 font-serif uppercase tracking-wider">Digital Invitation Studio</h2>
-              <p className="text-[10px] text-stone-400">Desain, kelola tamu, dan sebar undangan sakinah syar'i Anda</p>
+              <h2 className="text-sm font-bold text-text-primary font-serif uppercase tracking-wider">Digital Invitation Studio</h2>
+              <p className="text-[10px] text-text-tertiary">Desain, kelola tamu, dan sebar undangan sakinah syar'i Anda</p>
             </div>
           </div>
           
           <button
             onClick={() => handleSaveConfig(config)}
             disabled={isSaving}
-            className="px-3.5 py-1.5 bg-[#af7661] hover:bg-[#915c4a] text-white text-[11px] font-bold rounded-lg shadow-xs flex items-center gap-1.5 transition-all disabled:opacity-50 cursor-pointer border-none outline-none"
+            className="px-3.5 py-1.5 bg-brand-600 hover:bg-brand-500 text-white text-[11px] font-bold rounded-lg shadow-xs flex items-center gap-1.5 transition-all disabled:opacity-50 cursor-pointer border-none outline-none"
           >
             {isSaving ? (
               <>
@@ -506,7 +506,7 @@ export default function Undangan({ profile }: UndanganProps) {
         </div>
 
         {/* Tab Selectors */}
-        <div className="flex flex-wrap gap-1 p-1 bg-stone-50 border border-stone-200/80 rounded-xl overflow-hidden text-xs">
+        <div className="flex flex-wrap gap-1 p-1 bg-surface-sunken border border-surface-border/80 rounded-xl overflow-hidden text-xs">
           {[
             { id: "general", label: "Tema & Musik", icon: Music },
             { id: "mempelai", label: "Mempelai", icon: Heart },
@@ -522,8 +522,8 @@ export default function Undangan({ profile }: UndanganProps) {
                 onClick={() => setActiveEditorTab(tab.id as any)}
                 className={`px-3 py-2 flex items-center gap-1.5 rounded-lg font-semibold transition-all cursor-pointer border-none outline-none ${
                   activeEditorTab === tab.id
-                    ? "bg-white text-[#af7661] shadow-xs"
-                    : "text-stone-500 hover:text-stone-850"
+                    ? "bg-surface-raised text-brand-600 shadow-xs"
+                    : "text-text-secondary hover:text-text-primary"
                 }`}
               >
                 <Icon size={14} />
@@ -534,19 +534,19 @@ export default function Undangan({ profile }: UndanganProps) {
         </div>
 
         {/* EDITOR CARDS CONTENT */}
-        <div className="bg-stone-50/40 border border-stone-200/50 rounded-2xl p-5 min-h-[300px]">
+        <div className="bg-surface-sunken/40 border border-surface-border/50 rounded-2xl p-5 min-h-[300px]">
           
           {/* TAB 1: GENERAL (THEME & MUSIC) */}
           {activeEditorTab === "general" && (
             <div className="space-y-5 animate-fade-in text-xs">
-              <h3 className="text-xs font-bold text-stone-900 uppercase tracking-wide">Kustomisasi Tema & Suasana</h3>
+              <h3 className="text-xs font-bold text-text-primary uppercase tracking-wide">Kustomisasi Tema & Suasana</h3>
               
               {/* Select Theme Grid */}
               <div>
-                <label className="block font-bold text-stone-500 mb-2 uppercase tracking-wide text-[10px]">Pilih Palet Tema Undangan</label>
+                <label className="block font-bold text-text-secondary mb-2 uppercase tracking-wide text-[10px]">Pilih Palet Tema Undangan</label>
                 <div className="grid grid-cols-3 gap-3">
                   {[
-                    { id: "terracotta", name: "Terracotta Elegant", desc: "Hangat, etnik & sakinah", border: "border-[#af7661]/40", bg: "bg-[#FAF7F5]" },
+                    { id: "terracotta", name: "Terracotta Elegant", desc: "Hangat, etnik & sakinah", border: "border-brand-600/40", bg: "bg-[#FAF7F5]" },
                     { id: "alabaster", name: "Golden Alabaster", desc: "Putih, bersih & minimalis", border: "border-[#78716C]", bg: "bg-[#FAFAF9]" },
                     { id: "obsidian", name: "Obsidian Classic", desc: "Hitam, tegas & premium", border: "border-[#c9937d]", bg: "bg-[#1C1917]" }
                   ].map(themeOpt => (
@@ -555,15 +555,15 @@ export default function Undangan({ profile }: UndanganProps) {
                       onClick={() => updateField("theme", themeOpt.id)}
                       className={`p-3 text-left rounded-xl border-2 transition-all flex flex-col justify-between cursor-pointer ${
                         config.theme === themeOpt.id
-                          ? `${themeOpt.border} bg-white shadow-xs`
-                          : "border-stone-200 bg-white hover:bg-stone-50"
+                          ? `${themeOpt.border} bg-surface-raised shadow-xs`
+                          : "border-surface-border bg-surface-raised hover:bg-surface-sunken"
                       }`}
                     >
                       <div className="flex justify-between items-center w-full">
-                        <span className="font-bold text-stone-800 text-[11px]">{themeOpt.name}</span>
+                        <span className="font-bold text-text-primary text-[11px]">{themeOpt.name}</span>
                         <div className={`w-4 h-4 rounded-full ${themeOpt.bg} border border-stone-300 shadow-2xs`}></div>
                       </div>
-                      <p className="text-[9px] text-stone-400 mt-2">{themeOpt.desc}</p>
+                      <p className="text-[9px] text-text-tertiary mt-2">{themeOpt.desc}</p>
                     </button>
                   ))}
                 </div>
@@ -571,24 +571,24 @@ export default function Undangan({ profile }: UndanganProps) {
 
               {/* Backgroud Music Track Input */}
               <div className="space-y-1.5">
-                <label className="block font-bold text-stone-500 uppercase tracking-wide text-[10px]">Link Musik Latar (.mp3)</label>
+                <label className="block font-bold text-text-secondary uppercase tracking-wide text-[10px]">Link Musik Latar (.mp3)</label>
                 <div className="flex gap-2">
                   <input
                     type="url"
                     value={config.bgMusicUrl}
                     onChange={(e) => updateField("bgMusicUrl", e.target.value)}
-                    className="flex-1 px-3 py-2 bg-white border border-stone-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#af7661]"
+                    className="flex-1 px-3 py-2 bg-surface-raised border border-surface-border rounded-xl focus:outline-none focus:ring-1 focus:ring-brand-600"
                     placeholder="https://tautan-audio-anda.mp3"
                   />
                   <button
                     onClick={toggleMusic}
-                    className="px-3.5 py-2 border border-stone-200 bg-white hover:bg-stone-50 rounded-xl text-stone-500 cursor-pointer"
+                    className="px-3.5 py-2 border border-surface-border bg-surface-raised hover:bg-surface-sunken rounded-xl text-text-secondary cursor-pointer"
                     title={isPlayingMusic ? "Mute" : "Play"}
                   >
                     {isPlayingMusic ? <VolumeX size={15} /> : <Volume2 size={15} />}
                   </button>
                 </div>
-                <p className="text-[10px] text-stone-400 mt-1">Masukkan URL lagu instrumen akad/walimah format `.mp3`. Klik ikon speaker di samping untuk menguji coba musik di pratinjau Anda.</p>
+                <p className="text-[10px] text-text-tertiary mt-1">Masukkan URL lagu instrumen akad/walimah format `.mp3`. Klik ikon speaker di samping untuk menguji coba musik di pratinjau Anda.</p>
               </div>
             </div>
           )}
@@ -599,54 +599,54 @@ export default function Undangan({ profile }: UndanganProps) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 
                 {/* Mempelai Pria CPP */}
-                <div className="space-y-3.5 bg-white p-4 rounded-xl border border-stone-200/60 shadow-2xs">
-                  <div className="flex items-center space-x-2 border-b border-stone-100 pb-2">
+                <div className="space-y-3.5 bg-surface-raised p-4 rounded-xl border border-surface-border/60 shadow-2xs">
+                  <div className="flex items-center space-x-2 border-b border-surface-border pb-2">
                     <span className="w-5 h-5 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-[10px]">♂</span>
-                    <h4 className="font-bold text-stone-850">Mempelai Pria (CPP)</h4>
+                    <h4 className="font-bold text-text-primary">Mempelai Pria (CPP)</h4>
                   </div>
                   
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Nama Panggilan</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">Nama Panggilan</label>
                     <input
                       type="text"
                       required
                       value={config.groomNickname}
                       onChange={(e) => updateField("groomNickname", e.target.value)}
-                      className="w-full px-3 py-1.8 border border-stone-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#af7661]"
+                      className="w-full px-3 py-1.8 border border-surface-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-600"
                       placeholder="e.g. Rian"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Nama Lengkap & Gelar</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">Nama Lengkap & Gelar</label>
                     <input
                       type="text"
                       required
                       value={config.groomFullName}
                       onChange={(e) => updateField("groomFullName", e.target.value)}
-                      className="w-full px-3 py-1.8 border border-stone-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#af7661]"
+                      className="w-full px-3 py-1.8 border border-surface-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-600"
                       placeholder="e.g. Rian Hidayatullah, S.T."
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Nama Ayah</label>
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">Nama Ayah</label>
                       <input
                         type="text"
                         value={config.groomFather}
                         onChange={(e) => updateField("groomFather", e.target.value)}
-                        className="w-full px-3 py-1.8 border border-stone-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#af7661]"
+                        className="w-full px-3 py-1.8 border border-surface-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-600"
                         placeholder="Bapak..."
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Nama Ibu</label>
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">Nama Ibu</label>
                       <input
                         type="text"
                         value={config.groomMother}
                         onChange={(e) => updateField("groomMother", e.target.value)}
-                        className="w-full px-3 py-1.8 border border-stone-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#af7661]"
+                        className="w-full px-3 py-1.8 border border-surface-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-600"
                         placeholder="Ibu..."
                       />
                     </div>
@@ -654,54 +654,54 @@ export default function Undangan({ profile }: UndanganProps) {
                 </div>
 
                 {/* Mempelai Wanita CPW */}
-                <div className="space-y-3.5 bg-white p-4 rounded-xl border border-stone-200/60 shadow-2xs">
-                  <div className="flex items-center space-x-2 border-b border-stone-100 pb-2">
+                <div className="space-y-3.5 bg-surface-raised p-4 rounded-xl border border-surface-border/60 shadow-2xs">
+                  <div className="flex items-center space-x-2 border-b border-surface-border pb-2">
                     <span className="w-5 h-5 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-[10px]">♀</span>
-                    <h4 className="font-bold text-stone-850">Mempelai Wanita (CPW)</h4>
+                    <h4 className="font-bold text-text-primary">Mempelai Wanita (CPW)</h4>
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Nama Panggilan</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">Nama Panggilan</label>
                     <input
                       type="text"
                       required
                       value={config.brideNickname}
                       onChange={(e) => updateField("brideNickname", e.target.value)}
-                      className="w-full px-3 py-1.8 border border-stone-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#af7661]"
+                      className="w-full px-3 py-1.8 border border-surface-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-600"
                       placeholder="e.g. Amira"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Nama Lengkap & Gelar</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">Nama Lengkap & Gelar</label>
                     <input
                       type="text"
                       required
                       value={config.brideFullName}
                       onChange={(e) => updateField("brideFullName", e.target.value)}
-                      className="w-full px-3 py-1.8 border border-stone-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#af7661]"
+                      className="w-full px-3 py-1.8 border border-surface-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-600"
                       placeholder="e.g. Amira Nur Latifah, S.Psi."
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Nama Ayah</label>
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">Nama Ayah</label>
                       <input
                         type="text"
                         value={config.brideFather}
                         onChange={(e) => updateField("brideFather", e.target.value)}
-                        className="w-full px-3 py-1.8 border border-stone-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#af7661]"
+                        className="w-full px-3 py-1.8 border border-surface-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-600"
                         placeholder="Bapak..."
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Nama Ibu</label>
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">Nama Ibu</label>
                       <input
                         type="text"
                         value={config.brideMother}
                         onChange={(e) => updateField("brideMother", e.target.value)}
-                        className="w-full px-3 py-1.8 border border-stone-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#af7661]"
+                        className="w-full px-3 py-1.8 border border-surface-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-600"
                         placeholder="Ibu..."
                       />
                     </div>
@@ -717,147 +717,147 @@ export default function Undangan({ profile }: UndanganProps) {
             <div className="space-y-6 animate-fade-in text-xs">
               
               {/* Akad Event */}
-              <div className="bg-white p-4 rounded-xl border border-stone-200/60 shadow-2xs space-y-3.5">
-                <h4 className="font-bold text-stone-850 border-b border-stone-100 pb-2">Acara 1: Akad Nikah</h4>
+              <div className="bg-surface-raised p-4 rounded-xl border border-surface-border/60 shadow-2xs space-y-3.5">
+                <h4 className="font-bold text-text-primary border-b border-surface-border pb-2">Acara 1: Akad Nikah</h4>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Tanggal</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">Tanggal</label>
                     <input
                       type="date"
                       value={config.akadDate}
                       onChange={(e) => updateField("akadDate", e.target.value)}
-                      className="w-full px-3 py-1.8 border border-stone-200 rounded-lg focus:outline-none"
+                      className="w-full px-3 py-1.8 border border-surface-border rounded-lg focus:outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Mulai</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">Mulai</label>
                     <input
                       type="time"
                       value={config.akadTimeStart}
                       onChange={(e) => updateField("akadTimeStart", e.target.value)}
-                      className="w-full px-3 py-1.8 border border-stone-200 rounded-lg focus:outline-none"
+                      className="w-full px-3 py-1.8 border border-surface-border rounded-lg focus:outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Selesai</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">Selesai</label>
                     <input
                       type="time"
                       value={config.akadTimeEnd}
                       onChange={(e) => updateField("akadTimeEnd", e.target.value)}
-                      className="w-full px-3 py-1.8 border border-stone-200 rounded-lg focus:outline-none"
+                      className="w-full px-3 py-1.8 border border-surface-border rounded-lg focus:outline-none"
                     />
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Nama Tempat Venue</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">Nama Tempat Venue</label>
                     <input
                       type="text"
                       value={config.akadLocationName}
                       onChange={(e) => updateField("akadLocationName", e.target.value)}
-                      className="w-full px-3 py-1.8 border border-stone-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#af7661]"
+                      className="w-full px-3 py-1.8 border border-surface-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-600"
                       placeholder="e.g. Masjid Al-Barkah"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Tautan Google Maps</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">Tautan Google Maps</label>
                     <input
                       type="url"
                       value={config.akadMapsUrl}
                       onChange={(e) => updateField("akadMapsUrl", e.target.value)}
-                      className="w-full px-3 py-1.8 border border-stone-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#af7661]"
+                      className="w-full px-3 py-1.8 border border-surface-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-600"
                       placeholder="e.g. https://goo.gl/maps/..."
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Alamat Lengkap</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">Alamat Lengkap</label>
                   <input
                     type="text"
                     value={config.akadAddress}
                     onChange={(e) => updateField("akadAddress", e.target.value)}
-                    className="w-full px-3 py-1.8 border border-stone-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#af7661]"
+                    className="w-full px-3 py-1.8 border border-surface-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-600"
                     placeholder="e.g. Jalan Barakah Raya No. 12"
                   />
                 </div>
               </div>
 
               {/* Resepsi Event */}
-              <div className="bg-white p-4 rounded-xl border border-stone-200/60 shadow-2xs space-y-3.5">
-                <h4 className="font-bold text-stone-850 border-b border-stone-100 pb-2">Acara 2: Resepsi Pernikahan</h4>
+              <div className="bg-surface-raised p-4 rounded-xl border border-surface-border/60 shadow-2xs space-y-3.5">
+                <h4 className="font-bold text-text-primary border-b border-surface-border pb-2">Acara 2: Resepsi Pernikahan</h4>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Tanggal</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">Tanggal</label>
                     <input
                       type="date"
                       value={config.resepsiDate}
                       onChange={(e) => updateField("resepsiDate", e.target.value)}
-                      className="w-full px-3 py-1.8 border border-stone-200 rounded-lg focus:outline-none"
+                      className="w-full px-3 py-1.8 border border-surface-border rounded-lg focus:outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Mulai</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">Mulai</label>
                     <input
                       type="time"
                       value={config.resepsiTimeStart}
                       onChange={(e) => updateField("resepsiTimeStart", e.target.value)}
-                      className="w-full px-3 py-1.8 border border-stone-200 rounded-lg focus:outline-none"
+                      className="w-full px-3 py-1.8 border border-surface-border rounded-lg focus:outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Selesai</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">Selesai</label>
                     <input
                       type="time"
                       value={config.resepsiTimeEnd}
                       onChange={(e) => updateField("resepsiTimeEnd", e.target.value)}
-                      className="w-full px-3 py-1.8 border border-stone-200 rounded-lg focus:outline-none"
+                      className="w-full px-3 py-1.8 border border-surface-border rounded-lg focus:outline-none"
                     />
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Nama Tempat Venue</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">Nama Tempat Venue</label>
                     <input
                       type="text"
                       value={config.resepsiLocationName}
                       onChange={(e) => updateField("resepsiLocationName", e.target.value)}
-                      className="w-full px-3 py-1.8 border border-stone-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#af7661]"
+                      className="w-full px-3 py-1.8 border border-surface-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-600"
                       placeholder="e.g. Gedung Sakinah Walimah"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Tautan Google Maps</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">Tautan Google Maps</label>
                     <input
                       type="url"
                       value={config.resepsiMapsUrl}
                       onChange={(e) => updateField("resepsiMapsUrl", e.target.value)}
-                      className="w-full px-3 py-1.8 border border-stone-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#af7661]"
+                      className="w-full px-3 py-1.8 border border-surface-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-600"
                       placeholder="e.g. https://goo.gl/maps/..."
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Alamat Lengkap</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">Alamat Lengkap</label>
                   <input
                     type="text"
                     value={config.resepsiAddress}
                     onChange={(e) => updateField("resepsiAddress", e.target.value)}
-                    className="w-full px-3 py-1.8 border border-stone-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#af7661]"
+                    className="w-full px-3 py-1.8 border border-surface-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-600"
                     placeholder="e.g. Jalan Sakinah Raya No. 45"
                   />
                 </div>
               </div>
 
               {/* Streaming details */}
-              <div className="bg-white p-4 rounded-xl border border-stone-200/60 shadow-2xs space-y-3">
-                <h4 className="font-bold text-stone-850 border-b border-stone-100 pb-2">Penyiaran Siaran Langsung (Streaming)</h4>
+              <div className="bg-surface-raised p-4 rounded-xl border border-surface-border/60 shadow-2xs space-y-3">
+                <h4 className="font-bold text-text-primary border-b border-surface-border pb-2">Penyiaran Siaran Langsung (Streaming)</h4>
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Tautan Siaran Langsung (YouTube/Zoom/IG Live)</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">Tautan Siaran Langsung (YouTube/Zoom/IG Live)</label>
                   <input
                     type="url"
                     value={config.streamUrl}
                     onChange={(e) => updateField("streamUrl", e.target.value)}
-                    className="w-full px-3 py-1.8 border border-stone-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#af7661]"
+                    className="w-full px-3 py-1.8 border border-surface-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-600"
                     placeholder="e.g. https://youtube.com/..."
                   />
                 </div>
@@ -869,72 +869,72 @@ export default function Undangan({ profile }: UndanganProps) {
           {/* TAB 4: LOVE STORY TIMELINE */}
           {activeEditorTab === "story" && (
             <div className="space-y-5 animate-fade-in text-xs">
-              <h3 className="text-xs font-bold text-stone-900 uppercase tracking-wide">Linimasa Perjalanan Cinta (Kisah Ta'aruf / Khitbah)</h3>
+              <h3 className="text-xs font-bold text-text-primary uppercase tracking-wide">Linimasa Perjalanan Cinta (Kisah Ta'aruf / Khitbah)</h3>
               
               {/* Existing Story List */}
               <div className="space-y-3">
                 {config.loveStory.map((stage) => (
-                  <div key={stage.id} className="flex justify-between items-start bg-white p-3.5 rounded-xl border border-stone-200 shadow-2xs">
+                  <div key={stage.id} className="flex justify-between items-start bg-surface-raised p-3.5 rounded-xl border border-surface-border shadow-2xs">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-stone-850">{stage.title}</span>
-                        <span className="text-[9px] px-2 py-0.5 rounded-md bg-stone-100 text-stone-500 font-mono font-semibold">{stage.date}</span>
+                        <span className="font-bold text-text-primary">{stage.title}</span>
+                        <span className="text-[9px] px-2 py-0.5 rounded-md bg-stone-100 text-text-secondary font-mono font-semibold">{stage.date}</span>
                       </div>
-                      <p className="text-[10px] text-stone-500 leading-relaxed">{stage.description}</p>
+                      <p className="text-[10px] text-text-secondary leading-relaxed">{stage.description}</p>
                     </div>
                     <button
                       onClick={() => handleDeleteStory(stage.id)}
-                      className="p-1 rounded-lg text-stone-400 hover:text-rose-600 hover:bg-stone-55 transition-colors cursor-pointer shrink-0 border-none bg-transparent"
+                      className="p-1 rounded-lg text-text-tertiary hover:text-rose-600 hover:bg-stone-55 transition-colors cursor-pointer shrink-0 border-none bg-transparent"
                     >
                       <Trash size={14} />
                     </button>
                   </div>
                 ))}
                 {config.loveStory.length === 0 && (
-                  <div className="text-center p-6 bg-white border border-stone-200 rounded-xl text-stone-400 italic">
+                  <div className="text-center p-6 bg-surface-raised border border-surface-border rounded-xl text-text-tertiary italic">
                     Belum ada linimasa kisah yang dimasukkan.
                   </div>
                 )}
               </div>
 
               {/* Add Story Form */}
-              <div className="bg-white p-4 rounded-xl border border-stone-250/70 shadow-2xs space-y-3.5">
-                <h4 className="font-bold text-stone-850 border-b border-stone-100 pb-2">Tambah Kisah Baru</h4>
+              <div className="bg-surface-raised p-4 rounded-xl border border-stone-250/70 shadow-2xs space-y-3.5">
+                <h4 className="font-bold text-text-primary border-b border-surface-border pb-2">Tambah Kisah Baru</h4>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Judul Tahapan</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">Judul Tahapan</label>
                     <input
                       type="text"
                       value={newStoryTitle}
                       onChange={(e) => setNewStoryTitle(e.target.value)}
-                      className="w-full px-3 py-1.8 border border-stone-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#af7661]"
+                      className="w-full px-3 py-1.8 border border-surface-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-600"
                       placeholder="e.g. Pertama Bertemu / Ta'aruf"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Waktu / Tanggal</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">Waktu / Tanggal</label>
                     <input
                       type="text"
                       value={newStoryDate}
                       onChange={(e) => setNewStoryDate(e.target.value)}
-                      className="w-full px-3 py-1.8 border border-stone-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#af7661]"
+                      className="w-full px-3 py-1.8 border border-surface-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-600"
                       placeholder="e.g. Januari 2026"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Cerita Singkat</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">Cerita Singkat</label>
                   <textarea
                     value={newStoryDesc}
                     onChange={(e) => setNewStoryDesc(e.target.value)}
                     rows={2}
-                    className="w-full px-3 py-1.8 border border-stone-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#af7661] resize-none font-sans"
+                    className="w-full px-3 py-1.8 border border-surface-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-600 resize-none font-sans"
                     placeholder="Tuliskan kisah singkat perjalanan syar'i Anda..."
                   />
                 </div>
                 <button
                   onClick={handleAddStory}
-                  className="px-3.5 py-1.8 bg-[#af7661] hover:bg-[#915c4a] text-white text-[11px] font-bold rounded-lg shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer border-none"
+                  className="px-3.5 py-1.8 bg-brand-600 hover:bg-brand-500 text-white text-[11px] font-bold rounded-lg shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer border-none"
                 >
                   <Plus size={14} />
                   Tambah Kisah
@@ -947,54 +947,54 @@ export default function Undangan({ profile }: UndanganProps) {
           {/* TAB 5: GIFT ENVELOPE CONFIG */}
           {activeEditorTab === "gift" && (
             <div className="space-y-5 animate-fade-in text-xs">
-              <h3 className="text-xs font-bold text-stone-900 uppercase tracking-wide">Amplop Digital & Kado Nikah Pernikahan</h3>
+              <h3 className="text-xs font-bold text-text-primary uppercase tracking-wide">Amplop Digital & Kado Nikah Pernikahan</h3>
               
-              <div className="bg-white p-4 rounded-xl border border-stone-200/60 shadow-2xs space-y-3.5">
-                <h4 className="font-bold text-stone-850 border-b border-stone-100 pb-2">Rincian Rekening Bank / E-Wallet</h4>
+              <div className="bg-surface-raised p-4 rounded-xl border border-surface-border/60 shadow-2xs space-y-3.5">
+                <h4 className="font-bold text-text-primary border-b border-surface-border pb-2">Rincian Rekening Bank / E-Wallet</h4>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Nama Bank / E-Wallet</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">Nama Bank / E-Wallet</label>
                     <input
                       type="text"
                       value={config.bankName}
                       onChange={(e) => updateField("bankName", e.target.value)}
-                      className="w-full px-3 py-1.8 border border-stone-200 rounded-lg focus:outline-none"
+                      className="w-full px-3 py-1.8 border border-surface-border rounded-lg focus:outline-none"
                       placeholder="e.g. BSI / Bank Mandiri / GoPay"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Nomor Rekening / HP</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">Nomor Rekening / HP</label>
                     <input
                       type="text"
                       value={config.bankAccountNumber}
                       onChange={(e) => updateField("bankAccountNumber", e.target.value)}
-                      className="w-full px-3 py-1.8 border border-stone-200 rounded-lg focus:outline-none"
+                      className="w-full px-3 py-1.8 border border-surface-border rounded-lg focus:outline-none"
                       placeholder="e.g. 7123456789"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Nama Pemilik Rekening</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">Nama Pemilik Rekening</label>
                     <input
                       type="text"
                       value={config.bankAccountOwner}
                       onChange={(e) => updateField("bankAccountOwner", e.target.value)}
-                      className="w-full px-3 py-1.8 border border-stone-200 rounded-lg focus:outline-none"
+                      className="w-full px-3 py-1.8 border border-surface-border rounded-lg focus:outline-none"
                       placeholder="e.g. Rian Hidayatullah"
                     />
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white p-4 rounded-xl border border-stone-200/60 shadow-2xs space-y-3.5">
-                <h4 className="font-bold text-stone-850 border-b border-stone-100 pb-2">Simulasi Link QRIS Pembayaran</h4>
+              <div className="bg-surface-raised p-4 rounded-xl border border-surface-border/60 shadow-2xs space-y-3.5">
+                <h4 className="font-bold text-text-primary border-b border-surface-border pb-2">Simulasi Link QRIS Pembayaran</h4>
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Tautan Gambar QRIS (Image URL)</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">Tautan Gambar QRIS (Image URL)</label>
                   <input
                     type="url"
                     value={config.qrisImageUrl}
                     onChange={(e) => updateField("qrisImageUrl", e.target.value)}
-                    className="w-full px-3 py-1.8 border border-stone-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#af7661]"
+                    className="w-full px-3 py-1.8 border border-surface-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-600"
                     placeholder="https://api.qrserver.com/..."
                   />
                 </div>
@@ -1009,20 +1009,20 @@ export default function Undangan({ profile }: UndanganProps) {
             <div className="space-y-5 animate-fade-in text-xs">
               
               {/* Message Template Editor */}
-              <div className="bg-white p-4 rounded-xl border border-stone-250/70 shadow-2xs space-y-3">
-                <h4 className="font-bold text-stone-850 border-b border-stone-100 pb-2">Draft Template Undangan WhatsApp</h4>
+              <div className="bg-surface-raised p-4 rounded-xl border border-surface-border shadow-2xs space-y-3">
+                <h4 className="font-bold text-text-primary border-b border-surface-border pb-2">Draft Template Undangan WhatsApp</h4>
                 <textarea
                   value={config.messageTemplate}
                   onChange={(e) => updateField("messageTemplate", e.target.value)}
                   rows={6}
-                  className="w-full px-3 py-2.5 bg-stone-50/50 border border-stone-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#af7661] resize-none font-mono text-[10.5px]"
+                  className="w-full px-3 py-2.5 bg-surface-base border border-surface-border rounded-xl focus:outline-none focus:ring-1 focus:ring-brand-600 resize-none font-mono text-[10.5px]"
                   placeholder="Template teks kirim WA..."
                 />
-                <div className="flex gap-4 text-[9px] text-stone-400 font-semibold uppercase tracking-wider bg-stone-50 p-2 rounded-lg justify-center">
+                <div className="flex gap-4 text-[9px] text-text-tertiary font-semibold uppercase tracking-wider bg-surface-border/50 p-2 rounded-lg justify-center">
                   <span>💡 Gunakan Tags:</span>
-                  <span>`{nama}` = Nama Tamu</span>
-                  <span>`{alamat}` = Domisili</span>
-                  <span>`{link}` = Tautan Undangan</span>
+                  <span>{"{nama}"} = Nama Tamu</span>
+                  <span>{"{alamat}"} = Domisili</span>
+                  <span>{"{link}"} = Tautan Undangan</span>
                 </div>
               </div>
 
@@ -1092,7 +1092,7 @@ export default function Undangan({ profile }: UndanganProps) {
                 
                 <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
                   {config.guests.map((guest) => (
-                    <div key={guest.id} className="flex justify-between items-center bg-white p-3.5 rounded-xl border border-stone-200 shadow-2xs hover:border-[#c9937d]/30 transition-all">
+                    <div key={guest.id} className="flex justify-between items-center bg-white p-3.5 rounded-xl border border-stone-200 shadow-2xs hover:border-brand-500/30 transition-all">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
                           <span className="font-bold text-stone-850">{guest.name}</span>
@@ -1104,7 +1104,7 @@ export default function Undangan({ profile }: UndanganProps) {
                       <div className="flex items-center gap-1.5">
                         <button
                           onClick={() => setSelectedPreviewGuest(guest.name)}
-                          className="px-2 py-1.2 border border-stone-200 bg-white hover:bg-stone-50 text-stone-600 rounded-lg text-[10px] font-semibold transition-all cursor-pointer"
+                          className="px-2 py-1.2 border border-stone-200 bg-white hover:bg-stone-50 text-text-secondary rounded-lg text-[10px] font-semibold transition-all cursor-pointer"
                         >
                           Lihat HP
                         </button>
@@ -1173,7 +1173,7 @@ export default function Undangan({ profile }: UndanganProps) {
         </div>
 
         {/* 3D-Like Smartphone Container */}
-        <div className="max-w-[340px] w-full min-h-[600px] rounded-[2.8rem] border-[10px] border-stone-850 shadow-2xl relative bg-[#FAF9F6] overflow-hidden flex flex-col font-sans transition-all duration-300">
+        <div className="max-w-[340px] w-full min-h-[600px] rounded-[2.8rem] border-[10px] border-stone-850 shadow-2xl relative bg-surface-base overflow-hidden flex flex-col font-sans transition-all duration-300">
           
           {/* Top Notch Area */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-stone-850 rounded-b-2xl z-50 flex items-center justify-center">
@@ -1192,11 +1192,11 @@ export default function Undangan({ profile }: UndanganProps) {
           )}
 
           {/* MOCKUP SCREEN LAYER */}
-          <div className="flex-1 flex flex-col h-full overflow-y-auto relative pt-8 pb-14 text-[#333333] text-xs">
+          <div className="flex-1 flex flex-col h-full overflow-y-auto relative pt-8 pb-14 text-text-primary text-xs">
             
             {/* STEP A: COVER SCREEN (Before Open) */}
             {!isPhoneCoverOpened ? (
-              <div className="absolute inset-0 bg-[#FAF9F6] bg-gradient-to-b from-white via-[#FAF9F6] to-[#e3c8ba]/10 flex flex-col justify-between p-6 text-center z-40 animate-fade-in">
+              <div className="absolute inset-0 bg-surface-base bg-gradient-to-b from-white via-[#FAF9F6] to-[#e3c8ba]/10 flex flex-col justify-between p-6 text-center z-40 animate-fade-in">
                 
                 <div className="mt-8 flex flex-col items-center">
                   {/* Calligraphy logo seal */}
@@ -1209,7 +1209,7 @@ export default function Undangan({ profile }: UndanganProps) {
 
                 {/* Cover info */}
                 <div className="space-y-4">
-                  <div className="p-3 bg-white/80 border border-[#e3c8ba]/30 rounded-2xl shadow-xs">
+                  <div className="p-3 bg-white/80 border border-brand-200/30 rounded-2xl shadow-xs">
                     <p className="text-[10px] text-stone-500 font-semibold mb-1">Kepada Yth. Bapak/Ibu/Sdr/i:</p>
                     <h4 className="text-sm font-bold text-[#572309] truncate">
                       {selectedPreviewGuest || "Tamu Undangan Premium"}
@@ -1251,7 +1251,7 @@ export default function Undangan({ profile }: UndanganProps) {
                       </div>
                       
                       {/* Quranic Quote */}
-                      <div className="p-4 bg-white/70 border border-[#e3c8ba]/20 rounded-xl space-y-2">
+                      <div className="p-4 bg-white/70 border border-brand-200/20 rounded-xl space-y-2">
                         <p className="text-[14px] font-arabic leading-relaxed text-[#572309] text-center">وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُمْ مِنْ أَنْفُسِكُمْ أَزْوَاجًا لِتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُمْ مَوَدَّةً وَرَحْمَةً</p>
                         <p className="text-[9px] text-stone-500 italic leading-relaxed text-center">"Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu isteri-isteri dari jenismu sendiri, supaya kamu cenderung dan merasa tenteram kepadanya..." (QS. Ar-Rum: 21)</p>
                       </div>
@@ -1283,14 +1283,14 @@ export default function Undangan({ profile }: UndanganProps) {
                       <h4 className="font-bold text-center text-[#572309] font-serif uppercase tracking-wider text-[11px] mb-2">Jadwal & Lokasi Walimah</h4>
                       
                       {/* Akad Card */}
-                      <div className="bg-white/95 p-4 rounded-xl border border-[#e3c8ba]/30 shadow-2xs space-y-2">
+                      <div className="bg-white/95 p-4 rounded-xl border border-brand-200/30 shadow-2xs space-y-2">
                         <div className="flex justify-between items-center border-b border-stone-100 pb-1.5">
                           <span className="font-bold text-[#af7661]">1. Akad Nikah</span>
                           <Clock size={12} className="text-stone-400" />
                         </div>
-                        <p className="text-[10px] font-bold font-mono text-stone-700">{config.akadDate}</p>
+                        <p className="text-[10px] font-bold font-mono text-text-secondary">{config.akadDate}</p>
                         <p className="text-[10px] text-stone-500">Pukul {config.akadTimeStart} - {config.akadTimeEnd} WIB</p>
-                        <p className="text-[10px] text-stone-600 font-bold">{config.akadLocationName}</p>
+                        <p className="text-[10px] text-text-secondary font-bold">{config.akadLocationName}</p>
                         <p className="text-[9px] text-stone-400 leading-snug">{config.akadAddress}</p>
                         <a 
                           href={config.akadMapsUrl} 
@@ -1303,14 +1303,14 @@ export default function Undangan({ profile }: UndanganProps) {
                       </div>
 
                       {/* Resepsi Card */}
-                      <div className="bg-white/95 p-4 rounded-xl border border-[#e3c8ba]/30 shadow-2xs space-y-2">
+                      <div className="bg-white/95 p-4 rounded-xl border border-brand-200/30 shadow-2xs space-y-2">
                         <div className="flex justify-between items-center border-b border-stone-100 pb-1.5">
                           <span className="font-bold text-[#af7661]">2. Resepsi Walimah</span>
                           <Calendar size={12} className="text-stone-400" />
                         </div>
-                        <p className="text-[10px] font-bold font-mono text-stone-700">{config.resepsiDate}</p>
+                        <p className="text-[10px] font-bold font-mono text-text-secondary">{config.resepsiDate}</p>
                         <p className="text-[10px] text-stone-500">Pukul {config.resepsiTimeStart} - {config.resepsiTimeEnd} WIB</p>
-                        <p className="text-[10px] text-stone-600 font-bold">{config.resepsiLocationName}</p>
+                        <p className="text-[10px] text-text-secondary font-bold">{config.resepsiLocationName}</p>
                         <p className="text-[9px] text-stone-400 leading-snug">{config.resepsiAddress}</p>
                         <a 
                           href={config.resepsiMapsUrl} 
@@ -1371,7 +1371,7 @@ export default function Undangan({ profile }: UndanganProps) {
                     <div className="space-y-4 animate-fade-in">
                       <h4 className="font-bold text-center text-[#572309] font-serif uppercase tracking-wider text-[11px] mb-2">Amplop Digital & Kado Nikah</h4>
                       
-                      <div className="bg-white/95 p-4 rounded-xl border border-[#e3c8ba]/30 shadow-2xs text-center space-y-3.5">
+                      <div className="bg-white/95 p-4 rounded-xl border border-brand-200/30 shadow-2xs text-center space-y-3.5">
                         <div className="w-8 h-8 rounded-full bg-stone-50 flex items-center justify-center mx-auto text-[#af7661]">
                           <Wallet size={16} />
                         </div>
@@ -1385,14 +1385,14 @@ export default function Undangan({ profile }: UndanganProps) {
                             navigator.clipboard.writeText(config.bankAccountNumber);
                             alert("Bismillah, nomor rekening disalin!");
                           }}
-                          className="px-4 py-1.5 bg-stone-50 hover:bg-stone-100 text-stone-700 font-bold rounded-lg border border-stone-200 text-[10px] inline-flex items-center gap-1.5 transition-all cursor-pointer"
+                          className="px-4 py-1.5 bg-stone-50 hover:bg-stone-100 text-text-secondary font-bold rounded-lg border border-stone-200 text-[10px] inline-flex items-center gap-1.5 transition-all cursor-pointer"
                         >
                           <Copy size={11} /> Salin Rekening
                         </button>
                       </div>
 
                       {config.qrisImageUrl && (
-                        <div className="bg-white/95 p-4 rounded-xl border border-[#e3c8ba]/30 shadow-2xs text-center space-y-2.5">
+                        <div className="bg-white/95 p-4 rounded-xl border border-brand-200/30 shadow-2xs text-center space-y-2.5">
                           <p className="text-[10px] text-stone-400 uppercase tracking-wider font-semibold">Scan QRIS Kado Nikah</p>
                           <img src={config.qrisImageUrl} alt="QRIS Sakinah" className="w-32 h-32 mx-auto object-contain border border-stone-200 p-1.5 rounded-lg" />
                         </div>
@@ -1503,7 +1503,7 @@ export default function Undangan({ profile }: UndanganProps) {
                         className={`flex flex-col items-center justify-center flex-1 py-1 cursor-pointer border-none bg-transparent ${
                           activePhoneSection === sec.id
                             ? "text-[#af7661] scale-105"
-                            : "text-stone-400 hover:text-stone-600"
+                            : "text-stone-400 hover:text-text-secondary"
                         }`}
                       >
                         <Icon size={14} className="mb-0.5" />

@@ -142,7 +142,11 @@ export const defaultWeddingChecklist = [
   { category: "Administrasi Persiapan Menikah", taskName: "Foto ukuran 3x4 latar biru (CPP dan CPW)", status: "Belum", requiresDualCheck: true },
   { category: "Administrasi Persiapan Menikah", taskName: "Fotocopy KTP Wali Nikah", status: "Belum", requiresDualCheck: false },
   { category: "Administrasi Persiapan Menikah", taskName: "Fotocopy KTP 2 orang saksi Nikah", status: "Belum", requiresDualCheck: false },
-  { category: "Administrasi Persiapan Menikah", taskName: "Keterangan sudah Vaksin TT", status: "Belum", requiresDualCheck: true },
+  { category: "Administrasi Persiapan Menikah", taskName: "Vaksin TT (wajib KUA)", status: "Belum", requiresDualCheck: true },
+  { category: "Administrasi Persiapan Menikah", taskName: "Vaksin HPV", status: "Belum", requiresDualCheck: true },
+  { category: "Administrasi Persiapan Menikah", taskName: "Vaksin MMR", status: "Belum", requiresDualCheck: true },
+  { category: "Administrasi Persiapan Menikah", taskName: "Vaksin Varisela", status: "Belum", requiresDualCheck: true },
+  { category: "Administrasi Persiapan Menikah", taskName: "Vaksin Hepatitis B", status: "Belum", requiresDualCheck: true },
   { category: "Administrasi Persiapan Menikah", taskName: "Daftar ke KUA", status: "Belum", requiresDualCheck: false },
   { category: "Administrasi Persiapan Menikah", taskName: "Bimbingan Pra-nikah dari KUA", status: "Belum", requiresDualCheck: false },
 

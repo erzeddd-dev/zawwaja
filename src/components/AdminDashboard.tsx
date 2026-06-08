@@ -118,21 +118,21 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   });
 
   return (
-    <div className="min-h-screen bg-stone-50 text-stone-700 font-sans" id="admin-dashboard-container">
+    <div className="min-h-screen bg-surface-sunken text-text-secondary font-sans" id="admin-dashboard-container">
       {/* 1. Header Banner */}
-      <header className="bg-white border-b border-stone-200 py-4 px-6 md:px-12 flex flex-col sm:flex-row items-center justify-between gap-4 sticky top-0 z-40 shadow-sm">
+      <header className="bg-surface-raised border-b border-surface-border py-4 px-6 md:px-12 flex flex-col sm:flex-row items-center justify-between gap-4 sticky top-0 z-40 shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-purple-600/10 flex items-center justify-center text-purple-700 border border-purple-200">
+          <div className="w-10 h-10 rounded-xl bg-brand-600/10 flex items-center justify-center text-brand-600 border border-brand-200">
             <ShieldCheck size={24} />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="font-serif font-black text-lg md:text-xl text-stone-900 tracking-wide uppercase">Zawwaja</h1>
-              <span className="text-[10px] uppercase font-mono font-bold text-white bg-purple-600 border border-purple-700 rounded-full px-2.5 py-0.5 shadow-sm">
+              <h1 className="font-serif font-black text-lg md:text-xl text-text-primary tracking-wide uppercase">Zawwaja</h1>
+              <span className="text-[10px] uppercase font-mono font-bold text-white bg-brand-600 border border-brand-700 rounded-full px-2.5 py-0.5 shadow-sm">
                 🛡️ ADMIN VIEW
               </span>
             </div>
-            <p className="text-xs text-stone-500 font-medium">Sistem Manajemen & Verifikasi Profil Pengantin</p>
+            <p className="text-xs text-text-secondary font-medium">Sistem Manajemen & Verifikasi Profil Pengantin</p>
           </div>
         </div>
 
@@ -140,7 +140,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
           <button
             onClick={handleRefresh}
             disabled={isLoading || isRefreshing}
-            className="p-2 sm:px-3 sm:py-2 bg-stone-100 hover:bg-stone-200/80 rounded-xl border border-stone-250 text-stone-600 text-xs font-bold font-mono transition-all duration-150 flex items-center gap-1.5 cursor-pointer"
+            className="p-2 sm:px-3 sm:py-2 bg-surface-raised hover:bg-surface-border rounded-xl border border-surface-border text-text-secondary text-xs font-bold font-mono transition-all duration-150 flex items-center gap-1.5 cursor-pointer"
             title="Muat Ulang Data"
           >
             <RefreshCw size={14} className={isRefreshing ? "animate-spin" : ""} />
@@ -165,25 +165,25 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
             <ShieldCheck size={18} className="text-rose-500 shrink-0" />
             <div>
               <p className="font-bold">Error Administratif:</p>
-              <p className="mt-0.5 text-stone-600">{errorMessage}</p>
+              <p className="mt-0.5 text-text-secondary">{errorMessage}</p>
             </div>
           </div>
         )}
 
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-32 gap-3">
-            <Loader2 size={40} className="animate-spin text-purple-600" />
-            <p className="text-sm text-stone-500 font-semibold font-mono">Mengakses Database Firestore Aman...</p>
+            <Loader2 size={40} className="animate-spin text-brand-600" />
+            <p className="text-sm text-text-secondary font-semibold font-mono">Mengakses Database Firestore Aman...</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
             {/* 3. User Listing Panel */}
-            <div className="col-span-1 lg:col-span-7 bg-white rounded-2xl border border-stone-200/85 shadow-md p-5 pb-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-stone-100">
+            <div className="col-span-1 lg:col-span-7 bg-surface-raised rounded-2xl border border-surface-border/85 shadow-md p-5 pb-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-surface-border">
                 <div className="flex items-center gap-2">
-                  <Users className="text-purple-600" size={18} />
-                  <h2 className="font-serif font-bold text-sm text-stone-800 uppercase tracking-wider">Semua Pengguna Terdaftar ({users.length})</h2>
+                  <Users className="text-brand-600" size={18} />
+                  <h2 className="font-serif font-bold text-sm text-text-primary uppercase tracking-wider">Semua Pengguna Terdaftar ({users.length})</h2>
                 </div>
 
                 {/* Search query box */}
@@ -193,26 +193,26 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                     placeholder="Cari email / nama..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-8 pr-3 py-1.5 w-full sm:w-56 text-xs rounded-xl bg-stone-50 border border-stone-200 focus:outline-none focus:border-purple-500 font-medium text-stone-700"
+                    className="pl-8 pr-3 py-1.5 w-full sm:w-56 text-xs rounded-xl bg-surface-sunken border border-surface-border focus:outline-none focus:border-brand-500 font-medium text-text-secondary"
                   />
-                  <Search size={14} className="absolute left-2.5 top-2.5 text-stone-400" />
+                  <Search size={14} className="absolute left-2.5 top-2.5 text-text-tertiary" />
                 </div>
               </div>
 
               {filteredUsers.length === 0 ? (
                 <div className="py-16 text-center">
-                  <p className="text-stone-400 text-xs">Tidak ada pengguna yang cocok dengan pencarian Anda.</p>
+                  <p className="text-text-tertiary text-xs">Tidak ada pengguna yang cocok dengan pencarian Anda.</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs text-stone-600 text-[11px]">
+                  <table className="w-full text-left text-xs text-text-secondary text-[11px]">
                     <thead>
-                      <tr className="bg-stone-50 text-[10px] font-bold text-stone-500 uppercase tracking-wider border-b border-stone-200">
+                      <tr className="bg-surface-sunken text-[10px] font-bold text-text-secondary uppercase tracking-wider border-b border-surface-border">
                         <th className="py-3 px-4">Calon Pengantin (Profil)</th>
                         <th className="py-3 px-4">Kontak / Tanggal Terdaftar</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-stone-100">
+                    <tbody className="divide-y divide-surface-border">
                       {filteredUsers.map((u) => {
                         const isCurrentlySelected = selectedUser?.uid === u.uid;
                         const createdDate = u.createdAt ? new Date(u.createdAt).toLocaleDateString("id-ID", {
@@ -225,24 +225,24 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                           <tr 
                             key={u.uid} 
                             onClick={() => setSelectedUser(u)}
-                            className={`hover:bg-stone-50 cursor-pointer transition-all duration-150 ${isCurrentlySelected ? "bg-purple-50/50 hover:bg-purple-50" : ""}`}
+                            className={`hover:bg-brand-50 cursor-pointer transition-all duration-150 ${isCurrentlySelected ? "bg-brand-50/50 hover:bg-brand-50" : ""}`}
                             id={`admin-user-row-${u.uid}`}
                           >
                             <td className="py-3.5 px-4">
-                              <div className="font-semibold text-stone-950 text-xs">
+                              <div className="font-semibold text-text-primary text-xs">
                                 {u.fullName || "Pria Baru"} & {u.partnerName || "Wanita Baru"}
                               </div>
-                              <div className="text-[10px] text-stone-400 mt-0.5 flex items-center gap-1 font-mono hover:underline">
+                              <div className="text-[10px] text-text-tertiary mt-0.5 flex items-center gap-1 font-mono hover:underline">
                                 <Mail size={10} className="text-stone-300" />
                                 {u.email}
                               </div>
                             </td>
-                            <td className="py-3.5 px-4 font-mono text-stone-500 text-[11px]">
+                            <td className="py-3.5 px-4 font-mono text-text-secondary text-[11px]">
                               <div className="flex items-center gap-1">
                                 <Calendar size={11} className="text-stone-300" />
                                 {createdDate}
                               </div>
-                              <div className="text-[9px] text-stone-400 mt-0.5">{u.uid.substring(0, 10)}...</div>
+                              <div className="text-[9px] text-text-tertiary mt-0.5">{u.uid.substring(0, 10)}...</div>
                             </td>
                           </tr>
                         );
@@ -256,18 +256,18 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
             {/* 4. Selected User Details Inspector */}
             <div className="col-span-1 lg:col-span-5">
               {selectedUser ? (
-                <div className="bg-white rounded-2xl border border-stone-200/85 shadow-md p-5 pb-6 animate-in fade-in slide-in-from-right-4 duration-200" id="profile-inspector-panel">
-                  <div className="flex items-center justify-between pb-4 mb-5 border-b border-stone-100">
+                <div className="bg-surface-raised rounded-2xl border border-surface-border/85 shadow-md p-5 pb-6 animate-in fade-in slide-in-from-right-4 duration-200" id="profile-inspector-panel">
+                  <div className="flex items-center justify-between pb-4 mb-5 border-b border-surface-border">
                     <div className="flex items-center gap-2">
-                      <User className="text-purple-600" size={18} />
+                      <User className="text-brand-600" size={18} />
                       <div>
-                        <h3 className="font-serif font-black text-sm text-stone-850">INSPEKTUR PROFIL</h3>
-                        <p className="text-[10px] text-stone-400 font-mono">Pengguna: {selectedUser.fullName || "Pengantin"}</p>
+                        <h3 className="font-serif font-black text-sm text-text-primary">INSPEKTUR PROFIL</h3>
+                        <p className="text-[10px] text-text-tertiary font-mono">Pengguna: {selectedUser.fullName || "Pengantin"}</p>
                       </div>
                     </div>
                     <button 
                       onClick={() => setSelectedUser(null)}
-                      className="text-stone-400 hover:text-stone-600 text-xs font-bold transition-colors p-1"
+                      className="text-text-tertiary hover:text-text-secondary text-xs font-bold transition-colors p-1"
                       title="Selesai Tinjau"
                     >
                       Tutup
@@ -275,18 +275,18 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                   </div>
 
                   {/* Summary Profile of bride and groom */}
-                  <div className="p-5 bg-stone-50 rounded-xl border border-stone-200/60 font-mono text-[11px] space-y-3.5 text-stone-650 text-left">
+                  <div className="p-5 bg-surface-sunken rounded-xl border border-surface-border/60 font-mono text-[11px] space-y-3.5 text-text-secondary text-left">
                     <div>
-                      <span className="text-stone-450 block text-[9px] uppercase font-bold tracking-wider">Calon Pengantin Pria</span>
-                      <span className="font-semibold text-stone-800 text-xs">{selectedUser.fullName || "-"}</span>
+                      <span className="text-text-tertiary block text-[9px] uppercase font-bold tracking-wider">Calon Pengantin Pria</span>
+                      <span className="font-semibold text-text-primary text-xs">{selectedUser.fullName || "-"}</span>
                     </div>
                     <div>
-                      <span className="text-stone-450 block text-[9px] uppercase font-bold tracking-wider">Calon Pengantin Wanita</span>
-                      <span className="font-semibold text-stone-800 text-xs">{selectedUser.partnerName || "-"}</span>
+                      <span className="text-text-tertiary block text-[9px] uppercase font-bold tracking-wider">Calon Pengantin Wanita</span>
+                      <span className="font-semibold text-text-primary text-xs">{selectedUser.partnerName || "-"}</span>
                     </div>
                     <div>
-                      <span className="text-stone-450 block text-[9px] uppercase font-bold tracking-wider">Rencana Tanggal Akad</span>
-                      <span className="font-semibold text-stone-850 text-xs">
+                      <span className="text-text-tertiary block text-[9px] uppercase font-bold tracking-wider">Rencana Tanggal Akad</span>
+                      <span className="font-semibold text-text-primary text-xs">
                         {selectedUser.weddingDate ? new Date(selectedUser.weddingDate).toLocaleDateString("id-ID", {
                           weekday: 'long',
                           year: 'numeric',
@@ -296,21 +296,21 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                       </span>
                     </div>
                     <div>
-                      <span className="text-stone-450 block text-[9px] uppercase font-bold tracking-wider">Target Alokasi Anggaran</span>
-                      <span className="font-semibold text-stone-850 text-xs">
+                      <span className="text-text-tertiary block text-[9px] uppercase font-bold tracking-wider">Target Alokasi Anggaran</span>
+                      <span className="font-semibold text-text-primary text-xs">
                         Rp {(selectedUser.totalBudget || 0).toLocaleString("id-ID")}
                       </span>
                     </div>
                     <div>
-                      <span className="text-stone-450 block text-[9px] uppercase font-bold tracking-wider">Surel / Alamat Email</span>
-                      <span className="font-semibold text-stone-850 text-xs">{selectedUser.email}</span>
+                      <span className="text-text-tertiary block text-[9px] uppercase font-bold tracking-wider">Surel / Alamat Email</span>
+                      <span className="font-semibold text-text-primary text-xs">{selectedUser.email}</span>
                     </div>
                     <div>
-                      <span className="text-stone-450 block text-[9px] uppercase font-bold tracking-wider">User ID</span>
-                      <span className="text-[10px] text-stone-500 font-mono break-all">{selectedUser.uid}</span>
+                      <span className="text-text-tertiary block text-[9px] uppercase font-bold tracking-wider">User ID</span>
+                      <span className="text-[10px] text-text-secondary font-mono break-all">{selectedUser.uid}</span>
                     </div>
                     <div>
-                      <span className="text-stone-450 block text-[9px] uppercase font-bold tracking-wider">Status Pembayaran / Akun</span>
+                      <span className="text-text-tertiary block text-[9px] uppercase font-bold tracking-wider">Status Pembayaran / Akun</span>
                       <span className={`inline-block mt-1 text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full border ${
                         selectedUser.approvalStatus === "approved" 
                           ? "bg-emerald-50 text-emerald-800 border-emerald-200" 
@@ -354,11 +354,11 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                   </div>
                 </div>
               ) : (
-                <div className="border border-dashed border-stone-200 rounded-2xl py-16 px-6 text-center bg-stone-50/30">
-                  <div className="w-12 h-12 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center mx-auto mb-4 text-stone-400">
+                <div className="border border-dashed border-surface-border rounded-2xl py-16 px-6 text-center bg-surface-sunken/30">
+                  <div className="w-12 h-12 rounded-full bg-stone-100 border border-surface-border flex items-center justify-center mx-auto mb-4 text-text-tertiary">
                     <User size={20} />
                   </div>
-                  <h4 className="text-stone-850 text-xs font-bold uppercase tracking-wider">Silakan Pilih Pengguna</h4>
+                  <h4 className="text-text-primary text-xs font-bold uppercase tracking-wider">Silakan Pilih Pengguna</h4>
                   <p className="text-[11px] text-stone-550 mt-1 max-w-xs mx-auto">
                     Klik nama pengguna di tabel sebelah kiri untuk meninjau informasi rincian rencana akad pernikahan mereka secara lengkap.
                   </p>

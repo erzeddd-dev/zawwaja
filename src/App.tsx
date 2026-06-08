@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Sidebar from "./components/Sidebar";
 import Onboarding from "./components/Onboarding";
 import BudgetSummary from "./components/BudgetSummary";
@@ -50,7 +50,13 @@ export default function App() {
   const [user, setUser] = useState<any | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [authReady, setAuthReady] = useState(false);
-  const [currentTab, setCurrentTab] = useState<string>("dashboard");
+  const [currentTab, setCurrentTab] = useState<string>(() => {
+    return localStorage.getItem("zawwaja_current_tab") || "dashboard";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("zawwaja_current_tab", currentTab);
+  }, [currentTab]);
 
   // Core Document Database Collections
   const [checklistItems, setChecklistItems] = useState<WeddingChecklistItem[]>(defaultChecklistItems);
@@ -164,22 +170,36 @@ export default function App() {
   };
 
   // --- 1. Operations: Preparation Checklist ---
-  const handleSaveChecklistItem = async (item: WeddingChecklistItem) => {
+  const handleSaveChecklistItem = useCallback(async (item: WeddingChecklistItem) => {
     if (!profile?.uid) return;
-    await saveChecklistItem(profile.uid, item);
-    // Refresh local
-    const data = await getChecklistItems(profile.uid);
-    setChecklistItems(data);
-  };
+    
+    // Optimistic Update
+    setChecklistItems(prev => {
+      const exists = prev.find(i => i.id === item.id);
+      if (exists) {
+        return prev.map(i => i.id === item.id ? item : i);
+      } else {
+        return [...prev, item];
+      }
+    });
 
-  const handleDeleteChecklistItem = async (id: string) => {
+    try {
+      await saveChecklistItem(profile.uid, item);
+    } catch (err) {
+      console.error(err);
+      const data = await getChecklistItems(profile.uid);
+      setChecklistItems(data);
+    }
+  }, [profile?.uid]);
+
+  const handleDeleteChecklistItem = useCallback(async (id: string) => {
     if (!profile?.uid) return;
     await deleteChecklistItem(profile.uid, id);
     const data = await getChecklistItems(profile.uid);
     setChecklistItems(data);
-  };
+  }, [profile?.uid]);
 
-  const handleClearChecklist = async () => {
+  const handleClearChecklist = useCallback(async () => {
     if (!profile?.uid) return;
     if (window.confirm("Bismillah, yakin ingin mengosongkan seluruh daftar persiapan nikah Anda?")) {
       setIsUpdatingSettings(true);
@@ -192,9 +212,9 @@ export default function App() {
         setIsUpdatingSettings(false);
       }
     }
-  };
+  }, [profile?.uid]);
 
-  const handleResetChecklistDefaults = async () => {
+  const handleResetChecklistDefaults = useCallback(async () => {
     // Immediately reset UI state to default items to be reactive
     setChecklistItems(defaultChecklistItems);
     
@@ -209,7 +229,7 @@ export default function App() {
     } finally {
       setIsUpdatingSettings(false);
     }
-  };
+  }, [profile?.uid]);
 
 
   // --- 2. Operations: Vendor Management ---
