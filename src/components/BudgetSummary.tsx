@@ -334,17 +334,14 @@ export default function BudgetSummary({
           </div>
 
           {/* Floating Countdown Pill — mobile only */}
-          <div className="md:hidden glass-cylinder px-4 py-2.5 flex flex-col items-center justify-center text-center shrink-0 animate-countdown" style={{ minWidth: '84px' }}>
-            <span className="text-[7px] font-bold uppercase tracking-[0.15em] text-text-tertiary">Countdown</span>
-            <div className="flex items-baseline gap-0.5 mt-0.5">
-              <span className="text-2xl font-display font-extrabold text-brand-600 leading-none tracking-tight" style={{ textShadow: '0 1px 8px rgba(42, 92, 77, 0.15)' }}>
+          <div className="md:hidden glass-panel px-3 py-1.5 flex flex-col items-center justify-center text-center shrink-0 animate-countdown" style={{ minWidth: '70px', borderRadius: '12px' }}>
+            <span className="text-[6px] font-bold uppercase tracking-wider text-text-tertiary">Menuju Akad</span>
+            <div className="flex items-baseline gap-0.5">
+              <span className="text-xl font-display font-extrabold text-brand-600 leading-none tracking-tight">
                 {daysRemaining}
               </span>
-              <span className="text-[9px] font-bold text-brand-400 uppercase">hr</span>
+              <span className="text-[8px] font-bold text-brand-400 uppercase">hr</span>
             </div>
-            <span className="text-[7px] text-text-tertiary leading-tight mt-0.5">
-              {profile.weddingDate ? new Date(profile.weddingDate).toLocaleDateString("id-ID", { day: 'numeric', month: 'short' }) : "—"}
-            </span>
           </div>
         </div>
       </div>
@@ -404,18 +401,13 @@ export default function BudgetSummary({
                         position: 'relative',
                         cursor: 'pointer',
                         transition: 'all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                        // DONE state: filled green
-                        ...(isDone ? {
-                          background: 'linear-gradient(145deg, #2A5C4D 0%, #367663 100%)',
-                          border: '2px solid rgba(42,92,77,0.6)',
-                          boxShadow: '0 4px 14px rgba(42,92,77,0.3), inset 0 1px 2px rgba(255,255,255,0.15)'
-                        } : isActive ? {
+                        ...(isActive ? {
                           // ACTIVE state: bright glowing brand fill
                           background: 'linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(210,240,230,0.85) 100%)',
                           border: '2.5px solid rgba(42,92,77,0.7)',
                           boxShadow: '0 0 0 4px rgba(42,92,77,0.15), 0 0 20px rgba(42,92,77,0.4), 0 4px 16px rgba(0,0,0,0.08), inset 0 2px 3px rgba(255,255,255,0.9)'
                         } : {
-                          // PENDING state: muted grey glass
+                          // NORMAL state: muted grey glass for both done and pending
                           background: 'linear-gradient(145deg, rgba(240,240,240,0.7) 0%, rgba(220,225,223,0.6) 100%)',
                           border: '1.5px solid rgba(200,210,207,0.6)',
                           boxShadow: '0 2px 8px rgba(0,0,0,0.04), inset 0 1px 2px rgba(255,255,255,0.5)'
@@ -423,12 +415,7 @@ export default function BudgetSummary({
                       }}
                       id={`timeline-node-mobile-${phase.id}`}
                     >
-                      {/* Checkmark for done */}
-                      {isDone ? (
-                        <Check size={20} className="text-white stroke-[2.5px]" />
-                      ) : (
-                        <Icon size={20} className={isActive ? 'text-brand-600' : 'text-text-disabled'} />
-                      )}
+                      <Icon size={20} className={isActive ? 'text-brand-600' : 'text-text-disabled'} />
                     </button>
 
                     {/* Progress ring for active node */}
@@ -442,7 +429,7 @@ export default function BudgetSummary({
 
                     {/* Label */}
                     <p className={`text-[9px] font-bold text-center mt-1 leading-tight ${
-                      isActive ? 'text-brand-600' : isDone ? 'text-brand-500' : 'text-text-disabled'
+                      isActive ? 'text-brand-600' : 'text-text-disabled'
                     }`} style={{ maxWidth: '66px' }}>
                       {phase.title.split(' & ')[0]}
                     </p>
@@ -513,18 +500,13 @@ export default function BudgetSummary({
                     onMouseLeave={() => setHoveredNode(null)}
                     className={`glass-node w-16 h-16 flex items-center justify-center relative z-10 ${
                       isActive ? 'glass-node-active' : ''
-                    } ${isDone ? 'glass-node-done' : ''}`}
+                    }`}
                     title={`${phase.title} — Klik untuk navigasi`}
                     id={`timeline-node-${phase.id}`}
                   >
                     <Icon size={24} className={`${
-                      isActive ? 'text-brand-600' : isDone ? 'text-brand-500' : 'text-text-tertiary'
+                      isActive ? 'text-brand-600' : 'text-text-tertiary'
                     }`} />
-                    {isDone && (
-                      <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-brand-600 flex items-center justify-center shadow-md border-2 border-white">
-                        <Check size={10} className="text-white stroke-[3px]" />
-                      </div>
-                    )}
                   </button>
 
                   {isActive && (

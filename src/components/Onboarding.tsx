@@ -249,17 +249,17 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
 
   if (step === "auth") {
     return (
-      <div className="min-h-screen bg-[#FAF9F6] bg-gradient-to-br from-white via-[#FAF9F6] to-[#e3c8ba]/20 text-[#333333] flex flex-col lg:flex-row font-sans relative overflow-hidden" id="onboarding-auth">
+      <div className="min-h-screen antigravity-bg text-text-primary flex flex-col lg:flex-row font-sans relative overflow-hidden" id="onboarding-auth">
         {/* Decorative background glows across the whole canvas */}
-        <div className="absolute top-1/4 right-1/4 w-96 h-96 rounded-full bg-[#c9937d]/10 blur-3xl -z-10 pointer-events-none"></div>
-        <div className="absolute bottom-10 left-1/4 w-80 h-80 rounded-full bg-[#af7661]/5 blur-3xl -z-10 pointer-events-none animate-pulse"></div>
+        <div className="absolute top-1/4 right-1/4 w-96 h-96 rounded-full bg-brand-500/10 blur-3xl -z-10 pointer-events-none"></div>
+        <div className="absolute bottom-10 left-1/4 w-80 h-80 rounded-full bg-brand-600/10 blur-3xl -z-10 pointer-events-none animate-pulse"></div>
 
         {/* Left Column: Form & Branding */}
         <div className="w-full lg:w-1/2 flex flex-col justify-between min-h-screen p-6 lg:p-12 bg-transparent relative z-10">
           <div className="hidden lg:block"></div> {/* Spacer to push form to center vertically */}
 
           {/* Form Content Container */}
-          <div className="max-w-md w-full mx-auto my-auto py-6">
+          <div className="max-w-md w-full mx-auto my-auto py-6 glass-panel px-6 md:px-8 mt-12 md:mt-auto">
             
             {/* Majestic Centered Brand Emblem (No Text Clutter) */}
             <div className="text-center mb-8 flex justify-center">
@@ -273,11 +273,11 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
             {isForgotPasswordMode ? (
               <div>
                 <div className="text-center mb-6 flex flex-col items-center">
-                  <Lock className="text-[#af7661] mb-2.5 fill-[#af7661]/10 animate-pulse" size={36} />
-                  <h2 className="text-2xl font-serif font-bold text-stone-900 leading-tight">
+                  <Lock className="text-brand-600 mb-2.5 fill-brand-600/10 animate-pulse" size={36} />
+                  <h2 className="text-2xl font-serif font-bold text-text-primary leading-tight">
                     Lupa Kata Sandi?
                   </h2>
-                  <p className="text-stone-500 text-xs mt-1.5 font-sans">
+                  <p className="text-text-secondary text-xs mt-1.5 font-sans">
                     Masukkan email Anda untuk menerima tautan atur ulang kata sandi.
                   </p>
                 </div>
@@ -296,7 +296,7 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
                         <CheckCircle2 size={18} className="text-emerald-600" />
                         <span>Email Terkirim!</span>
                       </div>
-                      <p className="text-stone-600 leading-relaxed font-sans">
+                      <p className="text-text-secondary leading-relaxed font-sans">
                         {resetSuccessMessage}
                       </p>
                     </div>
@@ -307,7 +307,7 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
                         setResetSuccessMessage("");
                         setErrorMess("");
                       }}
-                      className="w-full py-3 bg-[#af7661] text-white font-bold rounded-xl shadow-md hover:bg-[#915c4a] transition-all duration-200 flex items-center justify-center cursor-pointer font-sans"
+                      className="w-full py-3 bg-brand-600 text-white font-bold rounded-xl shadow-md hover:bg-brand-500 transition-all duration-200 flex items-center justify-center cursor-pointer font-sans"
                     >
                       Kembali ke Masuk
                     </button>
@@ -315,7 +315,7 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
                 ) : (
                   <form onSubmit={handleForgotPasswordSubmit} className="space-y-4">
                     <div>
-                      <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-500 mb-1 font-sans">
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-text-secondary mb-1 font-sans">
                         Surel / Alamat Email
                       </label>
                       <input
@@ -324,14 +324,14 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
                         placeholder="nama.anda@gmail.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-4 py-2.5 rounded-xl border border-stone-200 focus:outline-none focus:ring-1 focus:ring-[#af7661] font-sans text-stone-800"
+                        className="w-full px-4 py-2.5 rounded-xl border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600 font-sans text-text-primary"
                       />
                     </div>
 
                     <button
                       type="submit"
                       disabled={isLoading}
-                      className="w-full py-3 bg-gradient-to-r from-[#af7661] to-[#c9937d] text-white font-bold rounded-xl shadow-md hover:opacity-95 transition-all duration-200 flex items-center justify-center cursor-pointer font-sans"
+                      className="w-full py-3 bg-gradient-to-r from-brand-600 to-brand-500 text-white font-bold rounded-xl shadow-md hover:opacity-95 transition-all duration-200 flex items-center justify-center cursor-pointer font-sans"
                     >
                       {isLoading ? (
                         <span className="flex items-center gap-2">
@@ -353,7 +353,7 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
                           setIsForgotPasswordMode(false);
                           setErrorMess("");
                         }}
-                        className="text-[#af7661] hover:underline text-xs font-semibold font-sans cursor-pointer bg-transparent border-0 p-0"
+                        className="text-brand-600 hover:underline text-xs font-semibold font-sans cursor-pointer bg-transparent border-0 p-0"
                       >
                         Kembali ke Masuk
                       </button>
@@ -364,10 +364,10 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
             ) : (
               <div>
                 <div className="text-center mb-6">
-                  <h2 className="text-2xl font-serif font-bold text-stone-900 tracking-tight leading-tight">
+                  <h2 className="text-2xl font-serif font-bold text-text-primary tracking-tight leading-tight">
                     {isSignUpMode ? "Mulai Pernikahan Barakah" : "Masuk ke Zawwaja"}
                   </h2>
-                  <p className="text-stone-500 text-xs mt-1 font-sans">
+                  <p className="text-text-secondary text-xs mt-1 font-sans">
                     {isSignUpMode 
                       ? "Susun rencana terbaik berlandaskan nilai syari'at" 
                       : "Lanjutkan perencanaan sakinah planner Anda"
@@ -376,7 +376,7 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
                 </div>
 
                 {/* Tab Selector */}
-                <div className="flex border border-stone-200/80 bg-stone-50 rounded-lg p-1 mb-6">
+                <div className="flex bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-1 mb-6">
                   <button
                     type="button"
                     onClick={() => {
@@ -385,8 +385,8 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
                     }}
                     className={`flex-1 text-center py-2 text-xs font-bold rounded-md transition-all cursor-pointer ${
                       !isSignUpMode
-                        ? "bg-white text-[#af7661] shadow-sm"
-                        : "text-stone-500 hover:text-stone-800"
+                        ? "bg-white/30 text-brand-700 shadow-sm"
+                        : "text-text-secondary hover:text-text-primary"
                     }`}
                   >
                     Masuk (Sign In)
@@ -399,8 +399,8 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
                     }}
                     className={`flex-1 text-center py-2 text-xs font-bold rounded-md transition-all cursor-pointer ${
                       isSignUpMode
-                        ? "bg-white text-[#af7661] shadow-sm"
-                        : "text-stone-500 hover:text-stone-800"
+                        ? "bg-white/30 text-brand-700 shadow-sm"
+                        : "text-text-secondary hover:text-text-primary"
                     }`}
                   >
                     Daftar (Sign Up)
@@ -416,7 +416,7 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
 
                 <form onSubmit={handleAuthSubmit} className="space-y-4">
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-500 mb-1 font-sans">
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-text-secondary mb-1 font-sans">
                       Surel / Alamat Email
                     </label>
                     <input
@@ -425,12 +425,12 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
                       placeholder="nama.anda@gmail.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full px-4 py-2.5 rounded-xl border border-stone-200 focus:outline-none focus:ring-1 focus:ring-[#af7661] font-sans text-stone-800"
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/40 border border-white/50 focus:outline-none focus:ring-1 focus:ring-brand-600 font-sans text-text-primary placeholder-stone-500 backdrop-blur-sm"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-500 mb-1 w-full flex justify-between font-sans">
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-text-secondary mb-1 w-full flex justify-between font-sans">
                       <span>{isSignUpMode ? "Kata Sandi Baru" : "Kata Sandi"}</span>
                       {!isSignUpMode && (
                         <button
@@ -440,7 +440,7 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
                             setErrorMess("");
                             setResetSuccessMessage("");
                           }}
-                          className="text-[#af7661] hover:underline normal-case font-semibold cursor-pointer bg-transparent border-0 p-0"
+                          className="text-brand-600 hover:underline normal-case font-semibold cursor-pointer bg-transparent border-0 p-0"
                         >
                           Lupa Kata Sandi?
                         </button>
@@ -452,7 +452,7 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
                       placeholder="••••••••"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full px-4 py-2.5 rounded-xl border border-stone-200 focus:outline-none focus:ring-1 focus:ring-[#af7661] text-stone-850 font-sans"
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/40 border border-white/50 focus:outline-none focus:ring-1 focus:ring-brand-600 text-text-primary font-sans placeholder-stone-500 backdrop-blur-sm"
                     />
                   </div>
 
@@ -460,7 +460,7 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
                     <button
                       type="submit"
                       disabled={isLoading}
-                      className="w-full py-3 bg-gradient-to-r from-[#af7661] to-[#c9937d] text-white font-bold rounded-xl shadow-md hover:opacity-95 transition-all duration-200 flex items-center justify-center cursor-pointer font-sans"
+                      className="w-full py-3 bg-gradient-to-r from-brand-600 to-brand-500 text-white font-bold rounded-xl shadow-md hover:opacity-95 transition-all duration-200 flex items-center justify-center cursor-pointer font-sans"
                     >
                       {isLoading ? (
                         <span className="flex items-center gap-2">
@@ -479,7 +479,7 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
                       type="button"
                       onClick={handleGoogleSignIn}
                       disabled={isLoading}
-                      className="w-full py-3 border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold rounded-lg text-xs flex items-center justify-center shadow-xs transition-colors cursor-pointer"
+                      className="w-full py-3 border border-white/30 bg-white/20 hover:bg-white/30 text-text-secondary font-bold rounded-lg text-xs flex items-center justify-center shadow-sm transition-colors cursor-pointer backdrop-blur-sm"
                     >
                       <svg className="w-4 h-4 mr-2.5 shrink-0" viewBox="0 0 24 24" fill="none">
                         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -493,8 +493,8 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
                 </form>
 
                 {/* Footer Switcher Mode */}
-                <div className="text-center mt-6 pt-3 border-t border-stone-100">
-                  <p className="text-xs text-stone-500 font-sans">
+                <div className="text-center mt-6 pt-3 border-t border-surface-border">
+                  <p className="text-xs text-text-secondary font-sans">
                     {isSignUpMode ? "Sudah punya akun?" : "Belum punya akun?"}{" "}
                     <button
                       type="button"
@@ -502,7 +502,7 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
                         setIsSignUpMode(!isSignUpMode);
                         setErrorMess("");
                       }}
-                      className="text-[#af7661] hover:text-[#915c4a] hover:underline font-bold bg-transparent border-0 p-0 cursor-pointer"
+                      className="text-brand-600 hover:text-[#915c4a] hover:underline font-bold bg-transparent border-0 p-0 cursor-pointer"
                     >
                       {isSignUpMode ? "Masuk ke Akun" : "Daftar Akun Baru"}
                     </button>
@@ -512,7 +512,7 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
             )}
           </div>
 
-          <div className="hidden lg:block text-center text-[10px] text-stone-400 font-sans">
+          <div className="hidden lg:block text-center text-[10px] text-text-tertiary font-sans">
             <p>Copyright © 2026 Zawwaja.id • All rights reserved by Phronesis Works.</p>
           </div>
         </div>
@@ -520,58 +520,58 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
         {/* Right Column: Promotional Value Cards & Soft Vertical Gradient */}
         <div className="w-full lg:w-1/2 min-h-[400px] lg:min-h-screen bg-transparent flex flex-col justify-center px-8 py-12 lg:px-16 relative z-10 lg:pl-8">
           
-          <div className="absolute top-1/3 right-10 w-72 h-72 rounded-full bg-[#c9937d]/15 blur-3xl -z-10 pointer-events-none animate-pulse"></div>
+          <div className="absolute top-1/3 right-10 w-72 h-72 rounded-full bg-brand-500/15 blur-3xl -z-10 pointer-events-none animate-pulse"></div>
 
           <div className="max-w-md mx-auto mb-8 w-full">
-            <h3 className="text-2xl font-serif font-bold text-[#572309] leading-tight">
+            <h3 className="text-2xl font-serif font-bold text-text-primary leading-tight">
               Planner Pernikahan Syar'i Terpadu
             </h3>
-            <p className="text-stone-600 text-xs mt-2 font-sans leading-relaxed">
+            <p className="text-text-secondary text-xs mt-2 font-sans leading-relaxed">
               Zawwaja membantu pasangan Muslim merencanakan tahapan pernikahan akad & walimah yang barakah, rapi, dan sejalan dengan syariat Islam.
             </p>
           </div>
 
           <div className="max-w-md mx-auto space-y-4 w-full">
             {/* Card 1 */}
-            <div className="group bg-white/95 p-4 rounded-xl border border-[#e3c8ba]/30 shadow-md shadow-stone-100/55 hover:shadow-lg hover:border-[#c9937d]/40 transition-all duration-300 flex gap-3.5">
-              <div className="w-9 h-9 rounded-lg bg-white shadow-xs border border-[#e3c8ba]/35 flex items-center justify-center text-[#af7661] shrink-0">
+            <div className="group bg-surface-raised/95 p-4 rounded-xl border border-brand-200/30 shadow-md shadow-stone-100/55 hover:shadow-lg hover:border-brand-500/40 transition-all duration-300 flex gap-3.5">
+              <div className="w-9 h-9 rounded-lg bg-surface-raised shadow-xs border border-brand-200/35 flex items-center justify-center text-brand-600 shrink-0">
                 <CheckCircle2 size={18} className="stroke-[2.5]" />
               </div>
               <div>
-                <h4 className="text-xs font-bold text-[#572309] font-sans">
+                <h4 className="text-xs font-bold text-text-primary font-sans">
                   Rencana Akad Syar'i
                 </h4>
-                <p className="text-[10px] text-stone-500 leading-relaxed font-sans mt-0.5">
+                <p className="text-[10px] text-text-secondary leading-relaxed font-sans mt-0.5">
                   Kelola rincian administrasi KUA & logistik walimah sesuai syariat Islam.
                 </p>
               </div>
             </div>
 
             {/* Card 2 */}
-            <div className="group bg-white/95 p-4 rounded-xl border border-[#e3c8ba]/30 shadow-md shadow-stone-100/55 hover:shadow-lg hover:border-[#c9937d]/40 transition-all duration-300 flex gap-3.5">
-              <div className="w-9 h-9 rounded-lg bg-white shadow-xs border border-[#e3c8ba]/35 flex items-center justify-center text-[#af7661] shrink-0">
+            <div className="group bg-surface-raised/95 p-4 rounded-xl border border-brand-200/30 shadow-md shadow-stone-100/55 hover:shadow-lg hover:border-brand-500/40 transition-all duration-300 flex gap-3.5">
+              <div className="w-9 h-9 rounded-lg bg-surface-raised shadow-xs border border-brand-200/35 flex items-center justify-center text-brand-600 shrink-0">
                 <Coins size={18} className="stroke-[2.5]" />
               </div>
               <div>
-                <h4 className="text-xs font-bold text-[#572309] font-sans">
+                <h4 className="text-xs font-bold text-text-primary font-sans">
                   Anggaran Sakinah
                 </h4>
-                <p className="text-[10px] text-stone-500 leading-relaxed font-sans mt-0.5">
+                <p className="text-[10px] text-text-secondary leading-relaxed font-sans mt-0.5">
                   Pantau alokasi budget dan pengeluaran secara transparan tanpa israf (boros).
                 </p>
               </div>
             </div>
 
             {/* Card 3 */}
-            <div className="group bg-white/95 p-4 rounded-xl border border-[#e3c8ba]/30 shadow-md shadow-stone-100/55 hover:shadow-lg hover:border-[#c9937d]/40 transition-all duration-300 flex gap-3.5">
-              <div className="w-9 h-9 rounded-lg bg-white shadow-xs border border-[#e3c8ba]/35 flex items-center justify-center text-[#af7661] shrink-0">
+            <div className="group bg-surface-raised/95 p-4 rounded-xl border border-brand-200/30 shadow-md shadow-stone-100/55 hover:shadow-lg hover:border-brand-500/40 transition-all duration-300 flex gap-3.5">
+              <div className="w-9 h-9 rounded-lg bg-surface-raised shadow-xs border border-brand-200/35 flex items-center justify-center text-brand-600 shrink-0">
                 <Compass size={18} className="stroke-[2.5]" />
               </div>
               <div>
-                <h4 className="text-xs font-bold text-[#572309] font-sans">
+                <h4 className="text-xs font-bold text-text-primary font-sans">
                   Direktori Vendor Syar'i
                 </h4>
-                <p className="text-[10px] text-stone-500 leading-relaxed font-sans mt-0.5">
+                <p className="text-[10px] text-text-secondary leading-relaxed font-sans mt-0.5">
                   Temukan rekanan katering, MUA, & dekorasi berkonsep syar'i terpisah dengan mudah.
                 </p>
               </div>
@@ -584,24 +584,27 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
 
   // Payment & Pending state uses centered card layout
   return (
-    <div className="min-h-screen bg-[#FAF9F6] text-[#333333] flex flex-col justify-between" id="onboarding-root">
-      <main className="flex-1 flex items-center justify-center px-4 py-12">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl shadow-[#af7661]/4 border border-stone-200/50 overflow-hidden">
+    <div className="min-h-screen antigravity-bg text-text-primary flex flex-col justify-between relative overflow-hidden" id="onboarding-root">
+      {/* Background decoration */}
+      <div className="absolute top-1/4 right-1/4 w-96 h-96 rounded-full bg-brand-500/10 blur-3xl -z-10 pointer-events-none"></div>
+      
+      <main className="flex-1 flex items-center justify-center px-4 py-12 relative z-10">
+        <div className="w-full max-w-md glass-panel overflow-hidden">
           
           {/* STEP 3: QRIS PAYMENT MODULE */}
           {step === "payment" && (
             <div className="p-8">
               <div className="text-center mb-6">
-                <Coins className="mx-auto text-[#af7661] mb-2" size={36} />
-                <h2 className="text-xl font-serif font-bold text-stone-950">Aktivasi Zawwaja</h2>
-                <p className="text-stone-500 text-sm mt-1">Satu kali investasi pendaftaran barakah selamanya</p>
+                <Coins className="mx-auto text-brand-600 mb-2" size={36} />
+                <h2 className="text-xl font-serif font-bold text-text-primary">Aktivasi Zawwaja</h2>
+                <p className="text-text-secondary text-sm mt-1">Satu kali investasi pendaftaran barakah selamanya</p>
               </div>
 
               {/* Price Tag box */}
-              <div className="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-100 text-center">
-                <p className="text-xs uppercase font-semibold text-emerald-800 tracking-wider">Pendaftaran Pernikahan Premium</p>
-                <h3 className="text-3xl font-bold font-mono text-emerald-950 mt-1">Rp 25.000</h3>
-                <p className="text-[11px] text-emerald-700 mt-1">Tanpa biaya bulanan tersembunyi</p>
+              <div className="mb-6 p-4 rounded-xl bg-white/40 border border-white/50 text-center backdrop-blur-sm">
+                <p className="text-xs uppercase font-semibold text-brand-800 tracking-wider">Pendaftaran Pernikahan Premium</p>
+                <h3 className="text-3xl font-bold font-mono text-brand-950 mt-1">Rp 25.000</h3>
+                <p className="text-[11px] text-brand-700 mt-1">Tanpa biaya bulanan tersembunyi</p>
               </div>
 
               {errorMess && (
@@ -617,7 +620,7 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
               </div>
 
               {/* Automated Grace Period info */}
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 space-y-2 text-[#78350f]">
+              <div className="bg-white/40 border border-white/50 rounded-xl p-4 mb-6 space-y-2 text-stone-700 backdrop-blur-sm">
                 <div className="flex gap-2.5">
                   <span className="text-base">💡</span>
                   <div className="text-xs leading-relaxed">
@@ -632,7 +635,7 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
                 <button
                   onClick={handleConfirmPaymentAndWhatsApp}
                   disabled={isLoading}
-                  className="w-full py-3 bg-[#af7661] hover:bg-[#915c4a] text-white font-bold rounded-lg shadow flex items-center justify-center transition-all cursor-pointer font-sans"
+                  className="w-full py-3 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-lg shadow flex items-center justify-center transition-all cursor-pointer font-sans"
                 >
                   {isLoading ? (
                     <span className="flex items-center gap-2">
@@ -649,7 +652,7 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
 
                 <button
                   onClick={onLogout}
-                  className="w-full py-2 border border-stone-200 text-stone-500 hover:text-stone-800 transition-colors text-xs font-semibold rounded-lg flex items-center justify-center cursor-pointer"
+                  className="w-full py-2 border border-surface-border text-text-secondary hover:text-text-primary transition-colors text-xs font-semibold rounded-lg flex items-center justify-center cursor-pointer"
                 >
                   Batal / Keluar
                 </button>
@@ -664,12 +667,12 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
                 <CheckCircle2 className="text-emerald-600" size={32} />
               </div>
 
-              <h2 className="text-xl font-serif font-bold text-stone-950">Pendaftaran Berhasil</h2>
-              <p className="text-[#af7661] text-sm font-semibold mt-2">Terima kasih, Anda sudah terdaftar.</p>
-              <p className="text-stone-500 text-xs mt-1">Mohon ditunggu untuk aktivasi akun Anda oleh Admin.</p>
+              <h2 className="text-xl font-serif font-bold text-text-primary">Pendaftaran Berhasil</h2>
+              <p className="text-brand-600 text-sm font-semibold mt-2">Terima kasih, Anda sudah terdaftar.</p>
+              <p className="text-text-secondary text-xs mt-1">Mohon ditunggu untuk aktivasi akun Anda oleh Admin.</p>
 
               {/* Informative Step instructions */}
-              <div className="my-6 p-4 rounded-xl bg-stone-50 border border-stone-200 text-left space-y-3 text-xs text-stone-600">
+              <div className="my-6 p-4 rounded-xl bg-surface-sunken border border-surface-border text-left space-y-3 text-xs text-text-secondary">
                 <div className="flex gap-2">
                   <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center shrink-0">1</span>
                   <p>Data registrasi dan nomor akad Anda sudah tersimpan dengan aman.</p>
@@ -688,7 +691,7 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
               <div className="space-y-3">
                 <button
                   onClick={onLogout}
-                  className="w-full py-2 border border-stone-200 text-stone-500 hover:text-stone-700 transition-colors text-xs font-semibold rounded-lg cursor-pointer"
+                  className="w-full py-2 border border-surface-border text-text-secondary hover:text-text-secondary transition-colors text-xs font-semibold rounded-lg cursor-pointer"
                 >
                   Kembali ke Halaman Utama / Logout
                 </button>
@@ -700,9 +703,9 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
       </main>
 
       {/* Aesthetic Footer */}
-      <footer className="p-4 border-t border-stone-200 bg-white text-center text-xs text-stone-400">
+      <footer className="p-4 border-t border-white/20 bg-white/10 backdrop-blur-md text-center text-xs text-text-tertiary relative z-10">
         <p className="font-serif">Zawwaja • Mewujudkan Pernikahan Sakinah Sharia-Compliant</p>
-        <p className="text-[10px] mt-1 text-stone-400">Copyright © 2026. All rights reserved by Phronesis Works.</p>
+        <p className="text-[10px] mt-1 text-text-tertiary">Copyright © 2026. All rights reserved by Phronesis Works.</p>
       </footer>
     </div>
   );
