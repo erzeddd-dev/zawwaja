@@ -359,101 +359,88 @@ export default function BudgetSummary({
           </span>
         </div>
 
-        {/* Mobile: Horizontal Scroll Timeline — with overflow-visible rows for shadow */}
-        <div className="md:hidden">
-          {/* Scrollable row of nodes — padded so shadow doesn't clip */}
-          <div className="overflow-x-auto pb-3" style={{ paddingLeft: '16px', paddingRight: '16px' }}>
-            <div className="flex gap-3 min-w-max py-4 items-end">
-              {phases.map((phase, idx) => {
-                const Icon = phase.icon;
-                const isActive = phase.id === activePhaseId;
-                const isDone = phase.id < activePhaseId;
-                const isPending = !isActive && !isDone;
-                const progress = getPhaseProgress(phase.id);
-
-                return (
-                  <div key={phase.id} className="flex flex-col items-center" style={{ width: '68px' }}>
-                    {/* Connector line between nodes */}
-                    {idx > 0 && (
-                      <div style={{ position: 'absolute' }} />
-                    )}
-
-                    {/* Active badge — above the node */}
-                    {isActive && (
-                      <div className="mb-1.5 flex items-center gap-1 px-2 py-0.5 rounded-full animate-pulse"
-                        style={{ background: 'rgba(42,92,77,0.12)', border: '1px solid rgba(42,92,77,0.25)' }}>
-                        <span className="w-1.5 h-1.5 rounded-full bg-brand-600" />
-                        <span className="text-[7px] font-black text-brand-600 uppercase tracking-wider">Aktif</span>
-                      </div>
-                    )}
-                    {!isActive && <div className="mb-1.5 h-5" />}
-
-                    {/* Glass Node — distinct styles per state */}
-                    <button
-                      onClick={() => onNavigate(phase.navigateTo)}
-                      style={{
-                        width: '52px',
-                        height: '52px',
-                        borderRadius: '50%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        position: 'relative',
-                        cursor: 'pointer',
-                        transition: 'all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                        ...(isActive ? {
-                          // ACTIVE state: bright glowing brand fill
-                          background: 'linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(210,240,230,0.85) 100%)',
-                          border: '2.5px solid rgba(42,92,77,0.7)',
-                          boxShadow: '0 0 0 4px rgba(42,92,77,0.15), 0 0 20px rgba(42,92,77,0.4), 0 4px 16px rgba(0,0,0,0.08), inset 0 2px 3px rgba(255,255,255,0.9)'
-                        } : {
-                          // NORMAL state: muted grey glass for both done and pending
-                          background: 'linear-gradient(145deg, rgba(240,240,240,0.7) 0%, rgba(220,225,223,0.6) 100%)',
-                          border: '1.5px solid rgba(200,210,207,0.6)',
-                          boxShadow: '0 2px 8px rgba(0,0,0,0.04), inset 0 1px 2px rgba(255,255,255,0.5)'
-                        })
-                      }}
-                      id={`timeline-node-mobile-${phase.id}`}
-                    >
-                      <Icon size={20} className={isActive ? 'text-brand-600' : 'text-text-disabled'} />
-                    </button>
-
-                    {/* Progress ring for active node */}
-                    {isActive && (
-                      <div className="mt-1.5 flex items-center gap-0.5 justify-center">
-                        <ProgressRing percent={progress} size={20} strokeWidth={2} />
-                        <span className="text-[8px] font-bold text-brand-600">{progress}%</span>
-                      </div>
-                    )}
-                    {!isActive && <div className="mt-1.5 h-5" />}
-
-                    {/* Label */}
-                    <p className={`text-[9px] font-bold text-center mt-1 leading-tight ${
-                      isActive ? 'text-brand-600' : 'text-text-disabled'
-                    }`} style={{ maxWidth: '66px' }}>
-                      {phase.title.split(' & ')[0]}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
+        {/* Mobile: Vertical Timeline */}
+        <div className="md:hidden px-4 py-4 relative">
+          {/* Vertical Connector Line (Background) */}
+          <div className="absolute left-[42px] top-8 bottom-8 w-1 rounded-full" style={{ background: 'rgba(0,0,0,0.06)' }}>
+            <div
+              className="w-full rounded-full transition-all duration-700"
+              style={{
+                height: `${((activePhaseId - 1) / 5) * 100}%`,
+                background: 'linear-gradient(180deg, #2A5C4D, #539C85)'
+              }}
+            />
           </div>
 
-          {/* Mobile connector bar underneath */}
-          <div className="mx-4 mb-4">
-            <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(0,0,0,0.06)' }}>
-              <div
-                className="h-full rounded-full transition-all duration-700"
-                style={{
-                  width: `${((activePhaseId - 1) / 5) * 100}%`,
-                  background: 'linear-gradient(90deg, #2A5C4D, #539C85)'
-                }}
-              />
-            </div>
-            <div className="flex justify-between mt-1">
-              <span className="text-[8px] text-text-tertiary">Mulai</span>
-              <span className="text-[8px] text-text-tertiary">Hari-H</span>
-            </div>
+          <div className="flex flex-col gap-6 relative z-10">
+            {phases.map((phase, idx) => {
+              const Icon = phase.icon;
+              const isActive = phase.id === activePhaseId;
+              const progress = getPhaseProgress(phase.id);
+
+              return (
+                <div key={phase.id} className="flex items-center gap-4">
+                  {/* Glass Node */}
+                  <button
+                    onClick={() => onNavigate(phase.navigateTo)}
+                    style={{
+                      width: '52px',
+                      height: '52px',
+                      borderRadius: '50%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      position: 'relative',
+                      cursor: 'pointer',
+                      flexShrink: 0,
+                      transition: 'all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                      ...(isActive ? {
+                        // ACTIVE state: bright glowing brand fill
+                        background: 'linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(210,240,230,0.85) 100%)',
+                        border: '2.5px solid rgba(42,92,77,0.7)',
+                        boxShadow: '0 0 0 4px rgba(42,92,77,0.15), 0 0 20px rgba(42,92,77,0.4), 0 4px 16px rgba(0,0,0,0.08), inset 0 2px 3px rgba(255,255,255,0.9)'
+                      } : {
+                        // NORMAL state: muted grey glass
+                        background: 'linear-gradient(145deg, rgba(240,240,240,0.7) 0%, rgba(220,225,223,0.6) 100%)',
+                        border: '1.5px solid rgba(200,210,207,0.6)',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.04), inset 0 1px 2px rgba(255,255,255,0.5)'
+                      })
+                    }}
+                    id={`timeline-node-mobile-${phase.id}`}
+                  >
+                    <Icon size={20} className={isActive ? 'text-brand-600' : 'text-text-disabled'} />
+                  </button>
+
+                  {/* Info / Text area */}
+                  <div className="flex-1 min-w-0 py-1">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <p className={`text-[12px] font-bold leading-tight truncate ${
+                        isActive ? 'text-brand-600' : 'text-text-primary'
+                      }`}>
+                        {phase.title}
+                      </p>
+                      {isActive && (
+                        <span className="text-[7px] font-black text-brand-600 uppercase tracking-wider bg-brand-50 px-1.5 py-0.5 rounded-full border border-brand-100 shrink-0 animate-pulse">
+                          Aktif
+                        </span>
+                      )}
+                    </div>
+                    
+                    <p className="text-[10px] text-text-tertiary leading-tight line-clamp-1 mb-1">
+                      {phase.subtitle}
+                    </p>
+
+                    {/* Progress indicator specifically for active phase */}
+                    {isActive && (
+                      <div className="flex items-center gap-1.5 mt-1.5">
+                        <ProgressRing percent={progress} size={16} strokeWidth={2} />
+                        <span className="text-[9px] font-bold text-brand-600">{progress}% selesai</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
