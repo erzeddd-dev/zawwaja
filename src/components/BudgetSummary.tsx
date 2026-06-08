@@ -1,16 +1,23 @@
-import React, { useEffect, useState, useRef } from "react";
-import { UserProfile, WeddingChecklistItem, MaharItem, GuestItem } from "../types";
+import React, { useEffect, useState } from "react";
+import { UserProfile, WeddingChecklistItem, MaharItem } from "../types";
 import { 
   Calendar, 
-  DollarSign, 
-  Coins, 
-  CheckCircle, 
-  Users, 
-  Clock, 
-  ChevronRight, 
-  ChevronLeft,
   Sparkles,
-  AlertCircle
+  AlertCircle,
+  Syringe,
+  Info,
+  Check,
+  ChevronDown,
+  ChevronUp,
+  X,
+  Compass,
+  FileText,
+  Camera,
+  Gift,
+  Mail,
+  Gem,
+  TrendingUp,
+  Users
 } from "lucide-react";
 
 interface BudgetSummaryProps {
@@ -19,28 +26,27 @@ interface BudgetSummaryProps {
   maharItems: MaharItem[];
   onNavigate: (tab: string) => void;
   onSaveProfile?: (fullName: string, partnerName: string, weddingDate: string, totalBudget: number) => Promise<void>;
+  onSaveChecklistItem?: (item: WeddingChecklistItem) => Promise<void>;
 }
 
-const islamicBanners = [
-  { text: "بَارَكَ اللهُ لَكَ وَبَارَكَ عَلَيْكَ وَجَمَعَ بَيْنَكُمَا فِي خَيْرٍ", translation: "Semoga Allah memberkahimu di waktu bahagia dan memberkahimu di waktu susah, serta mempersatukan kalian berdua dalam kebaikan.", source: "HR. Abu Daud" },
-  { text: "أَعْظَمُ النِّكَاحِ بَرَكَةً أَيْسَرُهُ مُؤْنَةً", translation: "Pernikahan yang paling besar barakahnya adalah yang paling mudah biayanya.", source: "HR. Ahmad" },
-  { text: "إِذَا تَزَوَّجَ الْعَبْدُ فَقَدِ اسْتَكْمَلَ نِصْفَ الدِّينِ", translation: "Bila seorang hamba menikah, maka sungguh ia telah menyempurnakan setengah agamanya. Maka bertaqwalah kepada Allah pada setengah sisanya.", source: "HR. Al-Baihaqi" },
-  { text: "رَبَّنَا هَبْ لَنَا مِنْ أَزْوَاجِنَا وَذُرِّيَّاتِنَا قُرَّةَ أَعْيُنٍ وَاجْعَلْنَا لِلْمُتَّقِينَ إِمَامًا", translation: "Ya Rabb kami, anugerahkanlah kepada kami istri-istri kami dan keturunan kami sebagai penyenang hati (kami), dan jadikanlah kami imam bagi orang-orang yang bertaqwa.", source: "QS. Al-Furqan: 74" }
-];
-
-export default function BudgetSummary({ profile, checklistItems, maharItems, onNavigate, onSaveProfile }: BudgetSummaryProps) {
+export default function BudgetSummary({ 
+  profile, 
+  checklistItems, 
+  maharItems, 
+  onNavigate, 
+  onSaveProfile,
+  onSaveChecklistItem
+}: BudgetSummaryProps) {
   // Stats state
   const [daysRemaining, setDaysRemaining] = useState(0);
   const [weeksRemaining, setWeeksRemaining] = useState(0);
-  const [hoursRemaining, setHoursRemaining] = useState(0);
-  const [bannerIndex, setBannerIndex] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [currentDateFormatted, setCurrentDateFormatted] = useState("");
 
-  // Touch and Mouse Drag controls for swipe gestures
-  const touchStartX = useRef<number | null>(null);
-  const touchEndX = useRef<number | null>(null);
+  // Modals state
+  const [showVaccineModal, setShowVaccineModal] = useState(false);
+  const [showKuaModal, setShowKuaModal] = useState(false);
 
-  // Welcome Modal states
+  // Welcome Onboarding Modal states
   const [onboardFullName, setOnboardFullName] = useState("");
   const [onboardPartnerName, setOnboardPartnerName] = useState("");
   const [onboardWeddingDate, setOnboardWeddingDate] = useState("2026-12-12");
@@ -48,78 +54,27 @@ export default function BudgetSummary({ profile, checklistItems, maharItems, onN
   const [isSavingOnboard, setIsSavingOnboard] = useState(false);
   const [onboardError, setOnboardError] = useState("");
 
+  // Tooltip state
+  const [hoveredNode, setHoveredNode] = useState<number | null>(null);
+
   const showWelcomeModal = !profile.fullName || !profile.partnerName || !profile.weddingDate;
 
-  const handleNextBanner = () => {
-    if (isTransitioning) return;
-    setIsTransitioning(true);
-    setBannerIndex((prev) => (prev + 1) % islamicBanners.length);
-    setTimeout(() => {
-      setIsTransitioning(false);
-    }, 500); // Debounce duration matching transition duration
-  };
-
-  const handlePrevBanner = () => {
-    if (isTransitioning) return;
-    setIsTransitioning(true);
-    setBannerIndex((prev) => (prev - 1 + islamicBanners.length) % islamicBanners.length);
-    setTimeout(() => {
-      setIsTransitioning(false);
-    }, 500); // Debounce duration matching transition duration
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-    touchEndX.current = e.touches[0].clientX;
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    touchEndX.current = e.touches[0].clientX;
-  };
-
-  const handleTouchEnd = () => {
-    if (touchStartX.current === null || touchEndX.current === null) return;
-    const diff = touchStartX.current - touchEndX.current;
-    const threshold = 50; // minimum pixels for swipe
-    if (diff > threshold) {
-      handleNextBanner();
-    } else if (diff < -threshold) {
-      handlePrevBanner();
-    }
-    touchStartX.current = null;
-    touchEndX.current = null;
-  };
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    touchStartX.current = e.clientX;
-    touchEndX.current = e.clientX;
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (touchStartX.current === null) return;
-    touchEndX.current = e.clientX;
-  };
-
-  const handleMouseUp = () => {
-    if (touchStartX.current === null || touchEndX.current === null) return;
-    const diff = touchStartX.current - touchEndX.current;
-    const threshold = 50;
-    if (diff > threshold) {
-      handleNextBanner();
-    } else if (diff < -threshold) {
-      handlePrevBanner();
-    }
-    touchStartX.current = null;
-    touchEndX.current = null;
-  };
-
-  // Calculate countdown timer
+  // Calculate current date and remaining days
   useEffect(() => {
+    const today = new Date();
+    setCurrentDateFormatted(
+      today.toLocaleDateString("id-ID", {
+        weekday: "long",
+        day: "numeric",
+        month: "short",
+        year: "numeric"
+      })
+    );
+
     const calculateTime = () => {
       if (!profile.weddingDate) {
         setDaysRemaining(0);
         setWeeksRemaining(0);
-        setHoursRemaining(0);
         return;
       }
       const targetDate = new Date(profile.weddingDate);
@@ -129,14 +84,11 @@ export default function BudgetSummary({ profile, checklistItems, maharItems, onN
       if (differenceMs > 0) {
         const totalDays = Math.floor(differenceMs / (1000 * 60 * 60 * 24));
         const weeks = Math.floor(totalDays / 7);
-        const hours = Math.floor((differenceMs / (1000 * 60 * 60)) % 24);
         setDaysRemaining(totalDays);
         setWeeksRemaining(weeks);
-        setHoursRemaining(hours);
       } else {
         setDaysRemaining(0);
         setWeeksRemaining(0);
-        setHoursRemaining(0);
       }
     };
 
@@ -144,6 +96,32 @@ export default function BudgetSummary({ profile, checklistItems, maharItems, onN
     const interval = setInterval(calculateTime, 60000); // refresh every minute
     return () => clearInterval(interval);
   }, [profile.weddingDate]);
+
+  // Dynamic ranges logic based on profile registration date and wedding date
+  const weddingDateObj = profile.weddingDate ? new Date(profile.weddingDate) : null;
+  const creationDateObj = profile.createdAt ? new Date(profile.createdAt) : new Date();
+  const totalPrepDays = weddingDateObj 
+    ? Math.max(180, Math.floor((weddingDateObj.getTime() - creationDateObj.getTime()) / (1000 * 60 * 60 * 24)))
+    : 180;
+  
+  const segmentLength = totalPrepDays / 6;
+  const daysElapsed = Math.max(0, totalPrepDays - daysRemaining);
+  const activePhaseId = Math.min(6, Math.max(1, Math.floor(daysElapsed / segmentLength) + 1));
+
+  // Daily Tips logic
+  const tips = [
+    "Komunikasi adalah kunci. Jangan lupa bicarakan ekspektasi finansial setelah menikah bersama pasangan.",
+    "Perbanyak puasa sunnah dan doa menjelang hari akad untuk memohon kelancaran.",
+    "Bandingkan vendor dengan cermat. Jangan terburu-buru membayar DP sebelum ada perjanjian (MoU) yang jelas.",
+    "Cek kembali syarat KUA jauh-jauh hari agar tidak ada dokumen yang kurang saat hari pendaftaran."
+  ];
+  const [activeTip, setActiveTip] = useState(0);
+  
+  useEffect(() => {
+    const today = new Date();
+    const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 1000 / 60 / 60 / 24);
+    setActiveTip(dayOfYear % tips.length);
+  }, []);
 
   const handleOnboardSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -171,8 +149,6 @@ export default function BudgetSummary({ profile, checklistItems, maharItems, onN
 
   // Calculations for total budget stats
   const totalTargetBudget = profile.totalBudget || 0;
-  
-  // Total expenses are sum of checklist item actual expenditure AND purchased mahar details
   const totalChecklistActual = checklistItems.reduce((acc, curr) => acc + (curr.budgetActual || 0), 0);
   const totalMaharActual = maharItems.reduce((acc, curr) => acc + (curr.price || 0), 0);
   const totalActualSpent = totalChecklistActual + totalMaharActual;
@@ -182,7 +158,9 @@ export default function BudgetSummary({ profile, checklistItems, maharItems, onN
   const completedChecklistCount = checklistItems.filter(i => i.isDone).length;
   const checklistPercentage = totalChecklistCount > 0 ? Math.round((completedChecklistCount / totalChecklistCount) * 100) : 0;
 
-
+  // Percentage & remaining budget calculations
+  const remainingTargetBudgetBalance = totalTargetBudget - totalActualSpent;
+  const isBudgetSafe = remainingTargetBudgetBalance >= 0;
 
   // Formatting currency helper
   const formatIDR = (num: number) => {
@@ -193,329 +171,691 @@ export default function BudgetSummary({ profile, checklistItems, maharItems, onN
     }).format(num);
   };
 
-  // Difference calculated
-  const remainingTargetBudgetBalance = totalTargetBudget - totalActualSpent;
-  const spentPercentOfTarget = totalTargetBudget > 0 ? Math.min(100, Math.round((totalActualSpent / totalTargetBudget) * 100)) : 0;
+  // Dynamic MMR Deadline calculation: 3 months before wedding date
+  const getMMRDeadline = () => {
+    if (!profile.weddingDate) return "September 2026";
+    const date = new Date(profile.weddingDate);
+    date.setMonth(date.getMonth() - 3);
+    return date.toLocaleDateString("id-ID", { month: "long", year: "numeric" });
+  };
 
-  // SVG Radial Ring constants
-  const svgSize = 120;
-  const strokeWidth = 8;
-  const radius = (svgSize - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const checklistStrokeOffset = circumference - (checklistPercentage / 100) * circumference;
-  const budgetStrokeOffset = circumference - (spentPercentOfTarget / 100) * circumference;
+  // Timeline phase data structure with icons and navigation targets
+  const phases = [
+    {
+      id: 1,
+      title: "Persiapan Awal",
+      subtitle: "5 Bulan",
+      icon: Compass,
+      navigateTo: "checklist",
+      categories: ["Persiapan Awal"]
+    },
+    {
+      id: 2,
+      title: "Administrasi & Dokumen",
+      subtitle: "4 Bulan",
+      icon: FileText,
+      navigateTo: "checklist",
+      categories: ["Administrasi Persiapan Menikah"]
+    },
+    {
+      id: 3,
+      title: "Vendor & Tempat",
+      subtitle: "3 Bulan",
+      icon: Camera,
+      navigateTo: "vendors",
+      categories: ["Tempat", "Make up dan Busana", "Dokumentasi", "Entertaint"]
+    },
+    {
+      id: 4,
+      title: "Mahar & Seserahan",
+      subtitle: "2 Bulan",
+      icon: Gift,
+      navigateTo: "mahar",
+      categories: ["Mahar dan Cincin"]
+    },
+    {
+      id: 5,
+      title: "Undangan & Tamu",
+      subtitle: "1 Bulan",
+      icon: Users,
+      navigateTo: "checklist",
+      categories: ["Makanan", "Undangan dan Souvenir"]
+    },
+    {
+      id: 6,
+      title: "Finalisasi & Hari-H",
+      subtitle: "Hari-H",
+      icon: Gem,
+      navigateTo: "checklist",
+      categories: ["Persiapan Lainnya"]
+    }
+  ];
+
+  // Helper to filter checklist items for each phase
+  const getItemsForPhase = (phaseId: number) => {
+    const phase = phases.find(p => p.id === phaseId);
+    if (!phase) return [];
+    return checklistItems.filter(item => {
+      return phase.categories.some(cat => cat.toLowerCase() === item.category.toLowerCase());
+    });
+  };
+
+  // Calculate progress per phase
+  const getPhaseProgress = (phaseId: number) => {
+    const items = getItemsForPhase(phaseId);
+    if (items.length === 0) return 0;
+    const done = items.filter(i => i.isDone).length;
+    return Math.round((done / items.length) * 100);
+  };
+
+  // SVG Budget mini chart data points (simulate 6-point trend line)
+  const chartPoints = phases.map((phase) => {
+    const items = getItemsForPhase(phase.id);
+    return items.reduce((acc, i) => acc + (i.budgetActual || 0), 0);
+  });
+  const maxChartVal = Math.max(...chartPoints, 1);
+
+  // Generate SVG path for budget chart
+  const chartWidth = 400;
+  const chartHeight = 80;
+  const chartPadding = 20;
+  const chartInnerWidth = chartWidth - chartPadding * 2;
+  const chartInnerHeight = chartHeight - chartPadding;
+  
+  const chartPathPoints = chartPoints.map((val, i) => {
+    const x = chartPadding + (i / (chartPoints.length - 1)) * chartInnerWidth;
+    const y = chartHeight - chartPadding / 2 - (val / maxChartVal) * chartInnerHeight;
+    return { x, y };
+  });
+  
+  const chartPathD = chartPathPoints.reduce((acc, point, i) => {
+    if (i === 0) return `M ${point.x} ${point.y}`;
+    const prev = chartPathPoints[i - 1];
+    const cpx1 = prev.x + (point.x - prev.x) / 3;
+    const cpx2 = point.x - (point.x - prev.x) / 3;
+    return `${acc} C ${cpx1} ${prev.y}, ${cpx2} ${point.y}, ${point.x} ${point.y}`;
+  }, "");
+
+  const chartAreaD = `${chartPathD} L ${chartPathPoints[chartPathPoints.length - 1].x} ${chartHeight} L ${chartPathPoints[0].x} ${chartHeight} Z`;
+
+  // Progress Ring helper
+  const ProgressRing = ({ percent, size = 44, strokeWidth = 3 }: { percent: number; size?: number; strokeWidth?: number }) => {
+    const radius = (size - strokeWidth) / 2;
+    const circumference = 2 * Math.PI * radius;
+    const offset = circumference - (percent / 100) * circumference;
+    
+    return (
+      <svg width={size} height={size} className="transform -rotate-90">
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke="rgba(42, 92, 77, 0.1)"
+          strokeWidth={strokeWidth}
+        />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke="rgba(42, 92, 77, 0.7)"
+          strokeWidth={strokeWidth}
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          className="progress-ring-circle"
+          style={{ transition: 'stroke-dashoffset 0.6s ease' }}
+        />
+      </svg>
+    );
+  };
 
   return (
-    <div className="space-y-6" id="dashboard-view">
+    <div className="space-y-6 relative" id="dashboard-view">
       
-      {/* 1. DYNAMIC ISLAMIC BANNER (HADITH & PRAYER MANUAL CAROUSEL) */}
-      <div className="relative bg-gradient-to-r from-[#af7661] to-[#d4a5a5]/95 text-white p-6 rounded-2xl shadow-md overflow-hidden min-h-[140px] flex items-center transition-all duration-300">
-        {/* Soft Background Geometry Grid */}
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
-        <div className="absolute right-4 bottom-[-20px] text-white/5 pointer-events-none">
-          <Sparkles size={160} />
-        </div>
-
-        <div className="w-full relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex-1 relative pr-10 pl-10 md:pr-12 md:pl-12 space-y-2">
-            {/* Left and Right Manual Chevrons */}
-            <button
-              onClick={handlePrevBanner}
-              disabled={isTransitioning}
-              className="absolute left-0 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-white/10 hover:bg-white/20 active:bg-white/30 disabled:opacity-50 transition-all border-none outline-none cursor-pointer flex items-center justify-center text-white/80 hover:text-white shrink-0 z-20"
-              title="Hadits Sebelumnya"
-            >
-              <ChevronLeft size={16} />
-            </button>
-            
-            <button
-              onClick={handleNextBanner}
-              disabled={isTransitioning}
-              className="absolute right-0 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-white/10 hover:bg-white/20 active:bg-white/30 disabled:opacity-50 transition-all border-none outline-none cursor-pointer flex items-center justify-center text-white/80 hover:text-white shrink-0 z-20"
-              title="Hadits Selanjutnya"
-            >
-              <ChevronRight size={16} />
-            </button>
-
-            {/* Swipeable Container with Ultra-Soft Deceleration */}
-            <div 
-              className="w-full overflow-hidden cursor-grab active:cursor-grabbing select-none"
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
-              onMouseLeave={handleMouseUp}
-            >
-              <div 
-                className="flex transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
-                style={{ transform: `translateX(-${bannerIndex * 100}%)` }}
-              >
-                {islamicBanners.map((banner, idx) => (
-                  <div key={idx} className="w-full shrink-0 min-h-[75px] flex flex-col justify-center text-center md:text-left pr-4">
-                    <p className="text-sm font-serif italic text-rose-100 font-medium tracking-wide mb-1 leading-relaxed">
-                      {banner.translation}
-                    </p>
-                    <p className="text-2xl md:text-3xl font-arabic text-white opacity-95 leading-relaxed mt-2 font-semibold">
-                      {banner.text}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            <div className="flex items-center justify-center md:justify-start gap-3">
-              <span className="inline-block text-[9px] uppercase tracking-widest font-black text-rose-100 bg-white/10 px-2.5 py-0.5 rounded-full select-none transition-all duration-300">
-                💡 Hadits Pilihan • {islamicBanners[bannerIndex].source}
-              </span>
-              
-              {/* Pagination Dots */}
-              <div className="flex gap-1.5 z-20">
-                {islamicBanners.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => {
-                      if (isTransitioning || bannerIndex === i) return;
-                      setIsTransitioning(true);
-                      setBannerIndex(i);
-                      setTimeout(() => {
-                        setIsTransitioning(false);
-                      }, 500);
-                    }}
-                    className={`h-1.5 rounded-full transition-all duration-300 border-none outline-none cursor-pointer ${
-                      bannerIndex === i ? "w-3 bg-white" : "w-1.5 bg-white/40 hover:bg-white/60"
-                    }`}
-                    title={`Slide ${i + 1}`}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white/15 backdrop-blur-md border border-white/20 p-4 rounded-xl flex items-center gap-3 self-center md:self-auto shrink-0 shadow-xs">
-            <Calendar className="text-rose-100" size={28} />
-            <div className="text-left">
-              <p className="text-[9px] text-rose-100 uppercase tracking-wider font-bold">Hari Pernikahan</p>
-              <p className="text-xs font-bold text-white leading-tight font-serif mt-0.5">
-                {profile.weddingDate ? new Date(profile.weddingDate).toLocaleDateString("id-ID", {
-                  weekday: 'long',
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                }) : "Belum ditentukan"}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 2. INFOGRAPHIC DASHBOARD CORE: 3 STUNNING RADIAL/SVG SEGMENTS */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        
-        {/* Card A: Countdown visual indicator */}
-        <div className="bg-white border border-stone-200/80 rounded-2xl p-5 shadow-xs relative overflow-hidden flex flex-col items-center text-center justify-between min-h-[220px] transition-all hover:shadow-md">
-          <p className="text-stone-400 text-[10px] uppercase tracking-wider font-bold">Hitung Mundur Akad</p>
-          
-          <div className="relative my-3 flex items-center justify-center">
-            {/* Elegant Calligraphy Backing arch */}
-            <div className="absolute text-[#af7661]/5 font-arabic text-7xl select-none leading-none pointer-events-none">
-              ز
-            </div>
-            <div className="text-center z-10 space-y-1">
-              <span className="block text-4xl font-extrabold text-stone-850 font-serif leading-none">{daysRemaining}</span>
-              <span className="text-[10px] uppercase font-bold tracking-widest text-[#af7661]">Hari Tersisa</span>
-            </div>
-          </div>
-
-          <div className="w-full border-t border-stone-100 pt-3 flex justify-between items-center text-[10px] text-stone-500 font-sans">
-            <span>Akad: {profile.weddingDate ? new Date(profile.weddingDate).toLocaleDateString("id-ID", { day: 'numeric', month: 'short' }) : "TBA"}</span>
-            <span className="font-semibold text-[#af7661] bg-rose-50 px-2 py-0.5 rounded-full font-mono">{weeksRemaining} Minggu Lagi</span>
-          </div>
-        </div>
-
-        {/* Card B: Circular Progress Infographic (Budget Spent) */}
-        <div className="bg-white border border-stone-200/80 rounded-2xl p-5 shadow-xs flex flex-col items-center text-center justify-between min-h-[220px] transition-all hover:shadow-md">
-          <p className="text-stone-400 text-[10px] uppercase tracking-wider font-bold">Kuota Anggaran Terpakai</p>
-          
-          <div className="relative my-2 flex items-center justify-center">
-            <svg width={svgSize} height={svgSize} className="transform -rotate-90">
-              {/* Outer track */}
-              <circle
-                cx={svgSize / 2}
-                cy={svgSize / 2}
-                r={radius}
-                className="stroke-stone-100"
-                strokeWidth={strokeWidth}
-                fill="transparent"
-              />
-              {/* Active track */}
-              <circle
-                cx={svgSize / 2}
-                cy={svgSize / 2}
-                r={radius}
-                className="stroke-[#af7661] transition-all duration-1000 ease-out"
-                strokeWidth={strokeWidth}
-                fill="transparent"
-                strokeDasharray={circumference}
-                strokeDashoffset={budgetStrokeOffset}
-                strokeLinecap="round"
-              />
-            </svg>
-            <div className="absolute text-center">
-              <span className="block text-xl font-black text-stone-850 font-mono leading-none">{spentPercentOfTarget}%</span>
-              <span className="text-[8px] text-stone-400 uppercase tracking-wider font-semibold block mt-0.5">Budget</span>
-            </div>
-          </div>
-
-          <div className="w-full border-t border-stone-100 pt-3 flex justify-between items-center text-[10px] text-stone-500 font-sans">
-            <span>Limit: {formatIDR(totalTargetBudget)}</span>
-            <span className="font-bold text-stone-800">Pakai: {formatIDR(totalActualSpent)}</span>
-          </div>
-        </div>
-
-        {/* Card C: Circular Progress Infographic (Checklist Progress) */}
-        <div className="bg-white border border-stone-200/80 rounded-2xl p-5 shadow-xs flex flex-col items-center text-center justify-between min-h-[220px] transition-all hover:shadow-md">
-          <p className="text-stone-400 text-[10px] uppercase tracking-wider font-bold">Progres Persiapan Akad</p>
-          
-          <div className="relative my-2 flex items-center justify-center">
-            <svg width={svgSize} height={svgSize} className="transform -rotate-90">
-              <circle
-                cx={svgSize / 2}
-                cy={svgSize / 2}
-                r={radius}
-                className="stroke-stone-100"
-                strokeWidth={strokeWidth}
-                fill="transparent"
-              />
-              <circle
-                cx={svgSize / 2}
-                cy={svgSize / 2}
-                r={radius}
-                className="stroke-emerald-600 transition-all duration-1000 ease-out"
-                strokeWidth={strokeWidth}
-                fill="transparent"
-                strokeDasharray={circumference}
-                strokeDashoffset={checklistStrokeOffset}
-                strokeLinecap="round"
-              />
-            </svg>
-            <div className="absolute text-center">
-              <span className="block text-xl font-black text-stone-850 font-mono leading-none">{checklistPercentage}%</span>
-              <span className="text-[8px] text-stone-400 uppercase tracking-wider font-semibold block mt-0.5">Selesai</span>
-            </div>
-          </div>
-
-          <div className="w-full border-t border-stone-100 pt-3 flex justify-between items-center text-[10px] text-stone-500 font-sans">
-            <span>Total Kebutuhan: {totalChecklistCount}</span>
-            <span className="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">{completedChecklistCount} Tuntas</span>
-          </div>
-        </div>
-
-      </div>
-
-      {/* 3. DYNAMIC SEGMENTED INFOGRAPHICS: STACKED PROGRESS & BALANCE */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        {/* Module A: Sakinah Budget Balance Stacked Progress (col: 12) */}
-        <div className="bg-white border border-stone-200/80 rounded-2xl shadow-xs p-5 lg:col-span-12 flex flex-col justify-between min-h-[220px]">
+      {/* ============================================ */}
+      {/* 1. FLOATING HEADER - Outside glass container */}
+      {/* ============================================ */}
+      <div className="animate-fade-up">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-1">
           <div>
-            <div className="flex items-center justify-between pb-3 border-b border-stone-100">
-              <h3 className="font-bold text-stone-900 text-sm font-serif">Aliran Anggaran Sakinah</h3>
-              <span className={`text-[9px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${remainingTargetBudgetBalance < 0 ? "bg-rose-50 text-rose-700 border border-rose-100" : "bg-emerald-50 text-emerald-800 border border-emerald-100"}`}>
-                {remainingTargetBudgetBalance < 0 ? "⚠️ Overbudget" : "✓ Saldo Aman"}
+            <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">
+              <Calendar size={12} />
+              <span>{currentDateFormatted}</span>
+            </div>
+            <h1 className="text-2xl md:text-3xl font-serif font-bold text-text-primary leading-tight" style={{ textShadow: '0 2px 8px rgba(42, 92, 77, 0.08)' }}>
+              Assalamu'alaikum, <span className="text-brand-600">{profile.fullName || "Pengantin"}</span>
+            </h1>
+            <p className="text-text-secondary text-xs mt-1">
+              Pernikahan dengan <span className="font-semibold text-brand-600">{profile.partnerName || "Pasangan"}</span> dalam <span className="font-bold text-brand-600">{daysRemaining} hari</span> lagi
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* ============================================ */}
+      {/* 2. TOP ROW: Countdown + Progress Stats       */}
+      {/* ============================================ */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 animate-fade-up" style={{ animationDelay: '0.1s' }}>
+        
+        {/* Countdown Cylinder Widget */}
+        <div className="glass-cylinder p-5 flex flex-col items-center justify-center text-center animate-countdown md:col-span-1">
+          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-text-tertiary mb-2">Hitung Mundur</span>
+          <div className="flex items-baseline gap-1">
+            <span className="text-5xl md:text-6xl font-display font-extrabold text-brand-600 leading-none tracking-tight" style={{ textShadow: '0 2px 12px rgba(42, 92, 77, 0.15)' }}>
+              {daysRemaining}
+            </span>
+            <span className="text-sm font-bold text-brand-400 uppercase tracking-wider">Hari</span>
+          </div>
+          <p className="text-[10px] text-text-tertiary mt-2 font-medium">
+            ~{weeksRemaining} minggu menuju akad
+          </p>
+          <p className="text-[9px] text-text-tertiary mt-0.5">
+            {profile.weddingDate ? new Date(profile.weddingDate).toLocaleDateString("id-ID", {
+              day: 'numeric', month: 'long', year: 'numeric'
+            }) : "Belum ditentukan"}
+          </p>
+        </div>
+
+        {/* Progress + Budget Cards */}
+        <div className="md:col-span-2 grid grid-cols-2 gap-4">
+          {/* Progress Card */}
+          <div className="glass-panel p-4 flex flex-col justify-between">
+            <span className="text-[9px] font-bold uppercase tracking-[0.15em] text-text-tertiary">Progres Persiapan</span>
+            <div className="flex items-center gap-3 mt-3">
+              <ProgressRing percent={checklistPercentage} size={52} strokeWidth={4} />
+              <div>
+                <span className="text-2xl font-display font-bold text-text-primary leading-none">{checklistPercentage}<span className="text-sm">%</span></span>
+                <p className="text-[9px] text-text-tertiary mt-0.5">{completedChecklistCount}/{totalChecklistCount} tugas</p>
+              </div>
+            </div>
+            <p className="text-[9px] text-brand-600 font-semibold mt-2">
+              {checklistPercentage === 0 ? "Mulai dari Fase 1 ↓" : `Fase ${activePhaseId} sedang berjalan`}
+            </p>
+          </div>
+
+          {/* Budget Card */}
+          <div className="glass-panel p-4 flex flex-col justify-between">
+            <span className="text-[9px] font-bold uppercase tracking-[0.15em] text-text-tertiary">Serapan Anggaran</span>
+            <div className="mt-3">
+              <span className="text-lg font-display font-bold text-text-primary leading-none">{formatIDR(totalActualSpent)}</span>
+              <p className="text-[9px] text-text-tertiary mt-1">dari {formatIDR(totalTargetBudget)}</p>
+            </div>
+            <div className="flex items-center gap-1.5 mt-2">
+              <div className={`w-2 h-2 rounded-full ${isBudgetSafe ? 'bg-emerald-500' : 'bg-rose-500'}`} />
+              <span className={`text-[10px] font-bold ${isBudgetSafe ? 'text-emerald-600' : 'text-rose-600'}`}>
+                {isBudgetSafe ? `${formatIDR(remainingTargetBudgetBalance)} (Aman)` : "Overbudget!"}
               </span>
             </div>
-
-            {/* Visual Segments */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 my-4 font-mono text-[11px]">
-              <div className="p-3 border border-stone-100 rounded-xl bg-stone-50/50">
-                <span className="text-stone-400 block text-[8px] uppercase tracking-wider font-bold">Limit Maksimal</span>
-                <span className="font-bold text-stone-850 block mt-1">{formatIDR(totalTargetBudget)}</span>
-              </div>
-              <div className="p-3 border border-stone-100 rounded-xl bg-stone-50/50">
-                <span className="text-stone-400 block text-[8px] uppercase tracking-wider font-bold">Pengeluaran Riil</span>
-                <span className="font-bold text-stone-850 block mt-1 text-[#af7661]">{formatIDR(totalActualSpent)}</span>
-              </div>
-              <div className="p-3 border border-stone-100 rounded-xl bg-stone-50/50">
-                <span className="text-stone-400 block text-[8px] uppercase tracking-wider font-bold">Sisa Kuota</span>
-                <span className={`font-bold block mt-1 ${remainingTargetBudgetBalance < 0 ? "text-rose-600 animate-pulse" : "text-emerald-700"}`}>{formatIDR(remainingTargetBudgetBalance)}</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-1.5 text-xs text-stone-500 font-medium">
-            <div className="flex justify-between">
-              <span>Rasio Penggunaan Dana</span>
-              <span>{spentPercentOfTarget}% Terpakai</span>
-            </div>
-            <div className="w-full bg-stone-100 h-2.5 rounded-full overflow-hidden">
-              <div 
-                className={`h-full rounded-full transition-all duration-500 ${spentPercentOfTarget > 90 ? "bg-rose-600" : spentPercentOfTarget > 70 ? "bg-amber-500" : "bg-emerald-600"}`}
-                style={{ width: `${spentPercentOfTarget}%` }}
-              ></div>
-            </div>
           </div>
         </div>
-
       </div>
 
-      {/* 4. SHARIA GUIDE STACKED PRINCIPLES */}
-      <div className="bg-white border border-stone-200/80 rounded-2xl p-5 shadow-xs">
-        <div className="pb-3 border-b border-stone-100">
-          <h4 className="font-serif font-black text-stone-900 text-sm">Prinsip Pernikahan Syar'i (Sakinah Guide)</h4>
-          <p className="text-stone-500 text-[10px] mt-0.5">Ringkasan rujukan Islami dalam melangsungkan walimah yang penuh barakah</p>
-        </div>
+      {/* ============================================ */}
+      {/* 3. FLOATING RIBBON TIMELINE (Main Attraction) */}
+      {/* ============================================ */}
+      <div className="glass-panel p-5 md:p-8 animate-fade-up relative overflow-hidden" style={{ animationDelay: '0.2s' }}>
+        <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-text-tertiary mb-6 md:mb-8 text-center">
+          Timeline Persiapan Nikah Syar'i
+        </h3>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-4 text-xs text-stone-650">
-          <div className="p-3 border border-stone-100 rounded-xl hover:border-[#af7661]/30 hover:bg-rose-50/10 transition-all flex flex-col justify-between">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <CheckCircle className="text-emerald-600 shrink-0" size={16} />
-                <strong className="text-stone-850">No Israf (Bebas Boros)</strong>
-              </div>
-              <p className="leading-relaxed text-stone-500 text-[11px]">
-                Mengatur katering, dekorasi, dan walimah secara khidmat tanpa melampaui batas kemampuan finansial. Syariat menganjurkan kesederhanaan.
-              </p>
-            </div>
-          </div>
+        {/* Desktop SVG Ribbon Path + Nodes */}
+        <div className="hidden md:block relative" style={{ minHeight: '280px' }}>
+          {/* SVG Curved Ribbon Path */}
+          <svg 
+            viewBox="0 0 900 200" 
+            className="w-full h-auto absolute top-1/2 -translate-y-1/2"
+            preserveAspectRatio="xMidYMid meet"
+            style={{ filter: 'drop-shadow(0 2px 4px rgba(42, 92, 77, 0.05))' }}
+          >
+            {/* Background decorative path */}
+            <path 
+              d="M 50 100 C 150 40, 250 160, 350 100 C 450 40, 550 160, 650 100 C 750 40, 850 100, 850 100" 
+              className="timeline-path"
+            />
+            {/* Active progress path overlay */}
+            <path 
+              d="M 50 100 C 150 40, 250 160, 350 100 C 450 40, 550 160, 650 100 C 750 40, 850 100, 850 100" 
+              className="timeline-path-active"
+              strokeDasharray={`${(activePhaseId / 6) * 1200}`}
+              strokeDashoffset="0"
+            />
+          </svg>
 
-          <div className="p-3 border border-stone-100 rounded-xl hover:border-[#af7661]/30 hover:bg-rose-50/10 transition-all flex flex-col justify-between">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <CheckCircle className="text-emerald-600 shrink-0" size={16} />
-                <strong className="text-stone-850">Mahar yang Memudahkan</strong>
-              </div>
-              <p className="leading-relaxed text-stone-500 text-[11px]">
-                Mahar terbaik adalah yang bernilai dan memudahkan suami serta memuliakan bagi istri. Tidak memberatkan pihak laki-laki secara berlebihan.
-              </p>
-            </div>
-          </div>
+          {/* Timeline Nodes positioned along the curve */}
+          <div className="relative flex justify-between items-start px-4" style={{ minHeight: '280px' }}>
+            {phases.map((phase, index) => {
+              const Icon = phase.icon;
+              const isActive = phase.id === activePhaseId;
+              const isDone = phase.id < activePhaseId;
+              const progress = getPhaseProgress(phase.id);
 
-          <div className="p-3 border border-stone-100 rounded-xl hover:border-[#af7661]/30 hover:bg-rose-50/10 transition-all flex flex-col justify-between">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <CheckCircle className="text-emerald-600 shrink-0" size={16} />
-                <strong className="text-stone-850">Mengutamakan Silaturahim</strong>
-              </div>
-              <p className="leading-relaxed text-stone-500 text-[11px]">
-                Dahulukan mengundang sanak kerabat dekat, para asatidzah/guru, tetangga sekitar, serta fakir miskin di sekitar tempat tinggal Anda.
-              </p>
-            </div>
+              // Vertical positions to follow the curve: alternating high/low
+              const isEven = index % 2 === 0;
+              const topPos = isEven ? '10px' : '120px';
+
+              return (
+                <div 
+                  key={phase.id}
+                  className={`flex flex-col items-center relative animate-scale-in anim-delay-${phase.id}`}
+                  style={{ top: topPos, position: 'relative', flex: '1', maxWidth: '130px' }}
+                >
+                  {/* Glass Sphere Node */}
+                  <button
+                    onClick={() => onNavigate(phase.navigateTo)}
+                    onMouseEnter={() => setHoveredNode(phase.id)}
+                    onMouseLeave={() => setHoveredNode(null)}
+                    className={`glass-node w-16 h-16 flex items-center justify-center relative z-10 ${
+                      isActive ? 'glass-node-active' : ''
+                    } ${isDone ? 'glass-node-done' : ''}`}
+                    title={`${phase.title} — Klik untuk navigasi`}
+                    id={`timeline-node-${phase.id}`}
+                  >
+                    <Icon size={24} className={`${
+                      isActive ? 'text-brand-600' : isDone ? 'text-brand-500' : 'text-text-tertiary'
+                    }`} />
+                    
+                    {/* Completed checkmark overlay */}
+                    {isDone && (
+                      <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-brand-600 flex items-center justify-center shadow-md border-2 border-white">
+                        <Check size={10} className="text-white stroke-[3px]" />
+                      </div>
+                    )}
+                  </button>
+
+                  {/* Active Badge */}
+                  {isActive && (
+                    <div className="glass-badge px-2.5 py-1 mt-2 flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-brand-600 animate-pulse" />
+                      <span className="text-[8px] font-black text-brand-600 uppercase tracking-wider">Sedang Berjalan</span>
+                    </div>
+                  )}
+
+                  {/* Node Label */}
+                  <div className="text-center mt-2">
+                    <p className={`text-[11px] font-bold leading-tight ${isActive ? 'text-brand-600' : 'text-text-primary'}`}>
+                      {phase.title}
+                    </p>
+                    <p className="text-[9px] text-text-tertiary mt-0.5">{phase.subtitle}</p>
+                  </div>
+
+                  {/* Mini Progress Ring (for Node 1 or active node) */}
+                  {(phase.id === 1 || isActive) && (
+                    <div className="mt-1.5 flex items-center gap-1">
+                      <ProgressRing percent={progress} size={28} strokeWidth={2.5} />
+                      <span className="text-[9px] font-bold text-text-secondary">{progress}%</span>
+                    </div>
+                  )}
+
+                  {/* Hover Tooltip */}
+                  {hoveredNode === phase.id && (
+                    <div className="glass-tooltip px-3 py-2 absolute -bottom-14 left-1/2 -translate-x-1/2 whitespace-nowrap z-30 animate-scale-in">
+                      <p className="text-[10px] font-medium">
+                        {isActive ? "Klik untuk Mengelola " + phase.title : `Klik untuk melihat ${phase.title}`}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Mobile: Horizontal Scroll Timeline */}
+        <div className="md:hidden overflow-x-auto pb-4 -mx-2 px-2 glass-scrollbar">
+          <div className="flex gap-5 min-w-max items-start py-2">
+            {phases.map((phase) => {
+              const Icon = phase.icon;
+              const isActive = phase.id === activePhaseId;
+              const isDone = phase.id < activePhaseId;
+              const progress = getPhaseProgress(phase.id);
+
+              return (
+                <div key={phase.id} className="flex flex-col items-center w-20 shrink-0">
+                  {/* Glass Node */}
+                  <button
+                    onClick={() => onNavigate(phase.navigateTo)}
+                    className={`glass-node w-14 h-14 flex items-center justify-center relative ${
+                      isActive ? 'glass-node-active' : ''
+                    } ${isDone ? 'glass-node-done' : ''}`}
+                    id={`timeline-node-mobile-${phase.id}`}
+                  >
+                    <Icon size={20} className={`${
+                      isActive ? 'text-brand-600' : isDone ? 'text-brand-500' : 'text-text-tertiary'
+                    }`} />
+                    {isDone && (
+                      <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-brand-600 flex items-center justify-center shadow-md border-2 border-white">
+                        <Check size={8} className="text-white stroke-[3px]" />
+                      </div>
+                    )}
+                  </button>
+
+                  {/* Active Badge */}
+                  {isActive && (
+                    <div className="glass-badge px-2 py-0.5 mt-1.5 flex items-center gap-1">
+                      <span className="w-1 h-1 rounded-full bg-brand-600 animate-pulse" />
+                      <span className="text-[7px] font-black text-brand-600 uppercase tracking-wider">Aktif</span>
+                    </div>
+                  )}
+
+                  {/* Label */}
+                  <p className={`text-[9px] font-bold text-center mt-1.5 leading-tight ${isActive ? 'text-brand-600' : 'text-text-primary'}`}>
+                    {phase.title}
+                  </p>
+                  <p className="text-[8px] text-text-tertiary">{phase.subtitle}</p>
+
+                  {/* Progress ring */}
+                  {(phase.id === 1 || isActive) && (
+                    <div className="mt-1 flex items-center gap-1">
+                      <ProgressRing percent={progress} size={22} strokeWidth={2} />
+                      <span className="text-[8px] font-bold text-text-secondary">{progress}%</span>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
 
-      {/* MANDATORY WELCOME MODAL SETUP */}
+      {/* ============================================ */}
+      {/* 4. BUDGET LINE CHART (Glass)                 */}
+      {/* ============================================ */}
+      <div className="glass-chart p-5 animate-fade-up" style={{ animationDelay: '0.3s' }}>
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <h4 className="text-[10px] font-bold uppercase tracking-[0.15em] text-text-tertiary">Tren Pengeluaran per Fase</h4>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <TrendingUp size={13} className={isBudgetSafe ? 'text-emerald-500' : 'text-rose-500'} />
+            <span className={`text-[10px] font-bold ${isBudgetSafe ? 'text-emerald-600' : 'text-rose-600'}`}>
+              {formatIDR(totalActualSpent)} {isBudgetSafe ? '(Aman)' : '(Over!)'}
+            </span>
+          </div>
+        </div>
+
+        {/* SVG Line Chart */}
+        <div className="w-full overflow-hidden">
+          <svg viewBox={`0 0 ${chartWidth} ${chartHeight + 10}`} className="w-full h-auto" preserveAspectRatio="xMidYMid meet">
+            {/* Grid lines */}
+            {[0.25, 0.5, 0.75].map((ratio, i) => (
+              <line
+                key={i}
+                x1={chartPadding}
+                y1={chartHeight - chartPadding / 2 - ratio * chartInnerHeight}
+                x2={chartWidth - chartPadding}
+                y2={chartHeight - chartPadding / 2 - ratio * chartInnerHeight}
+                stroke="rgba(42, 92, 77, 0.06)"
+                strokeWidth="1"
+                strokeDasharray="4 4"
+              />
+            ))}
+            
+            {/* Area fill under the line */}
+            <path
+              d={chartAreaD}
+              fill="url(#chartGradient)"
+              opacity="0.4"
+            />
+            
+            {/* The line itself */}
+            <path
+              d={chartPathD}
+              fill="none"
+              stroke="rgba(42, 92, 77, 0.5)"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              style={{ filter: 'drop-shadow(0 1px 3px rgba(42, 92, 77, 0.2))' }}
+            />
+            
+            {/* Data points */}
+            {chartPathPoints.map((point, i) => (
+              <g key={i}>
+                <circle
+                  cx={point.x}
+                  cy={point.y}
+                  r={i + 1 === activePhaseId ? 5 : 3.5}
+                  fill={i + 1 === activePhaseId ? 'rgba(42, 92, 77, 0.9)' : 'rgba(42, 92, 77, 0.4)'}
+                  stroke="white"
+                  strokeWidth="2"
+                  style={{ filter: i + 1 === activePhaseId ? 'drop-shadow(0 0 4px rgba(42, 92, 77, 0.4))' : 'none' }}
+                />
+                {/* Phase label below point */}
+                <text
+                  x={point.x}
+                  y={chartHeight + 6}
+                  textAnchor="middle"
+                  fontSize="7"
+                  fill="rgba(114, 132, 126, 0.8)"
+                  fontFamily="Inter, sans-serif"
+                  fontWeight="600"
+                >
+                  Fase {i + 1}
+                </text>
+              </g>
+            ))}
+            
+            {/* Gradient definition */}
+            <defs>
+              <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="rgba(42, 92, 77, 0.25)" />
+                <stop offset="100%" stopColor="rgba(42, 92, 77, 0.02)" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+      </div>
+
+      {/* ============================================ */}
+      {/* 5. TIP HARIAN + CTA BUTTONS                  */}
+      {/* ============================================ */}
+      <div className="glass-panel p-4 flex items-start gap-3 cursor-pointer hover:shadow-lg transition-shadow animate-fade-up"
+        onClick={() => setActiveTip((prev) => (prev + 1) % tips.length)}
+        title="Klik untuk melihat tip berikutnya"
+        style={{ animationDelay: '0.35s' }}
+      >
+        <div className="bg-white/60 p-2 rounded-xl text-brand-600 border border-white/50 shadow-sm shrink-0 backdrop-blur-sm">
+          <Sparkles size={18} className="fill-brand-100" />
+        </div>
+        <div>
+          <h4 className="text-[10px] font-bold uppercase tracking-wider text-brand-600/80">Tip Pranikah Hari Ini</h4>
+          <p className="text-xs text-text-secondary mt-0.5 font-medium leading-relaxed">
+            {tips[activeTip]}
+          </p>
+        </div>
+      </div>
+
+      {/* CTA Buttons */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 animate-fade-up" style={{ animationDelay: '0.4s' }}>
+        <button
+          onClick={() => onNavigate("checklist")}
+          className="py-3 px-4 bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 shadow-lg transition-all cursor-pointer hover:shadow-xl hover:-translate-y-0.5"
+        >
+          Mulai fase {activePhaseId} ↗
+        </button>
+        <button
+          onClick={() => setShowVaccineModal(true)}
+          className="py-3 px-4 glass-panel hover:shadow-lg text-text-primary font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer hover:-translate-y-0.5"
+        >
+          Jadwal vaksin ↗
+        </button>
+        <button
+          onClick={() => setShowKuaModal(true)}
+          className="py-3 px-4 glass-panel hover:shadow-lg text-text-primary font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer hover:-translate-y-0.5"
+        >
+          Panduan KUA ↗
+        </button>
+      </div>
+
+      {/* ============================================ */}
+      {/* VACCINATION SCHEDULE POPUP MODAL              */}
+      {/* ============================================ */}
+      {showVaccineModal && (
+        <div className="fixed inset-0 bg-stone-950/50 backdrop-blur-md flex items-center justify-center z-50 p-4">
+          <div className="bg-surface-raised rounded-2xl border border-surface-border shadow-2xl w-full max-w-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 max-h-[85vh] flex flex-col">
+            <div className="bg-brand-600 p-4 text-white flex justify-between items-center shrink-0">
+              <div className="flex items-center gap-2">
+                <Syringe size={18} />
+                <h3 className="font-serif font-bold text-sm">Panduan & Jadwal Vaksinasi Pranikah Syar'i</h3>
+              </div>
+              <button 
+                onClick={() => setShowVaccineModal(false)}
+                className="p-1 hover:bg-surface-raised/10 rounded text-rose-100 hover:text-white transition-colors cursor-pointer border-none bg-transparent"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4 text-xs overflow-y-auto text-text-secondary">
+              <p className="leading-relaxed text-text-secondary font-medium">
+                Pemberian imunisasi dan vaksinasi pramilu/pranikah merupakan bagian dari ikhtiar menjaga kesehatan jasmani keturunan (Hifzhun Nasl) yang dianjurkan dalam Islam.
+              </p>
+              
+              <div className="space-y-3.5 divide-y divide-stone-100">
+                <div className="pt-0">
+                  <h4 className="font-bold text-brand-600 text-xs flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-brand-600"></span>
+                    1. Vaksin Tetanus Toksoid (TT) <span className="px-1.5 py-0.2 bg-rose-50 text-rose-600 rounded text-[9px] font-black border border-rose-150">Wajib KUA</span>
+                  </h4>
+                  <p className="mt-1 leading-relaxed text-text-secondary">
+                    Sangat krusial untuk mencegah infeksi tetanus pada ibu saat melahirkan dan neonatus (bayi baru lahir). KUA mewajibkan bukti suntik TT (biasanya TT1 dan TT2 dengan selang waktu minimal 4 minggu) sebagai salah satu prasyarat administrasi resmi akad nikah.
+                  </p>
+                </div>
+
+                <div className="pt-3">
+                  <h4 className="font-bold text-text-primary text-xs flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-brand-600"></span>
+                    2. Vaksin MMR (Measles, Mumps, Rubella)
+                  </h4>
+                  <p className="mt-1 leading-relaxed text-text-secondary">
+                    Melindungi dari bahaya Campak, Gondongan, dan terutama Rubella yang dapat menyebabkan cacat lahir bawaan (kebutaan, ketulian, kelainan jantung) pada janin. <strong className="text-stone-750">Harus selesai minimal 3 bulan sebelum hamil</strong> karena vaksin ini berbasis virus hidup dan tidak boleh diberikan kepada wanita hamil.
+                  </p>
+                </div>
+
+                <div className="pt-3">
+                  <h4 className="font-bold text-text-primary text-xs flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-brand-600"></span>
+                    3. Vaksin HPV (Human Papillomavirus)
+                  </h4>
+                  <p className="mt-1 leading-relaxed text-text-secondary">
+                    Mencegah infeksi virus HPV penyebab kanker serviks (leher rahim) pada wanita. Paling efektif jika diberikan secara lengkap dalam 3 dosis sebelum aktif berhubungan seksual secara rutin.
+                  </p>
+                </div>
+
+                <div className="pt-3">
+                  <h4 className="font-bold text-text-primary text-xs flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-brand-600"></span>
+                    4. Vaksin Varisela & Hepatitis B
+                  </h4>
+                  <p className="mt-1 leading-relaxed text-text-secondary">
+                    Mencegah cacar air berat pada ibu hamil dan mencegah penularan Hepatitis B (infeksi hati kronis) yang berisiko menular ke pasangan atau ditularkan dari ibu ke anak selama masa persalinan.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 bg-surface-sunken border-t border-stone-150 flex justify-end shrink-0">
+              <button
+                onClick={() => setShowVaccineModal(false)}
+                className="px-4 py-2 bg-brand-600 text-white font-bold rounded-xl text-xs hover:bg-[#985e49] transition-colors cursor-pointer border-none"
+              >
+                Saya Mengerti
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================ */}
+      {/* KUA REGISTRATION GUIDE POPUP MODAL            */}
+      {/* ============================================ */}
+      {showKuaModal && (
+        <div className="fixed inset-0 bg-stone-950/50 backdrop-blur-md flex items-center justify-center z-50 p-4">
+          <div className="bg-surface-raised rounded-2xl border border-surface-border shadow-2xl w-full max-w-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 max-h-[85vh] flex flex-col">
+            <div className="bg-brand-600 p-4 text-white flex justify-between items-center shrink-0">
+              <div className="flex items-center gap-2">
+                <Info size={18} />
+                <h3 className="font-serif font-bold text-sm">Panduan & Syarat Pendaftaran KUA</h3>
+              </div>
+              <button 
+                onClick={() => setShowKuaModal(false)}
+                className="p-1 hover:bg-surface-raised/10 rounded text-rose-100 hover:text-white transition-colors cursor-pointer border-none bg-transparent"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4 text-xs overflow-y-auto text-text-secondary">
+              <h4 className="font-serif font-bold text-text-primary text-sm">Alur Administrasi Pendaftaran Nikah Resmi</h4>
+              
+              <div className="space-y-4">
+                <div className="bg-surface-sunken p-3 rounded-xl border border-surface-border space-y-1.5">
+                  <span className="font-bold text-brand-600 uppercase tracking-wider text-[9px] block">Langkah 1: Pengantar RT/RW & Kelurahan (N1-N4)</span>
+                  <p className="text-text-secondary leading-relaxed">
+                    Minta Surat Pengantar Nikah dari RT dan RW setempat. Bawa surat pengantar tersebut bersama berkas KTP & KK ke Kantor Kelurahan domisili Anda untuk diterbitkan Formulir N1, N2, N3, dan N4.
+                  </p>
+                </div>
+
+                <div className="bg-surface-sunken p-3 rounded-xl border border-surface-border space-y-1.5">
+                  <span className="font-bold text-brand-600 uppercase tracking-wider text-[9px] block">Langkah 2: Cek Kesehatan & Imunisasi TT di Puskesmas</span>
+                  <p className="text-text-secondary leading-relaxed">
+                    Kunjungi Puskesmas atau rumah sakit rujukan terdekat untuk melakukan tes kesehatan pranikah dan mendapatkan suntikan imunisasi Tetanus Toksoid (TT). Surat keterangan imunisasi ini wajib disertakan saat mendaftar ke KUA.
+                  </p>
+                </div>
+
+                <div className="bg-surface-sunken p-3 rounded-xl border border-surface-border space-y-1.5">
+                  <span className="font-bold text-brand-600 uppercase tracking-wider text-[9px] block">Langkah 3: Pendaftaran ke KUA Kecamatan</span>
+                  <p className="text-text-secondary leading-relaxed">
+                    Serahkan semua berkas ke KUA Kecamatan tempat akad nikah dilangsungkan <strong className="text-stone-750">minimal 10 hari kerja</strong> sebelum akad. Jika pernikahan dilakukan di luar wilayah kecamatan domisili Anda, mintalah Surat Rekomendasi Nikah dari KUA asal domisili Anda terlebih dahulu.
+                  </p>
+                </div>
+
+                <div className="bg-surface-sunken p-3 rounded-xl border border-surface-border space-y-1.5">
+                  <span className="font-bold text-brand-600 uppercase tracking-wider text-[9px] block">Langkah 4: Mengikuti Kursus/Bimbingan Pranikah (Bimwin)</span>
+                  <p className="text-text-secondary leading-relaxed">
+                    Mengikuti pembekalan keluarga sakinah (bimbingan perkawinan) yang diselenggarakan oleh KUA setempat guna memahami hak, kewajiban, dan ilmu syar'i tentang membina rumah tangga islami.
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-2 space-y-2">
+                <h5 className="font-bold text-text-primary text-xs">Dokumen Persyaratan Utama yang Wajib Disiapkan:</h5>
+                <ul className="list-disc pl-5 space-y-1 text-stone-550 leading-relaxed">
+                  <li>Fotocopy KTP & KK (masing-masing calon mempelai dan orang tua).</li>
+                  <li>Fotocopy Akta Kelahiran & Ijazah Terakhir (calon mempelai).</li>
+                  <li>Surat Pengantar Nikah (N1) dan berkas administrasi kelurahan pendukung (N2-N4).</li>
+                  <li>Surat Keterangan Imunisasi TT (Wajib bagi mempelai wanita).</li>
+                  <li>Pas foto latar biru: ukuran 2x3 (4 lembar) & 3x4 (4 lembar).</li>
+                  <li>Fotocopy KTP Wali Nikah dan 2 orang Saksi Nikah.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="p-4 bg-surface-sunken border-t border-stone-150 flex justify-end shrink-0">
+              <button
+                onClick={() => setShowKuaModal(false)}
+                className="px-4 py-2 bg-brand-600 text-white font-bold rounded-xl text-xs hover:bg-[#985e49] transition-colors cursor-pointer border-none"
+              >
+                Saya Mengerti
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================ */}
+      {/* MANDATORY WELCOME MODAL SETUP                */}
+      {/* ============================================ */}
       {showWelcomeModal && (
-        <div className="fixed inset-0 bg-stone-950/80 backdrop-blur-md flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl border border-stone-200 p-6 md:p-8 max-w-lg w-full shadow-2xl relative">
+        <div className="fixed inset-0 bg-stone-950/80 backdrop-blur-lg flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-surface-raised rounded-2xl border border-surface-border p-6 md:p-8 max-w-lg w-full shadow-2xl relative">
             <div className="text-center mb-6">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold tracking-wider text-emerald-805 bg-emerald-50 border border-emerald-100 uppercase">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold tracking-wider text-emerald-850 bg-emerald-50 border border-emerald-100 uppercase">
                 Bismillah, Selamat Datang di Zawwaja
               </span>
-              <h2 className="text-2xl font-serif font-black text-stone-950 mt-3">Lengkapi Profil Akad Pernikahan</h2>
-              <p className="text-stone-500 text-xs mt-1 leading-relaxed">
+              <h2 className="text-2xl font-serif font-black text-text-primary mt-3">Lengkapi Profil Akad Pernikahan</h2>
+              <p className="text-text-secondary text-xs mt-1 leading-relaxed">
                 Silakan lengkapi informasi calon pengantin untuk mengonfigurasi jadwal, anggaran transparan, dan checklist syar'i Anda.
               </p>
             </div>
@@ -529,7 +869,7 @@ export default function BudgetSummary({ profile, checklistItems, maharItems, onN
 
             <form onSubmit={handleOnboardSubmit} className="space-y-4">
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-500 mb-1">
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-text-secondary mb-1">
                   Calon Pengantin Pria
                 </label>
                 <input
@@ -538,12 +878,12 @@ export default function BudgetSummary({ profile, checklistItems, maharItems, onN
                   placeholder="Contoh: Rian Hardi"
                   value={onboardFullName}
                   onChange={(e) => setOnboardFullName(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-stone-50 rounded-lg border border-stone-200 focus:outline-none focus:ring-2 focus:ring-emerald-600 font-sans text-sm text-stone-850 placeholder-stone-400"
+                  className="w-full px-4 py-2.5 bg-surface-sunken rounded-lg border border-surface-border focus:outline-none focus:ring-2 focus:ring-brand-600 font-sans text-sm text-text-primary placeholder-stone-400"
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-500 mb-1">
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-text-secondary mb-1">
                   Calon Pengantin Wanita
                 </label>
                 <input
@@ -552,13 +892,13 @@ export default function BudgetSummary({ profile, checklistItems, maharItems, onN
                   placeholder="Contoh: Amira Syafira"
                   value={onboardPartnerName}
                   onChange={(e) => setOnboardPartnerName(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-stone-50 rounded-lg border border-stone-200 focus:outline-none focus:ring-2 focus:ring-emerald-600 font-sans text-sm text-stone-850 placeholder-stone-400"
+                  className="w-full px-4 py-2.5 bg-surface-sunken rounded-lg border border-surface-border focus:outline-none focus:ring-2 focus:ring-brand-600 font-sans text-sm text-text-primary placeholder-stone-400"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-500 mb-1">
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-text-secondary mb-1">
                     Rencana Tanggal Akad Nikah
                   </label>
                   <input
@@ -566,16 +906,16 @@ export default function BudgetSummary({ profile, checklistItems, maharItems, onN
                     required
                     value={onboardWeddingDate}
                     onChange={(e) => setOnboardWeddingDate(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-stone-50 rounded-lg border border-stone-200 focus:outline-none focus:ring-2 focus:ring-emerald-600 font-mono text-xs text-stone-750"
+                    className="w-full px-4 py-2.5 bg-surface-sunken rounded-lg border border-surface-border focus:outline-none focus:ring-2 focus:ring-brand-600 font-mono text-xs text-text-primary"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-500 mb-1">
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-text-secondary mb-1">
                     Estimasi Anggaran (IDR)
                   </label>
                   <div className="relative">
-                    <span className="absolute left-3 top-2.5 text-stone-500 text-sm font-semibold">Rp</span>
+                    <span className="absolute left-3 top-2.5 text-text-secondary text-sm font-semibold">Rp</span>
                     <input
                       type="number"
                       required
@@ -583,7 +923,7 @@ export default function BudgetSummary({ profile, checklistItems, maharItems, onN
                       step={500000}
                       value={onboardTotalBudget}
                       onChange={(e) => setOnboardTotalBudget(Number(e.target.value))}
-                      className="w-full pl-9 pr-3 py-2.5 bg-stone-50 rounded-lg border border-stone-200 focus:outline-none focus:ring-2 focus:ring-emerald-600 font-mono text-xs text-stone-850"
+                      className="w-full pl-9 pr-3 py-2.5 bg-surface-sunken rounded-lg border border-surface-border focus:outline-none focus:ring-2 focus:ring-brand-600 font-mono text-xs text-text-primary"
                     />
                   </div>
                 </div>
@@ -593,7 +933,7 @@ export default function BudgetSummary({ profile, checklistItems, maharItems, onN
                 <button
                   type="submit"
                   disabled={isSavingOnboard}
-                  className="w-full py-3 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold rounded-lg shadow-md transition-all duration-200 flex items-center justify-center cursor-pointer text-sm"
+                  className="w-full py-3 bg-brand-600 hover:bg-[#985e49] text-white font-semibold rounded-lg shadow-md transition-all duration-200 flex items-center justify-center cursor-pointer text-sm"
                 >
                   {isSavingOnboard ? (
                     <span className="flex items-center gap-2">
