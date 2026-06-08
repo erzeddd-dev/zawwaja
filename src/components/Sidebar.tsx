@@ -50,12 +50,14 @@ export default function Sidebar({
   return (
     <>
       {/* 1. MOBILE VIEW: Bottom Navigation Bar (md:hidden) — Glassmorphism */}
+      {/* Order: Mahar | Vendor | Persiapan | Dashboard (rightmost) */}
       <div className="fixed bottom-0 left-0 right-0 h-16 glass-bottom-bar flex md:hidden items-center justify-around px-2 z-40">
-        {menuItems.map((item) => {
+        {[...menuItems].reverse().map((item) => {
           const Icon = item.icon;
           const isActive = currentTab === item.id;
           
           let shortLabel = item.label;
+          if (item.id === "dashboard") shortLabel = "Dashboard";
           if (item.id === "checklist") shortLabel = "Persiapan";
           if (item.id === "vendors") shortLabel = "Vendor";
           if (item.id === "mahar") shortLabel = "Mahar";
@@ -64,16 +66,20 @@ export default function Sidebar({
             <button
               key={item.id}
               onClick={() => setCurrentTab(item.id)}
-              className={`flex flex-col items-center justify-center py-1 flex-1 transition-all cursor-pointer ${
+              className={`flex flex-col items-center justify-center py-1 flex-1 transition-all cursor-pointer relative ${
                 isActive 
-                  ? "text-brand-600 scale-105" 
+                  ? "text-brand-600" 
                   : "text-text-secondary hover:text-brand-600"
               }`}
               title={item.label}
               id={`nav-item-mobile-${item.id}`}
             >
-              <Icon size={18} className="mb-0.5" />
-              <span className={`text-[9px] font-sans font-medium tracking-tight ${isActive ? "text-brand-600 font-bold" : "text-text-tertiary"}`}>
+              {/* Active indicator dot — top */}
+              <span className={`absolute top-0 left-1/2 -translate-x-1/2 w-5 h-0.5 rounded-full transition-all duration-300 ${
+                isActive ? 'bg-brand-600 opacity-100' : 'opacity-0'
+              }`} />
+              <Icon size={isActive ? 20 : 18} className={`mb-0.5 transition-all ${isActive ? 'scale-110' : ''}`} />
+              <span className={`text-[9px] font-sans tracking-tight transition-all ${isActive ? "text-brand-600 font-bold" : "text-text-tertiary font-medium"}`}>
                 {shortLabel}
               </span>
             </button>
@@ -84,21 +90,25 @@ export default function Sidebar({
         {isAdmin && (
           <button
             onClick={() => setCurrentTab("admin")}
-            className={`flex flex-col items-center justify-center py-1 flex-1 transition-all cursor-pointer ${
+            className={`flex flex-col items-center justify-center py-1 flex-1 transition-all cursor-pointer relative ${
               currentTab === "admin" 
-                ? "text-amber-700 scale-105" 
+                ? "text-amber-700" 
                 : "text-stone-550 hover:text-amber-700"
             }`}
             title="Portal Admin"
             id="nav-item-mobile-admin"
           >
-            <UserCheck size={18} className="mb-0.5" />
-            <span className={`text-[9px] font-sans font-medium tracking-tight ${currentTab === "admin" ? "text-amber-700 font-bold" : "text-stone-400"}`}>
+            <span className={`absolute top-0 left-1/2 -translate-x-1/2 w-5 h-0.5 rounded-full transition-all duration-300 ${
+              currentTab === "admin" ? 'bg-amber-600 opacity-100' : 'opacity-0'
+            }`} />
+            <UserCheck size={currentTab === "admin" ? 20 : 18} className="mb-0.5 transition-all" />
+            <span className={`text-[9px] font-sans tracking-tight ${currentTab === "admin" ? "text-amber-700 font-bold" : "text-stone-400 font-medium"}`}>
               Admin
             </span>
           </button>
         )}
       </div>
+
 
       {/* 2. DESKTOP VIEW: Glassmorphism Sidebar (md:flex) */}
       <div 

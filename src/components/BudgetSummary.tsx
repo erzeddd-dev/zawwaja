@@ -312,34 +312,262 @@ export default function BudgetSummary({
   };
 
   return (
-    <div className="space-y-6 relative" id="dashboard-view">
-      
+    <div className="space-y-4 md:space-y-6 relative" id="dashboard-view">
+
       {/* ============================================ */}
-      {/* 1. FLOATING HEADER - Outside glass container */}
+      {/* 1. FLOATING HEADER (compact on mobile)       */}
       {/* ============================================ */}
       <div className="animate-fade-up">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-1">
-          <div>
-            <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">
+        {/* Mobile: single-row header with countdown pill */}
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex-1 min-w-0">
+            <div className="hidden sm:flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">
               <Calendar size={12} />
               <span>{currentDateFormatted}</span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-serif font-bold text-text-primary leading-tight" style={{ textShadow: '0 2px 8px rgba(42, 92, 77, 0.08)' }}>
+            <h1 className="text-xl md:text-3xl font-serif font-bold text-text-primary leading-tight" style={{ textShadow: '0 2px 8px rgba(42, 92, 77, 0.08)' }}>
               Assalamu'alaikum, <span className="text-brand-600">{profile.fullName || "Pengantin"}</span>
             </h1>
-            <p className="text-text-secondary text-xs mt-1">
-              Pernikahan dengan <span className="font-semibold text-brand-600">{profile.partnerName || "Pasangan"}</span> dalam <span className="font-bold text-brand-600">{daysRemaining} hari</span> lagi
+            <p className="text-text-secondary text-xs mt-0.5">
+              dalam <span className="font-bold text-brand-600">{daysRemaining} hari</span> lagi bersama <span className="font-semibold text-brand-600">{profile.partnerName || "Pasangan"}</span>
             </p>
+          </div>
+
+          {/* Floating Countdown Pill — mobile only */}
+          <div className="md:hidden glass-cylinder px-4 py-2.5 flex flex-col items-center justify-center text-center shrink-0 animate-countdown" style={{ minWidth: '84px' }}>
+            <span className="text-[7px] font-bold uppercase tracking-[0.15em] text-text-tertiary">Countdown</span>
+            <div className="flex items-baseline gap-0.5 mt-0.5">
+              <span className="text-2xl font-display font-extrabold text-brand-600 leading-none tracking-tight" style={{ textShadow: '0 1px 8px rgba(42, 92, 77, 0.15)' }}>
+                {daysRemaining}
+              </span>
+              <span className="text-[9px] font-bold text-brand-400 uppercase">hr</span>
+            </div>
+            <span className="text-[7px] text-text-tertiary leading-tight mt-0.5">
+              {profile.weddingDate ? new Date(profile.weddingDate).toLocaleDateString("id-ID", { day: 'numeric', month: 'short' }) : "—"}
+            </span>
           </div>
         </div>
       </div>
 
       {/* ============================================ */}
-      {/* 2. TOP ROW: Countdown + Progress Stats       */}
+      {/* 2. TIMELINE — DOMINANT on mobile, first!     */}
       {/* ============================================ */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 animate-fade-up" style={{ animationDelay: '0.1s' }}>
-        
-        {/* Countdown Cylinder Widget */}
+      <div className="glass-panel animate-fade-up relative" style={{ animationDelay: '0.1s' }}>
+        <div className="px-4 pt-4 pb-1 flex items-center justify-between">
+          <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-text-tertiary">
+            Timeline Persiapan Nikah
+          </h3>
+          <span className="text-[9px] text-brand-600 font-bold bg-brand-50/80 px-2 py-0.5 rounded-full border border-brand-100">
+            Fase {activePhaseId}/6
+          </span>
+        </div>
+
+        {/* Mobile: Horizontal Scroll Timeline — with overflow-visible rows for shadow */}
+        <div className="md:hidden">
+          {/* Scrollable row of nodes — padded so shadow doesn't clip */}
+          <div className="overflow-x-auto pb-3" style={{ paddingLeft: '16px', paddingRight: '16px' }}>
+            <div className="flex gap-3 min-w-max py-4 items-end">
+              {phases.map((phase, idx) => {
+                const Icon = phase.icon;
+                const isActive = phase.id === activePhaseId;
+                const isDone = phase.id < activePhaseId;
+                const isPending = !isActive && !isDone;
+                const progress = getPhaseProgress(phase.id);
+
+                return (
+                  <div key={phase.id} className="flex flex-col items-center" style={{ width: '68px' }}>
+                    {/* Connector line between nodes */}
+                    {idx > 0 && (
+                      <div style={{ position: 'absolute' }} />
+                    )}
+
+                    {/* Active badge — above the node */}
+                    {isActive && (
+                      <div className="mb-1.5 flex items-center gap-1 px-2 py-0.5 rounded-full animate-pulse"
+                        style={{ background: 'rgba(42,92,77,0.12)', border: '1px solid rgba(42,92,77,0.25)' }}>
+                        <span className="w-1.5 h-1.5 rounded-full bg-brand-600" />
+                        <span className="text-[7px] font-black text-brand-600 uppercase tracking-wider">Aktif</span>
+                      </div>
+                    )}
+                    {!isActive && <div className="mb-1.5 h-5" />}
+
+                    {/* Glass Node — distinct styles per state */}
+                    <button
+                      onClick={() => onNavigate(phase.navigateTo)}
+                      style={{
+                        width: '52px',
+                        height: '52px',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        position: 'relative',
+                        cursor: 'pointer',
+                        transition: 'all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                        // DONE state: filled green
+                        ...(isDone ? {
+                          background: 'linear-gradient(145deg, #2A5C4D 0%, #367663 100%)',
+                          border: '2px solid rgba(42,92,77,0.6)',
+                          boxShadow: '0 4px 14px rgba(42,92,77,0.3), inset 0 1px 2px rgba(255,255,255,0.15)'
+                        } : isActive ? {
+                          // ACTIVE state: bright glowing brand fill
+                          background: 'linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(210,240,230,0.85) 100%)',
+                          border: '2.5px solid rgba(42,92,77,0.7)',
+                          boxShadow: '0 0 0 4px rgba(42,92,77,0.15), 0 0 20px rgba(42,92,77,0.4), 0 4px 16px rgba(0,0,0,0.08), inset 0 2px 3px rgba(255,255,255,0.9)'
+                        } : {
+                          // PENDING state: muted grey glass
+                          background: 'linear-gradient(145deg, rgba(240,240,240,0.7) 0%, rgba(220,225,223,0.6) 100%)',
+                          border: '1.5px solid rgba(200,210,207,0.6)',
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.04), inset 0 1px 2px rgba(255,255,255,0.5)'
+                        })
+                      }}
+                      id={`timeline-node-mobile-${phase.id}`}
+                    >
+                      {/* Checkmark for done */}
+                      {isDone ? (
+                        <Check size={20} className="text-white stroke-[2.5px]" />
+                      ) : (
+                        <Icon size={20} className={isActive ? 'text-brand-600' : 'text-text-disabled'} />
+                      )}
+                    </button>
+
+                    {/* Progress ring for active node */}
+                    {isActive && (
+                      <div className="mt-1.5 flex items-center gap-0.5 justify-center">
+                        <ProgressRing percent={progress} size={20} strokeWidth={2} />
+                        <span className="text-[8px] font-bold text-brand-600">{progress}%</span>
+                      </div>
+                    )}
+                    {!isActive && <div className="mt-1.5 h-5" />}
+
+                    {/* Label */}
+                    <p className={`text-[9px] font-bold text-center mt-1 leading-tight ${
+                      isActive ? 'text-brand-600' : isDone ? 'text-brand-500' : 'text-text-disabled'
+                    }`} style={{ maxWidth: '66px' }}>
+                      {phase.title.split(' & ')[0]}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Mobile connector bar underneath */}
+          <div className="mx-4 mb-4">
+            <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(0,0,0,0.06)' }}>
+              <div
+                className="h-full rounded-full transition-all duration-700"
+                style={{
+                  width: `${((activePhaseId - 1) / 5) * 100}%`,
+                  background: 'linear-gradient(90deg, #2A5C4D, #539C85)'
+                }}
+              />
+            </div>
+            <div className="flex justify-between mt-1">
+              <span className="text-[8px] text-text-tertiary">Mulai</span>
+              <span className="text-[8px] text-text-tertiary">Hari-H</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop SVG Ribbon Path + Nodes */}
+        <div className="hidden md:block relative p-8 pt-4" style={{ minHeight: '280px' }}>
+          {/* SVG Curved Ribbon Path */}
+          <svg
+            viewBox="0 0 900 200"
+            className="w-full h-auto absolute top-1/2 -translate-y-1/2 left-0"
+            preserveAspectRatio="xMidYMid meet"
+            style={{ filter: 'drop-shadow(0 2px 4px rgba(42, 92, 77, 0.05))' }}
+          >
+            <path
+              d="M 50 100 C 150 40, 250 160, 350 100 C 450 40, 550 160, 650 100 C 750 40, 850 100, 850 100"
+              className="timeline-path"
+            />
+            <path
+              d="M 50 100 C 150 40, 250 160, 350 100 C 450 40, 550 160, 650 100 C 750 40, 850 100, 850 100"
+              className="timeline-path-active"
+              strokeDasharray={`${(activePhaseId / 6) * 1200}`}
+              strokeDashoffset="0"
+            />
+          </svg>
+
+          {/* Desktop Timeline Nodes */}
+          <div className="relative flex justify-between items-start px-4" style={{ minHeight: '280px' }}>
+            {phases.map((phase, index) => {
+              const Icon = phase.icon;
+              const isActive = phase.id === activePhaseId;
+              const isDone = phase.id < activePhaseId;
+              const progress = getPhaseProgress(phase.id);
+              const isEven = index % 2 === 0;
+              const topPos = isEven ? '10px' : '120px';
+
+              return (
+                <div
+                  key={phase.id}
+                  className={`flex flex-col items-center relative animate-scale-in anim-delay-${phase.id}`}
+                  style={{ top: topPos, position: 'relative', flex: '1', maxWidth: '130px' }}
+                >
+                  <button
+                    onClick={() => onNavigate(phase.navigateTo)}
+                    onMouseEnter={() => setHoveredNode(phase.id)}
+                    onMouseLeave={() => setHoveredNode(null)}
+                    className={`glass-node w-16 h-16 flex items-center justify-center relative z-10 ${
+                      isActive ? 'glass-node-active' : ''
+                    } ${isDone ? 'glass-node-done' : ''}`}
+                    title={`${phase.title} — Klik untuk navigasi`}
+                    id={`timeline-node-${phase.id}`}
+                  >
+                    <Icon size={24} className={`${
+                      isActive ? 'text-brand-600' : isDone ? 'text-brand-500' : 'text-text-tertiary'
+                    }`} />
+                    {isDone && (
+                      <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-brand-600 flex items-center justify-center shadow-md border-2 border-white">
+                        <Check size={10} className="text-white stroke-[3px]" />
+                      </div>
+                    )}
+                  </button>
+
+                  {isActive && (
+                    <div className="glass-badge px-2.5 py-1 mt-2 flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-brand-600 animate-pulse" />
+                      <span className="text-[8px] font-black text-brand-600 uppercase tracking-wider">Sedang Berjalan</span>
+                    </div>
+                  )}
+
+                  <div className="text-center mt-2">
+                    <p className={`text-[11px] font-bold leading-tight ${isActive ? 'text-brand-600' : 'text-text-primary'}`}>
+                      {phase.title}
+                    </p>
+                    <p className="text-[9px] text-text-tertiary mt-0.5">{phase.subtitle}</p>
+                  </div>
+
+                  {(phase.id === 1 || isActive) && (
+                    <div className="mt-1.5 flex items-center gap-1">
+                      <ProgressRing percent={progress} size={28} strokeWidth={2.5} />
+                      <span className="text-[9px] font-bold text-text-secondary">{progress}%</span>
+                    </div>
+                  )}
+
+                  {hoveredNode === phase.id && (
+                    <div className="glass-tooltip px-3 py-2 absolute -bottom-14 left-1/2 -translate-x-1/2 whitespace-nowrap z-30 animate-scale-in">
+                      <p className="text-[10px] font-medium">
+                        {isActive ? "Klik untuk Mengelola " + phase.title : `Klik untuk melihat ${phase.title}`}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* ============================================ */}
+      {/* 3. STATS ROW: desktop countdown + cards      */}
+      {/* ============================================ */}
+      {/* Desktop: Countdown + stats side by side */}
+      <div className="hidden md:grid md:grid-cols-3 gap-4 animate-fade-up" style={{ animationDelay: '0.2s' }}>
+        {/* Countdown Cylinder Widget - desktop only full version */}
         <div className="glass-cylinder p-5 flex flex-col items-center justify-center text-center animate-countdown md:col-span-1">
           <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-text-tertiary mb-2">Hitung Mundur</span>
           <div className="flex items-baseline gap-1">
@@ -348,19 +576,13 @@ export default function BudgetSummary({
             </span>
             <span className="text-sm font-bold text-brand-400 uppercase tracking-wider">Hari</span>
           </div>
-          <p className="text-[10px] text-text-tertiary mt-2 font-medium">
-            ~{weeksRemaining} minggu menuju akad
-          </p>
+          <p className="text-[10px] text-text-tertiary mt-2 font-medium">~{weeksRemaining} minggu menuju akad</p>
           <p className="text-[9px] text-text-tertiary mt-0.5">
-            {profile.weddingDate ? new Date(profile.weddingDate).toLocaleDateString("id-ID", {
-              day: 'numeric', month: 'long', year: 'numeric'
-            }) : "Belum ditentukan"}
+            {profile.weddingDate ? new Date(profile.weddingDate).toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric' }) : "Belum ditentukan"}
           </p>
         </div>
 
-        {/* Progress + Budget Cards */}
         <div className="md:col-span-2 grid grid-cols-2 gap-4">
-          {/* Progress Card */}
           <div className="glass-panel p-4 flex flex-col justify-between">
             <span className="text-[9px] font-bold uppercase tracking-[0.15em] text-text-tertiary">Progres Persiapan</span>
             <div className="flex items-center gap-3 mt-3">
@@ -375,7 +597,6 @@ export default function BudgetSummary({
             </p>
           </div>
 
-          {/* Budget Card */}
           <div className="glass-panel p-4 flex flex-col justify-between">
             <span className="text-[9px] font-bold uppercase tracking-[0.15em] text-text-tertiary">Serapan Anggaran</span>
             <div className="mt-3">
@@ -392,172 +613,33 @@ export default function BudgetSummary({
         </div>
       </div>
 
-      {/* ============================================ */}
-      {/* 3. FLOATING RIBBON TIMELINE (Main Attraction) */}
-      {/* ============================================ */}
-      <div className="glass-panel p-5 md:p-8 animate-fade-up relative overflow-hidden" style={{ animationDelay: '0.2s' }}>
-        <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-text-tertiary mb-6 md:mb-8 text-center">
-          Timeline Persiapan Nikah Syar'i
-        </h3>
-        
-        {/* Desktop SVG Ribbon Path + Nodes */}
-        <div className="hidden md:block relative" style={{ minHeight: '280px' }}>
-          {/* SVG Curved Ribbon Path */}
-          <svg 
-            viewBox="0 0 900 200" 
-            className="w-full h-auto absolute top-1/2 -translate-y-1/2"
-            preserveAspectRatio="xMidYMid meet"
-            style={{ filter: 'drop-shadow(0 2px 4px rgba(42, 92, 77, 0.05))' }}
-          >
-            {/* Background decorative path */}
-            <path 
-              d="M 50 100 C 150 40, 250 160, 350 100 C 450 40, 550 160, 650 100 C 750 40, 850 100, 850 100" 
-              className="timeline-path"
-            />
-            {/* Active progress path overlay */}
-            <path 
-              d="M 50 100 C 150 40, 250 160, 350 100 C 450 40, 550 160, 650 100 C 750 40, 850 100, 850 100" 
-              className="timeline-path-active"
-              strokeDasharray={`${(activePhaseId / 6) * 1200}`}
-              strokeDashoffset="0"
-            />
-          </svg>
-
-          {/* Timeline Nodes positioned along the curve */}
-          <div className="relative flex justify-between items-start px-4" style={{ minHeight: '280px' }}>
-            {phases.map((phase, index) => {
-              const Icon = phase.icon;
-              const isActive = phase.id === activePhaseId;
-              const isDone = phase.id < activePhaseId;
-              const progress = getPhaseProgress(phase.id);
-
-              // Vertical positions to follow the curve: alternating high/low
-              const isEven = index % 2 === 0;
-              const topPos = isEven ? '10px' : '120px';
-
-              return (
-                <div 
-                  key={phase.id}
-                  className={`flex flex-col items-center relative animate-scale-in anim-delay-${phase.id}`}
-                  style={{ top: topPos, position: 'relative', flex: '1', maxWidth: '130px' }}
-                >
-                  {/* Glass Sphere Node */}
-                  <button
-                    onClick={() => onNavigate(phase.navigateTo)}
-                    onMouseEnter={() => setHoveredNode(phase.id)}
-                    onMouseLeave={() => setHoveredNode(null)}
-                    className={`glass-node w-16 h-16 flex items-center justify-center relative z-10 ${
-                      isActive ? 'glass-node-active' : ''
-                    } ${isDone ? 'glass-node-done' : ''}`}
-                    title={`${phase.title} — Klik untuk navigasi`}
-                    id={`timeline-node-${phase.id}`}
-                  >
-                    <Icon size={24} className={`${
-                      isActive ? 'text-brand-600' : isDone ? 'text-brand-500' : 'text-text-tertiary'
-                    }`} />
-                    
-                    {/* Completed checkmark overlay */}
-                    {isDone && (
-                      <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-brand-600 flex items-center justify-center shadow-md border-2 border-white">
-                        <Check size={10} className="text-white stroke-[3px]" />
-                      </div>
-                    )}
-                  </button>
-
-                  {/* Active Badge */}
-                  {isActive && (
-                    <div className="glass-badge px-2.5 py-1 mt-2 flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-brand-600 animate-pulse" />
-                      <span className="text-[8px] font-black text-brand-600 uppercase tracking-wider">Sedang Berjalan</span>
-                    </div>
-                  )}
-
-                  {/* Node Label */}
-                  <div className="text-center mt-2">
-                    <p className={`text-[11px] font-bold leading-tight ${isActive ? 'text-brand-600' : 'text-text-primary'}`}>
-                      {phase.title}
-                    </p>
-                    <p className="text-[9px] text-text-tertiary mt-0.5">{phase.subtitle}</p>
-                  </div>
-
-                  {/* Mini Progress Ring (for Node 1 or active node) */}
-                  {(phase.id === 1 || isActive) && (
-                    <div className="mt-1.5 flex items-center gap-1">
-                      <ProgressRing percent={progress} size={28} strokeWidth={2.5} />
-                      <span className="text-[9px] font-bold text-text-secondary">{progress}%</span>
-                    </div>
-                  )}
-
-                  {/* Hover Tooltip */}
-                  {hoveredNode === phase.id && (
-                    <div className="glass-tooltip px-3 py-2 absolute -bottom-14 left-1/2 -translate-x-1/2 whitespace-nowrap z-30 animate-scale-in">
-                      <p className="text-[10px] font-medium">
-                        {isActive ? "Klik untuk Mengelola " + phase.title : `Klik untuk melihat ${phase.title}`}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+      {/* Mobile: compact progress + budget row */}
+      <div className="md:hidden grid grid-cols-2 gap-3 animate-fade-up" style={{ animationDelay: '0.2s' }}>
+        <div className="glass-panel p-3 flex flex-col justify-between">
+          <span className="text-[8px] font-bold uppercase tracking-wider text-text-tertiary">Progres</span>
+          <div className="flex items-center gap-2 mt-2">
+            <ProgressRing percent={checklistPercentage} size={38} strokeWidth={3} />
+            <div>
+              <span className="text-lg font-display font-bold text-text-primary leading-none">{checklistPercentage}<span className="text-xs">%</span></span>
+              <p className="text-[8px] text-text-tertiary">{completedChecklistCount}/{totalChecklistCount}</p>
+            </div>
           </div>
         </div>
-
-        {/* Mobile: Horizontal Scroll Timeline */}
-        <div className="md:hidden overflow-x-auto pb-4 -mx-2 px-2 glass-scrollbar">
-          <div className="flex gap-5 min-w-max items-start py-2">
-            {phases.map((phase) => {
-              const Icon = phase.icon;
-              const isActive = phase.id === activePhaseId;
-              const isDone = phase.id < activePhaseId;
-              const progress = getPhaseProgress(phase.id);
-
-              return (
-                <div key={phase.id} className="flex flex-col items-center w-20 shrink-0">
-                  {/* Glass Node */}
-                  <button
-                    onClick={() => onNavigate(phase.navigateTo)}
-                    className={`glass-node w-14 h-14 flex items-center justify-center relative ${
-                      isActive ? 'glass-node-active' : ''
-                    } ${isDone ? 'glass-node-done' : ''}`}
-                    id={`timeline-node-mobile-${phase.id}`}
-                  >
-                    <Icon size={20} className={`${
-                      isActive ? 'text-brand-600' : isDone ? 'text-brand-500' : 'text-text-tertiary'
-                    }`} />
-                    {isDone && (
-                      <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-brand-600 flex items-center justify-center shadow-md border-2 border-white">
-                        <Check size={8} className="text-white stroke-[3px]" />
-                      </div>
-                    )}
-                  </button>
-
-                  {/* Active Badge */}
-                  {isActive && (
-                    <div className="glass-badge px-2 py-0.5 mt-1.5 flex items-center gap-1">
-                      <span className="w-1 h-1 rounded-full bg-brand-600 animate-pulse" />
-                      <span className="text-[7px] font-black text-brand-600 uppercase tracking-wider">Aktif</span>
-                    </div>
-                  )}
-
-                  {/* Label */}
-                  <p className={`text-[9px] font-bold text-center mt-1.5 leading-tight ${isActive ? 'text-brand-600' : 'text-text-primary'}`}>
-                    {phase.title}
-                  </p>
-                  <p className="text-[8px] text-text-tertiary">{phase.subtitle}</p>
-
-                  {/* Progress ring */}
-                  {(phase.id === 1 || isActive) && (
-                    <div className="mt-1 flex items-center gap-1">
-                      <ProgressRing percent={progress} size={22} strokeWidth={2} />
-                      <span className="text-[8px] font-bold text-text-secondary">{progress}%</span>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+        <div className="glass-panel p-3 flex flex-col justify-between">
+          <span className="text-[8px] font-bold uppercase tracking-wider text-text-tertiary">Anggaran</span>
+          <div className="mt-2">
+            <span className="text-sm font-display font-bold text-text-primary leading-none">{formatIDR(totalActualSpent)}</span>
+          </div>
+          <div className="flex items-center gap-1 mt-1.5">
+            <div className={`w-1.5 h-1.5 rounded-full ${isBudgetSafe ? 'bg-emerald-500' : 'bg-rose-500'}`} />
+            <span className={`text-[9px] font-bold ${isBudgetSafe ? 'text-emerald-600' : 'text-rose-600'}`}>
+              {isBudgetSafe ? 'Aman' : 'Overbudget!'}
+            </span>
           </div>
         </div>
       </div>
+
+
 
       {/* ============================================ */}
       {/* 4. BUDGET LINE CHART (Glass)                 */}
