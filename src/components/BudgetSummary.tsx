@@ -328,7 +328,7 @@ export default function BudgetSummary({
             <h1 className="text-xl md:text-3xl font-serif font-bold text-text-primary leading-tight" style={{ textShadow: '0 2px 8px rgba(42, 92, 77, 0.08)' }}>
               Assalamu'alaikum, <span className="text-brand-600">{profile.fullName || "Pengantin"}</span>
             </h1>
-            <p className="text-text-secondary text-xs mt-0.5">
+            <p className="text-text-secondary text-sm md:text-base mt-1.5">
               dalam <span className="font-bold text-brand-600">{daysRemaining} hari</span> lagi bersama <span className="font-semibold text-brand-600">{profile.partnerName || "Pasangan"}</span>
             </p>
           </div>
@@ -483,12 +483,9 @@ export default function BudgetSummary({
                 >
                   <button
                     onClick={() => onNavigate(phase.navigateTo)}
-                    onMouseEnter={() => setHoveredNode(phase.id)}
-                    onMouseLeave={() => setHoveredNode(null)}
                     className={`glass-node w-16 h-16 flex items-center justify-center relative z-10 ${
                       isActive ? 'glass-node-active' : ''
                     }`}
-                    title={`${phase.title} — Klik untuk navigasi`}
                     id={`timeline-node-${phase.id}`}
                   >
                     <Icon size={24} className={`${
@@ -514,14 +511,6 @@ export default function BudgetSummary({
                     <div className="mt-1.5 flex items-center gap-1">
                       <ProgressRing percent={progress} size={28} strokeWidth={2.5} />
                       <span className="text-[9px] font-bold text-text-secondary">{progress}%</span>
-                    </div>
-                  )}
-
-                  {hoveredNode === phase.id && (
-                    <div className="glass-tooltip px-3 py-2 absolute -bottom-14 left-1/2 -translate-x-1/2 whitespace-nowrap z-30 animate-scale-in">
-                      <p className="text-[10px] font-medium">
-                        {isActive ? "Klik untuk Mengelola " + phase.title : `Klik untuk melihat ${phase.title}`}
-                      </p>
                     </div>
                   )}
                 </div>
