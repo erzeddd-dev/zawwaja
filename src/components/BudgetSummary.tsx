@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { UserProfile, WeddingChecklistItem, MaharItem } from "../types";
 import { 
   Calendar, 
@@ -29,7 +29,59 @@ interface BudgetSummaryProps {
   onSaveChecklistItem?: (item: WeddingChecklistItem) => Promise<void>;
 }
 
-export default function BudgetSummary({ 
+// Timeline phase data structure with icons and navigation targets
+const phases = [
+  {
+    id: 1,
+    title: "Persiapan Awal",
+    subtitle: "5 Bulan",
+    icon: Compass,
+    navigateTo: "checklist",
+    categories: ["Persiapan Awal"]
+  },
+  {
+    id: 2,
+    title: "Administrasi & Dokumen",
+    subtitle: "4 Bulan",
+    icon: FileText,
+    navigateTo: "checklist",
+    categories: ["Administrasi Persiapan Menikah"]
+  },
+  {
+    id: 3,
+    title: "Vendor & Tempat",
+    subtitle: "3 Bulan",
+    icon: Camera,
+    navigateTo: "vendors",
+    categories: ["Tempat", "Make up dan Busana", "Dokumentasi", "Entertaint"]
+  },
+  {
+    id: 4,
+    title: "Mahar & Seserahan",
+    subtitle: "2 Bulan",
+    icon: Gift,
+    navigateTo: "mahar",
+    categories: ["Mahar dan Cincin"]
+  },
+  {
+    id: 5,
+    title: "Undangan & Tamu",
+    subtitle: "1 Bulan",
+    icon: Users,
+    navigateTo: "checklist",
+    categories: ["Makanan", "Undangan dan Souvenir"]
+  },
+  {
+    id: 6,
+    title: "Finalisasi & Hari-H",
+    subtitle: "Hari-H",
+    icon: Gem,
+    navigateTo: "checklist",
+    categories: ["Persiapan Lainnya"]
+  }
+];
+
+function BudgetSummary({ 
   profile, 
   checklistItems, 
   maharItems, 
@@ -172,88 +224,39 @@ export default function BudgetSummary({
   };
 
   // Dynamic MMR Deadline calculation: 3 months before wedding date
-  const getMMRDeadline = () => {
+  const getMMRDeadline = useCallback(() => {
     if (!profile.weddingDate) return "September 2026";
     const date = new Date(profile.weddingDate);
     date.setMonth(date.getMonth() - 3);
     return date.toLocaleDateString("id-ID", { month: "long", year: "numeric" });
-  };
+  }, [profile.weddingDate]);
 
-  // Timeline phase data structure with icons and navigation targets
-  const phases = [
-    {
-      id: 1,
-      title: "Persiapan Awal",
-      subtitle: "5 Bulan",
-      icon: Compass,
-      navigateTo: "checklist",
-      categories: ["Persiapan Awal"]
-    },
-    {
-      id: 2,
-      title: "Administrasi & Dokumen",
-      subtitle: "4 Bulan",
-      icon: FileText,
-      navigateTo: "checklist",
-      categories: ["Administrasi Persiapan Menikah"]
-    },
-    {
-      id: 3,
-      title: "Vendor & Tempat",
-      subtitle: "3 Bulan",
-      icon: Camera,
-      navigateTo: "vendors",
-      categories: ["Tempat", "Make up dan Busana", "Dokumentasi", "Entertaint"]
-    },
-    {
-      id: 4,
-      title: "Mahar & Seserahan",
-      subtitle: "2 Bulan",
-      icon: Gift,
-      navigateTo: "mahar",
-      categories: ["Mahar dan Cincin"]
-    },
-    {
-      id: 5,
-      title: "Undangan & Tamu",
-      subtitle: "1 Bulan",
-      icon: Users,
-      navigateTo: "checklist",
-      categories: ["Makanan", "Undangan dan Souvenir"]
-    },
-    {
-      id: 6,
-      title: "Finalisasi & Hari-H",
-      subtitle: "Hari-H",
-      icon: Gem,
-      navigateTo: "checklist",
-      categories: ["Persiapan Lainnya"]
-    }
-  ];
+
 
   // Helper to filter checklist items for each phase
-  const getItemsForPhase = (phaseId: number) => {
+  const getItemsForPhase = useCallback((phaseId: number) => {
     const phase = phases.find(p => p.id === phaseId);
     if (!phase) return [];
     return checklistItems.filter(item => {
       return phase.categories.some(cat => cat.toLowerCase() === item.category.toLowerCase());
     });
-  };
+  }, [phases, checklistItems]);
 
   // Calculate progress per phase
-  const getPhaseProgress = (phaseId: number) => {
+  const getPhaseProgress = useCallback((phaseId: number) => {
     const items = getItemsForPhase(phaseId);
     if (items.length === 0) return 0;
     const done = items.filter(i => i.isDone).length;
     return Math.round((done / items.length) * 100);
-  };
+  }, [getItemsForPhase]);
 
   // SVG Budget mini chart data points (simulate 6-point trend line)
-  const chartPoints = phases.map((phase) => {
+  const chartPoints = useMemo(() => phases.map((phase) => {
     const items = getItemsForPhase(phase.id);
     return items.reduce((acc, i) => acc + (i.budgetActual || 0), 0);
-  });
-  const maxChartVal = Math.max(...chartPoints, 1);
+  }), [phases, getItemsForPhase]);
+  
+  const maxChartVal = useMemo(() => Math.max(...chartPoints, 1), [chartPoints]);
 
   // Generate SVG path for budget chart
   const chartWidth = 400;
@@ -262,21 +265,21 @@ export default function BudgetSummary({
   const chartInnerWidth = chartWidth - chartPadding * 2;
   const chartInnerHeight = chartHeight - chartPadding;
   
-  const chartPathPoints = chartPoints.map((val, i) => {
+  const chartPathPoints = useMemo(() => chartPoints.map((val, i) => {
     const x = chartPadding + (i / (chartPoints.length - 1)) * chartInnerWidth;
     const y = chartHeight - chartPadding / 2 - (val / maxChartVal) * chartInnerHeight;
     return { x, y };
-  });
+  }), [chartPoints, maxChartVal, chartInnerWidth, chartInnerHeight]);
   
-  const chartPathD = chartPathPoints.reduce((acc, point, i) => {
+  const chartPathD = useMemo(() => chartPathPoints.reduce((acc, point, i) => {
     if (i === 0) return `M ${point.x} ${point.y}`;
     const prev = chartPathPoints[i - 1];
     const cpx1 = prev.x + (point.x - prev.x) / 3;
     const cpx2 = point.x - (point.x - prev.x) / 3;
     return `${acc} C ${cpx1} ${prev.y}, ${cpx2} ${point.y}, ${point.x} ${point.y}`;
-  }, "");
+  }, ""), [chartPathPoints]);
 
-  const chartAreaD = `${chartPathD} L ${chartPathPoints[chartPathPoints.length - 1].x} ${chartHeight} L ${chartPathPoints[0].x} ${chartHeight} Z`;
+  const chartAreaD = useMemo(() => `${chartPathD} L ${chartPathPoints[chartPathPoints.length - 1].x} ${chartHeight} L ${chartPathPoints[0].x} ${chartHeight} Z`, [chartPathD, chartPathPoints]);
 
   // Progress Ring helper
   const ProgressRing = ({ percent, size = 44, strokeWidth = 3 }: { percent: number; size?: number; strokeWidth?: number }) => {
@@ -607,7 +610,7 @@ export default function BudgetSummary({
       <div className="glass-chart p-5 animate-fade-up" style={{ animationDelay: '0.3s' }}>
         <div className="flex items-center justify-between mb-3">
           <div>
-            <h4 className="text-[10px] font-bold uppercase tracking-[0.15em] text-text-tertiary">Tren Pengeluaran per Fase</h4>
+            <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-text-tertiary">Tren Pengeluaran per Fase</h3>
           </div>
           <div className="flex items-center gap-1.5">
             <TrendingUp size={13} className={isBudgetSafe ? 'text-emerald-500' : 'text-rose-500'} />
@@ -997,3 +1000,6 @@ export default function BudgetSummary({
     </div>
   );
 }
+
+export default React.memo(BudgetSummary);
+
