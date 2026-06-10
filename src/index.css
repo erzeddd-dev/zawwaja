@@ -312,28 +312,55 @@
     min-height: 100vh;
   }
 
-  .antigravity-bg::after {
-    content: '';
-    position: fixed;
-    inset: -10%; /* slight bleed to prevent edge artifacts */
-    z-index: -2;
-    background-image: url('/bg-garden.webp');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+  /* Desktop only: floral background with blur overlay */
+  @media (min-width: 768px) {
+    .antigravity-bg::after {
+      content: '';
+      position: fixed;
+      inset: -10%;
+      z-index: -2;
+      background-image: url('/bg-garden.webp');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .antigravity-bg::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: rgba(240, 248, 245, 0.55);
+      backdrop-filter: blur(10px) saturate(1.1);
+      -webkit-backdrop-filter: blur(10px) saturate(1.1);
+      pointer-events: none;
+      z-index: -1;
+      transform: translateZ(0);
+      will-change: transform;
+    }
   }
 
-  .antigravity-bg::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: rgba(240, 248, 245, 0.55);
-    backdrop-filter: blur(10px) saturate(1.1);
-    -webkit-backdrop-filter: blur(10px) saturate(1.1);
-    pointer-events: none;
-    z-index: -1;
-    transform: translateZ(0);
-    will-change: transform;
+  /* Mobile: solid clean background — no image, no blur */
+  @media (max-width: 767px) {
+    .antigravity-bg {
+      background-color: #F8FAF9;
+    }
+
+    /* Solid white cards on mobile for WCAG contrast */
+    .glass-panel {
+      background: #FFFFFF;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      box-shadow: 0 1px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .glass-chart {
+      background: #FFFFFF;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      box-shadow: 0 1px 8px rgba(0, 0, 0, 0.05);
+    }
   }
 }
 

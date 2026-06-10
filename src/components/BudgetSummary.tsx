@@ -335,36 +335,38 @@ function BudgetSummary({
       {/* 1. PROFILE HEADER — TikTok-style (mobile)   */}
       {/* ============================================ */}
       <div className="animate-fade-up">
-        {/* Mobile: TikTok-style 30/70 profile dashboard */}
-        <div className="md:hidden flex flex-col items-center text-center relative">
+        {/* Mobile: Golden Ratio 38:62 profile dashboard */}
+        <div className="md:hidden flex flex-col relative" style={{ padding: '0 34px' }}>
           
-          {/* ─── ZONE 1: Context & Status (Top 30%) ─── */}
-          {/* Avatar + Name + 3 Big Stats */}
-          <div className="w-full pb-4">
-            {/* Avatar Row with Edit */}
-            <div className="flex items-center justify-center gap-4 mb-2">
-              <div className="relative">
-                <div className="w-[72px] h-[72px] rounded-full bg-gradient-to-br from-brand-100 via-brand-50 to-brand-200 text-brand-700 flex items-center justify-center font-bold text-2xl border-[3px] border-white shadow-lg shadow-brand-600/10">
+          {/* ─── ZONE 1: Context & Status (Top ~38% / 306px) ─── */}
+          <div className="w-full" style={{ paddingBottom: '21px' }}>
+            {/* Avatar + Name Row — 8px icon-text gap, 13px name-date gap */}
+            <div className="flex items-center gap-[13px]" style={{ marginBottom: '21px' }}>
+              <div className="relative shrink-0">
+                <div className="w-[72px] h-[72px] rounded-full bg-gradient-to-br from-brand-100 via-brand-50 to-brand-200 text-brand-700 flex items-center justify-center font-bold text-[23px] font-sans border-[3px] border-white shadow-lg shadow-brand-600/10">
                   {getInitials(profile.fullName)}
                 </div>
-                {/* Edit button — Fitts's Law: 44px touch target */}
+                {/* Edit button — positioned ON the circle border */}
                 <button
                   onClick={onOpenSettings}
-                  className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-brand-600 text-white flex items-center justify-center shadow-md border-2 border-white hover:bg-brand-700 transition-colors cursor-pointer active:scale-90"
+                  className="absolute bottom-0 right-[-4px] w-[28px] h-[28px] rounded-full bg-brand-600 text-white flex items-center justify-center shadow-md border-2 border-white hover:bg-brand-700 transition-colors cursor-pointer active:scale-90"
                   title="Edit Profil"
                   id="profile-edit-btn"
                 >
                   <Pencil size={12} />
                 </button>
               </div>
-              <div className="text-left">
-                <h1 className="text-[20px] font-serif font-bold text-text-primary leading-tight tracking-tight">
+              <div className="text-left min-w-0">
+                {/* 23px — Golden Ratio sub-heading, sans-serif unified */}
+                <h1 className="text-[23px] font-sans font-bold text-text-primary leading-tight tracking-tight truncate">
                   {profile.fullName || "Pengantin"}
                 </h1>
-                <p className="text-[13px] text-text-secondary mt-0.5">
-                  & {profile.partnerName || "Pasangan"} <span className="text-brand-500">♡</span>
+                {/* 14px — body text */}
+                <p className="text-[14px] text-text-secondary font-sans" style={{ marginTop: '4px' }}>
+                  & {profile.partnerName || "Pasangan"}
                 </p>
-                <p className="text-[10px] text-text-tertiary mt-0.5">
+                {/* 10px — micro label */}
+                <p className="text-[10px] text-text-tertiary font-medium" style={{ marginTop: '4px' }}>
                   {profile.weddingDate 
                     ? new Date(profile.weddingDate).toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric' })
                     : "Tanggal belum ditentukan"}
@@ -372,18 +374,20 @@ function BudgetSummary({
               </div>
             </div>
 
-            {/* 3 Big Stats Row — Like TikTok's Followers/Following/Likes */}
-            <div className="flex items-stretch justify-center gap-0 mt-3 mx-1">
+            {/* 3 Big Stats Row — 37px super-heading numbers, 10px labels */}
+            <div className="flex items-stretch justify-center bg-white rounded-2xl" style={{ border: '1px solid rgba(0,0,0,0.06)', boxShadow: '0 1px 8px rgba(0,0,0,0.05)' }}>
               {/* Stat: Countdown */}
-              <div className="flex-1 flex flex-col items-center py-2.5 border-r border-surface-border/50">
-                <span className="text-[24px] font-display font-extrabold text-brand-600 leading-none tracking-tight">
+              <div className="flex-1 flex flex-col items-center" style={{ padding: '13px 0' }}>
+                <span className="text-[37px] font-sans font-extrabold text-brand-600 leading-none tracking-tight">
                   {daysRemaining}
                 </span>
-                <span className="text-[10px] text-text-tertiary font-semibold mt-1 uppercase tracking-wider">Hari Lagi</span>
+                <span className="text-[10px] text-text-secondary font-semibold uppercase tracking-wider" style={{ marginTop: '8px' }}>Hari Lagi</span>
               </div>
-              {/* Stat: Budget Used */}
-              <div className="flex-1 flex flex-col items-center py-2.5 border-r border-surface-border/50">
-                <span className={`text-[22px] font-display font-extrabold leading-none tracking-tight ${isBudgetSafe ? 'text-text-primary' : 'text-rose-600'}`}>
+              <div className="w-px bg-black/5" />
+              {/* Stat: Budget Used — with Rp prefix to avoid ambiguity */}
+              <div className="flex-1 flex flex-col items-center" style={{ padding: '13px 0' }}>
+                <span className={`text-[32px] font-sans font-extrabold leading-none tracking-tight ${isBudgetSafe ? 'text-text-primary' : 'text-rose-600'}`}>
+                  <span className="text-[18px]">Rp</span>
                   {totalActualSpent >= 1000000 
                     ? `${(totalActualSpent / 1000000).toFixed(1)}jt`
                     : totalActualSpent >= 1000 
@@ -391,38 +395,35 @@ function BudgetSummary({
                       : totalActualSpent
                   }
                 </span>
-                <span className="text-[10px] text-text-tertiary font-semibold mt-1 uppercase tracking-wider">Terpakai</span>
+                <span className="text-[10px] text-text-secondary font-semibold uppercase tracking-wider" style={{ marginTop: '8px' }}>Terpakai</span>
               </div>
+              <div className="w-px bg-black/5" />
               {/* Stat: Progress % */}
-              <div className="flex-1 flex flex-col items-center py-2.5">
-                <span className="text-[24px] font-display font-extrabold text-brand-600 leading-none tracking-tight">
-                  {checklistPercentage}<span className="text-[14px]">%</span>
+              <div className="flex-1 flex flex-col items-center" style={{ padding: '13px 0' }}>
+                <span className="text-[37px] font-sans font-extrabold text-brand-600 leading-none tracking-tight">
+                  {checklistPercentage}<span className="text-[18px]">%</span>
                 </span>
-                <span className="text-[10px] text-text-tertiary font-semibold mt-1 uppercase tracking-wider">Selesai</span>
+                <span className="text-[10px] text-text-secondary font-semibold uppercase tracking-wider" style={{ marginTop: '8px' }}>Selesai</span>
               </div>
             </div>
           </div>
 
-          {/* ─── ZONE 2: Control Center (Quick Actions) ─── */}
-          {/* Horizontal action buttons — 44px min touch target */}
-          <div className="w-full flex gap-2 px-1 pb-3">
-            <button
-              onClick={() => onNavigate("checklist")}
-              className="flex-1 py-2.5 bg-brand-600 text-white font-bold text-[11px] rounded-lg flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-transform cursor-pointer"
-            >
-              Fase {activePhaseId} ↗
-            </button>
+          {/* ─── ZONE 2: Control Center ─── */}
+          {/* Quick actions with verbs — Law of Similarity: same function = same style */}
+          <div className="w-full flex gap-[8px]" style={{ paddingBottom: '13px' }}>
             <button
               onClick={() => setShowVaccineModal(true)}
-              className="flex-1 py-2.5 bg-surface-raised border border-surface-border text-text-primary font-semibold text-[11px] rounded-lg flex items-center justify-center gap-1 active:scale-95 transition-transform cursor-pointer"
+              className="flex-1 bg-white border border-black/8 text-text-primary font-semibold text-[12px] font-sans rounded-xl flex items-center justify-center gap-[8px] active:scale-95 transition-transform cursor-pointer"
+              style={{ padding: '13px 0', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}
             >
-              <Syringe size={13} /> Vaksin
+              <Syringe size={14} /> Jadwal Vaksin
             </button>
             <button
               onClick={() => setShowKuaModal(true)}
-              className="flex-1 py-2.5 bg-surface-raised border border-surface-border text-text-primary font-semibold text-[11px] rounded-lg flex items-center justify-center gap-1 active:scale-95 transition-transform cursor-pointer"
+              className="flex-1 bg-white border border-black/8 text-text-primary font-semibold text-[12px] font-sans rounded-xl flex items-center justify-center gap-[8px] active:scale-95 transition-transform cursor-pointer"
+              style={{ padding: '13px 0', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}
             >
-              <Info size={13} /> KUA
+              <Info size={14} /> Cek Syarat KUA
             </button>
           </div>
         </div>
@@ -445,16 +446,21 @@ function BudgetSummary({
       </div>
 
       {/* ============================================ */}
-      {/* 2. TIMELINE — DOMINANT on mobile, first!     */}
+      {/* ZONE 3: Deep Dive Content (Bottom ~62%)    */}
       {/* ============================================ */}
-      <div className="glass-panel animate-fade-up relative" style={{ animationDelay: '0.1s' }}>
-        <div className="px-4 pt-4 pb-1 flex items-center justify-between">
-          <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-text-tertiary">
+      {/* 55px Fibonacci macro gap from Zone 2 to content */}
+      <div className="glass-panel animate-fade-up relative" style={{ animationDelay: '0.1s', marginTop: '0' }}>
+        <div className="flex items-center justify-between" style={{ padding: '13px 21px 8px' }}>
+          <h2 className="text-[10px] font-bold font-sans uppercase tracking-[0.2em] text-text-secondary">
             Timeline Persiapan Nikah
           </h2>
-          <span className="text-[9px] text-brand-600 font-bold bg-brand-50/80 px-2 py-0.5 rounded-full border border-brand-100">
-            Fase {activePhaseId}/6
-          </span>
+          {/* Fase button lives HERE — inside its own card (Law of Similarity) */}
+          <button
+            onClick={() => onNavigate("checklist")}
+            className="text-[10px] text-white font-bold bg-brand-600 px-3 py-1 rounded-full cursor-pointer active:scale-95 transition-transform"
+          >
+            Fase {activePhaseId}/6 →
+          </button>
         </div>
 
         {/* Mobile: Vertical Timeline */}
@@ -470,7 +476,7 @@ function BudgetSummary({
             />
           </div>
 
-          <div className="flex flex-col gap-6 relative z-10">
+          <div className="flex flex-col gap-[21px] relative z-10">
             {phases.map((phase, idx) => {
               const Icon = phase.icon;
               const isActive = phase.id === activePhaseId;
@@ -507,14 +513,14 @@ function BudgetSummary({
                     id={`timeline-node-mobile-${phase.id}`}
                     aria-label={phase.title}
                   >
-                    <Icon size={20} className={isActive ? 'text-brand-600' : 'text-text-disabled'} />
+                    <Icon size={20} className={isActive ? 'text-brand-600' : 'text-stone-500'} />
                   </button>
 
                   {/* Info / Text area */}
                   <div className="flex-1 min-w-0 py-1">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <p className={`text-[12px] font-bold leading-tight truncate ${
-                        isActive ? 'text-brand-600' : 'text-text-primary'
+                      <p className={`text-[13px] font-bold font-sans leading-tight truncate ${
+                        isActive ? 'text-brand-600' : 'text-stone-600'
                       }`}>
                         {phase.title}
                       </p>
@@ -525,7 +531,7 @@ function BudgetSummary({
                       )}
                     </div>
                     
-                    <p className="text-[10px] text-text-tertiary leading-tight line-clamp-1 mb-1">
+                    <p className="text-[10px] text-stone-500 leading-tight line-clamp-1 mb-1">
                       {phase.subtitle}
                     </p>
 
