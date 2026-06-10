@@ -1,6 +1,6 @@
-import React, { useTransition, memo } from "react";
+import React, { memo } from "react";
 import { 
-  LayoutDashboard, 
+  CircleUser, 
   CheckSquare, 
   Building, 
   Gift, 
@@ -27,10 +27,9 @@ export default memo(function Sidebar({
   onOpenSettings 
 }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
-  const [isPending, startTransition] = useTransition();
 
   const menuItems = [
-    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { id: "dashboard", label: "Profil", icon: CircleUser },
     { id: "checklist", label: "Persiapan Nikah", icon: CheckSquare },
     { id: "vendors", label: "Manajemen Vendor", icon: Building },
     { id: "mahar", label: "Seserahan & Mahar", icon: Gift },
@@ -58,7 +57,7 @@ export default memo(function Sidebar({
           const isActive = currentTab === item.id;
           
           let shortLabel = item.label;
-          if (item.id === "dashboard") shortLabel = "Dashboard";
+          if (item.id === "dashboard") shortLabel = "Profil";
           if (item.id === "checklist") shortLabel = "Persiapan";
           if (item.id === "vendors") shortLabel = "Vendor";
           if (item.id === "mahar") shortLabel = "Mahar";
@@ -66,7 +65,7 @@ export default memo(function Sidebar({
           return (
             <button
               key={item.id}
-              onClick={() => startTransition(() => setCurrentTab(item.id))}
+              onClick={() => setCurrentTab(item.id)}
               className={`flex flex-col items-center justify-center py-1 flex-1 transition-all cursor-pointer relative ${
                 isActive 
                   ? "text-brand-600" 
@@ -90,7 +89,7 @@ export default memo(function Sidebar({
         {/* Render Admin entry if user is admin */}
         {isAdmin && (
           <button
-            onClick={() => startTransition(() => setCurrentTab("admin"))}
+            onClick={() => setCurrentTab("admin")}
             className={`flex flex-col items-center justify-center py-1 flex-1 transition-all cursor-pointer relative ${
               currentTab === "admin" 
                 ? "text-amber-700" 
@@ -172,7 +171,7 @@ export default memo(function Sidebar({
               return (
                 <button
                   key={item.id}
-                  onClick={() => startTransition(() => setCurrentTab(item.id))}
+                  onClick={() => setCurrentTab(item.id)}
                   className={`w-full flex items-center rounded-xl text-xs font-semibold tracking-wide transition-all group cursor-pointer ${
                     isCollapsed ? "justify-center p-3" : "justify-start px-4 py-3"
                   } ${
@@ -191,7 +190,7 @@ export default memo(function Sidebar({
             {/* Admin Portal Nav Item (visible only for admins) */}
             {isAdmin && (
               <button
-                onClick={() => startTransition(() => setCurrentTab("admin"))}
+                onClick={() => setCurrentTab("admin")}
                 className={`w-full flex items-center rounded-xl text-xs font-semibold tracking-wide transition-all group cursor-pointer ${
                   isCollapsed ? "justify-center p-3" : "justify-start px-4 py-3"
                 } ${

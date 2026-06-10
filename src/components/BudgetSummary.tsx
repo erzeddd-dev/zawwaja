@@ -6,6 +6,8 @@ import {
   AlertCircle,
   Syringe,
   Info,
+  Building,
+  Gift,
   Check,
   ChevronDown,
   ChevronUp,
@@ -13,7 +15,7 @@ import {
   Compass,
   FileText,
   Camera,
-  Gift,
+  Heart,
   Mail,
   Gem,
   TrendingUp,
@@ -412,18 +414,18 @@ function BudgetSummary({
           {/* Quick actions with verbs — Law of Similarity: same function = same style */}
           <div className="w-full flex gap-[8px]" style={{ paddingBottom: '13px' }}>
             <button
-              onClick={() => setShowVaccineModal(true)}
+              onClick={() => onNavigate("vendors")}
               className="flex-1 bg-white border border-black/8 text-text-primary font-semibold text-[12px] font-sans rounded-xl flex items-center justify-center gap-[8px] active:scale-95 transition-transform cursor-pointer"
               style={{ padding: '13px 0', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}
             >
-              <Syringe size={14} /> Jadwal Vaksin
+              <Building size={14} /> Kelola Vendor
             </button>
             <button
-              onClick={() => setShowKuaModal(true)}
+              onClick={() => onNavigate("mahar")}
               className="flex-1 bg-white border border-black/8 text-text-primary font-semibold text-[12px] font-sans rounded-xl flex items-center justify-center gap-[8px] active:scale-95 transition-transform cursor-pointer"
               style={{ padding: '13px 0', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}
             >
-              <Info size={14} /> Cek Syarat KUA
+              <Gift size={14} /> Atur Mahar
             </button>
           </div>
         </div>
@@ -786,25 +788,25 @@ function BudgetSummary({
         </div>
       </div>
 
-      {/* CTA Buttons — desktop only (mobile has Zone 2 quick actions) */}
-      <div className="hidden md:grid md:grid-cols-3 gap-3 animate-fade-up" style={{ animationDelay: '0.4s' }}>
+      {/* CTA Buttons — Informasi Tambahan */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-[13px] animate-fade-up" style={{ animationDelay: '0.4s' }}>
         <button
           onClick={() => onNavigate("checklist")}
-          className="py-3 px-4 bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 shadow-lg transition-all cursor-pointer hover:shadow-xl hover:-translate-y-0.5"
+          className="hidden md:flex py-3 px-4 bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs rounded-xl items-center justify-center gap-1.5 shadow-lg transition-all cursor-pointer hover:shadow-xl hover:-translate-y-0.5"
         >
           Mulai fase {activePhaseId} ↗
         </button>
         <button
           onClick={() => setShowVaccineModal(true)}
-          className="py-3 px-4 glass-panel hover:shadow-lg text-text-primary font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer hover:-translate-y-0.5"
+          className="py-3 px-4 bg-white border border-black/8 shadow-sm rounded-xl hover:shadow-md text-text-primary font-bold text-[11px] flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95"
         >
-          Jadwal vaksin ↗
+          <Syringe size={14} className="text-brand-600" /> Jadwal Vaksin
         </button>
         <button
           onClick={() => setShowKuaModal(true)}
-          className="py-3 px-4 glass-panel hover:shadow-lg text-text-primary font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer hover:-translate-y-0.5"
+          className="py-3 px-4 bg-white border border-black/8 shadow-sm rounded-xl hover:shadow-md text-text-primary font-bold text-[11px] flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95"
         >
-          Panduan KUA ↗
+          <Info size={14} className="text-brand-600" /> Panduan KUA
         </button>
       </div>
 

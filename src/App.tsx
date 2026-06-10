@@ -1,13 +1,13 @@
-import React, { useEffect, useState, useCallback, Suspense, lazy } from "react";
-const Sidebar = lazy(() => import("./components/Sidebar"));
+import React, { useEffect, useState, useCallback } from "react";
+import Sidebar from "./components/Sidebar";
 import Onboarding from "./components/Onboarding";
-const BudgetSummary = lazy(() => import("./components/BudgetSummary"));
+import BudgetSummary from "./components/BudgetSummary";
 
-const Preparation = lazy(() => import("./components/Preparation"));
-const Vendors = lazy(() => import("./components/Vendors"));
-const Mahar = lazy(() => import("./components/Mahar"));
-const AdminPortal = lazy(() => import("./components/AdminPortal"));
-const AdminDashboard = lazy(() => import("./components/AdminDashboard"));
+import Preparation from "./components/Preparation";
+import Vendors from "./components/Vendors";
+import Mahar from "./components/Mahar";
+import AdminPortal from "./components/AdminPortal";
+import AdminDashboard from "./components/AdminDashboard";
 
 
 import { 
@@ -412,15 +412,13 @@ export default function App() {
     <div className="flex h-screen antigravity-bg font-sans text-text-primary" id="main-workspace">
       
       {/* 1. Left Sidebar Navigation */}
-      <Suspense fallback={<div className="w-16 md:w-64 h-full bg-surface-raised border-r border-surface-border animate-pulse"></div>}>
-        <Sidebar 
-          currentTab={currentTab} 
-          setCurrentTab={setCurrentTab} 
-          profile={profile}
-          onLogout={handleLogout}
-          onOpenSettings={() => setCurrentTab("profile")}
-        />
-      </Suspense>
+      <Sidebar 
+        currentTab={currentTab} 
+        setCurrentTab={setCurrentTab} 
+        profile={profile}
+        onLogout={handleLogout}
+        onOpenSettings={() => setCurrentTab("profile")}
+      />
 
       {/* 2. Main Work Panel Area */}
       <div className="flex-1 flex flex-col overflow-hidden relative z-[1]">
@@ -429,12 +427,6 @@ export default function App() {
         {/* Outer scrolling content block with bottom padding to fit bottom bar on mobile */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 pb-24 md:pb-8">
           <div className="max-w-6xl mx-auto pb-12">
-            <Suspense fallback={
-              <div className="flex flex-col items-center justify-center py-20 text-text-tertiary animate-pulse">
-                <div className="w-8 h-8 border-4 border-brand-200 border-t-brand-600 rounded-full animate-spin mb-4"></div>
-                <p className="text-xs font-semibold">Memuat halaman...</p>
-              </div>
-            }>
             {/* Render Views depending on state */}
             {currentTab === "dashboard" && (
               <BudgetSummary
@@ -492,7 +484,6 @@ export default function App() {
                 }}
               />
             )}
-            </Suspense>
 
             {currentTab === "profile" && (
               <div className="max-w-md mx-auto space-y-6 animate-fade-in pt-4">
