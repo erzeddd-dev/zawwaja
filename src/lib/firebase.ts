@@ -30,7 +30,7 @@ import {
   getDownloadURL 
 } from 'firebase/storage';
 import firebaseConfig from '../firebase-applet-config.json';
-import { UserProfile, WeddingChecklistItem, VendorItem, MaharItem, GuestItem, ApprovalStatus, UserFile } from '../types';
+import { UserProfile, WeddingChecklistItem, VendorItem, MaharItem, ApprovalStatus } from '../types';
 
 // Let's check if the configuration is still active as placeholder/mock
 export const isMockMode = firebaseConfig.apiKey === "mock-api-key-for-local-fallback" || !firebaseConfig.apiKey;
@@ -119,7 +119,7 @@ const MOCK_USERS_KEY = "zawwaja_mock_users";
 const MOCK_CHECKLIST_KEY = "zawwaja_mock_checklist";
 const MOCK_VENDORS_KEY = "zawwaja_mock_vendors";
 const MOCK_MAHAR_KEY = "zawwaja_mock_mahar";
-const MOCK_GUESTS_KEY = "zawwaja_mock_guests";
+
 
 // Initialize mock data if not present
 export const defaultWeddingChecklist = [
@@ -232,10 +232,7 @@ const defaultVendors = [
   { name: "Berkah Catering Sharia", category: "Konsumsi", contact: "089876543210", socialMedia: "@berkahcatering", notes: "Sertifikasi Halal MUI, menu pondokan kambing guling recommended." }
 ];
 
-const defaultGuests: Partial<GuestItem>[] = [
-  { name: "Ustadz Hanan Attaki", relationship: "Keluarga" as const, invitationType: "Digital" as const, isRsvp: true, notes: "Diundang sebagai penceramah khutbah nikah." },
-  { name: "Ahmad Subarjo & Keluarga", relationship: "Sahabat" as const, invitationType: "Cetak" as const, isRsvp: false, notes: "Teman dekat kuliah." }
-];
+
 
 // Helper to secure default/fallback collections inside LocalStorage
 function getMockCollection<T>(key: string, defaults: Partial<T>[] = [], userId: string): T[] {
@@ -815,122 +812,7 @@ export async function deleteMaharItem(userId: string, itemId: string): Promise<v
 }
 
 
-// --- 4. Guest List API ---
 
-export async function getGuestItems(userId: string): Promise<GuestItem[]> {
-  if (isMockMode) {
-    return getMockCollection<GuestItem>(MOCK_GUESTS_KEY, defaultGuests, userId);
-  } else {
-    try {
-      const querySnapshot = await getDocs(collection(db, "users", userId, "guests"));
-      const list: GuestItem[] = [];
-      querySnapshot.forEach((doc) => {
-        list.push(doc.data() as GuestItem);
-      });
-      return list.sort((a,b) => a.createdAt.localeCompare(b.createdAt));
-    } catch (error) {
-      handleFirestoreError(error, OperationType.LIST, `users/${userId}/guests`);
-      return [];
-    }
-  }
-}
-
-export async function saveGuestItem(userId: string, guest: GuestItem): Promise<void> {
-  if (isMockMode) {
-    const list = getMockCollection<GuestItem>(MOCK_GUESTS_KEY, defaultGuests, userId);
-    const index = list.findIndex(g => g.id === guest.id);
-    if (index >= 0) {
-      list[index] = { ...guest, updatedAt: new Date().toISOString() };
-    } else {
-      list.push(guest);
-    }
-    setMockCollection(MOCK_GUESTS_KEY, list, userId);
-  } else {
-    try {
-      const docRef = doc(db, "users", userId, "guests", guest.id);
-      await setDoc(docRef, guest);
-    } catch (error) {
-      handleFirestoreError(error, OperationType.WRITE, `users/${userId}/guests/${guest.id}`);
-    }
-  }
-}
-
-export async function deleteGuestItem(userId: string, guestId: string): Promise<void> {
-  if (isMockMode) {
-    const list = getMockCollection<GuestItem>(MOCK_GUESTS_KEY, defaultGuests, userId);
-    const filtered = list.filter(g => g.id !== guestId);
-    setMockCollection(MOCK_GUESTS_KEY, filtered, userId);
-  } else {
-    try {
-      await deleteDoc(doc(db, "users", userId, "guests", guestId));
-    } catch (error) {
-      handleFirestoreError(error, OperationType.DELETE, `users/${userId}/guests/${guestId}`);
-    }
-  }
-}
-
-const MOCK_INVITATION_KEY = "zawwaja_mock_invitation";
-
-export async function getInvitationConfig(userId: string): Promise<any> {
-  if (isMockMode) {
-    const data = localStorage.getItem(`${MOCK_INVITATION_KEY}_${userId}`);
-    if (!data) {
-      const defaults = {
-        title: "Website Undangan Pernikahan",
-        couple: {
-          male: { name: "Wahyu Pratama", shortName: "Wahyu", parents: { father: "Bapak Budi Pratama", mother: "Ibu Siti Aminah" }, photo: "./assets/images/cowo.png" },
-          female: { name: "Riski Amelia", shortName: "Riski", parents: { father: "Bapak Heri Amelia", mother: "Ibu Ani Lestari" }, photo: "./assets/images/cewe.png" }
-        },
-        schedule: {
-          dateString: "Rabu, 15 Maret 2028",
-          countdownDate: "2028-03-15 10:00:00",
-          akad: { time: "Pukul 10.00 WIB - Selesai" },
-          resepsi: { time: "Pukul 13.00 WIB - Selesai" },
-          calendarLink: "https://calendar.google.com/calendar/render?action=TEMPLATE&text=The%20Wedding%20of%20Wahyu%20and%20Riski"
-        },
-        location: {
-          venue: "Kediaman Mempelai Wanita",
-          address: "RT 10 RW 02, Desa Pajerukan, Kec. Kalibagor, Kab. Banyumas, Jawa Tengah 53191",
-          mapsLink: "https://goo.gl/maps/ALZR6FJZU3kxVwN86"
-        },
-        gifts: [
-          { bank: "BNI", logo: "https://upload.wikimedia.org/wikipedia/id/thumb/5/55/BNI_logo.svg/640px-BNI_logo.svg.png", accountNumber: "987654321", accountHolder: "Wahyu Pratama" },
-          { bank: "BRI", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/BANK_BRI_logo.svg/640px-BANK_BRI_logo.svg.png", accountNumber: "123456789", accountHolder: "Riski Amelia" }
-        ],
-        music: { url: "./assets/music/sound.mp3" },
-        useFirebase: false
-      };
-      localStorage.setItem(`${MOCK_INVITATION_KEY}_${userId}`, JSON.stringify(defaults));
-      return defaults;
-    }
-    return JSON.parse(data);
-  } else {
-    try {
-      const docRef = doc(db, "users", userId, "config", "invitation");
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        return docSnap.data();
-      }
-      return null;
-    } catch (error) {
-      handleFirestoreError(error, OperationType.GET, `users/${userId}/config/invitation`);
-      return null;
-    }
-  }
-}
-
-export async function saveInvitationConfig(userId: string, data: any): Promise<void> {
-  if (isMockMode) {
-    localStorage.setItem(`${MOCK_INVITATION_KEY}_${userId}`, JSON.stringify(data));
-  } else {
-    try {
-      const docRef = doc(db, "users", userId, "config", "invitation");
-      await setDoc(docRef, data);
-    } catch (error) {
-      handleFirestoreError(error, OperationType.WRITE, `users/${userId}/config/invitation`);
-    }
-  }
-}
 
 // Developer testing login hook
 export async function loginAsAdminMock(): Promise<void> {
@@ -1222,91 +1104,6 @@ export async function uploadPaymentProof(userId: string, file: File): Promise<st
   }
 }
 
-const MOCK_FILES_PREFIX = "zawwaja_mock_files_";
 
-export async function getUserFiles(userId: string): Promise<UserFile[]> {
-  if (isMockMode) {
-    const listStr = localStorage.getItem(MOCK_FILES_PREFIX + userId) || "[]";
-    return JSON.parse(listStr);
-  } else {
-    try {
-      const qRef = collection(db, "users", userId, "files");
-      const querySnapshot = await getDocs(qRef);
-      const list: UserFile[] = [];
-      querySnapshot.forEach((docSnap) => {
-        list.push({ id: docSnap.id, ...docSnap.data() } as UserFile);
-      });
-      return list;
-    } catch (error) {
-      console.error("Gagal mengambil daftar berkas:", error);
-      return [];
-    }
-  }
-}
-
-export async function uploadUserFile(userId: string, file: File): Promise<UserFile> {
-  if (isMockMode) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const url = reader.result as string;
-        const newFile: UserFile = {
-          id: "mock-file-" + Math.random().toString(36).substring(2, 9),
-          name: file.name,
-          url: url,
-          type: file.type,
-          size: file.size,
-          createdAt: new Date().toISOString()
-        };
-        const curListStr = localStorage.getItem(MOCK_FILES_PREFIX + userId) || "[]";
-        const curList = JSON.parse(curListStr);
-        curList.push(newFile);
-        localStorage.setItem(MOCK_FILES_PREFIX + userId, JSON.stringify(curList));
-        resolve(newFile);
-      };
-      reader.onerror = (err) => reject(err);
-      reader.readAsDataURL(file);
-    });
-  } else {
-    try {
-      const fileExtension = file.name.split('.').pop() || 'png';
-      const storageRef = ref(storage, `users/${userId}/files/file_${Date.now()}.${fileExtension}`);
-      const snapshot = await uploadBytes(storageRef, file);
-      const downloadURL = await getDownloadURL(snapshot.ref);
-      
-      const fileId = "file-" + Math.random().toString(36).substring(2, 9);
-      const fileDoc: UserFile = {
-        id: fileId,
-        name: file.name,
-        url: downloadURL,
-        type: file.type,
-        size: file.size,
-        createdAt: new Date().toISOString()
-      };
-      
-      await setDoc(doc(db, "users", userId, "files", fileId), fileDoc);
-      return fileDoc;
-    } catch (error: any) {
-      console.error("Firebase Storage file upload error:", error);
-      throw new Error(error.message || "Gagal mengunggah berkas pernikahan.");
-    }
-  }
-}
-
-export async function deleteUserFile(userId: string, fileId: string): Promise<void> {
-  if (isMockMode) {
-    const listStr = localStorage.getItem(MOCK_FILES_PREFIX + userId) || "[]";
-    const list: UserFile[] = JSON.parse(listStr);
-    const updated = list.filter(f => f.id !== fileId);
-    localStorage.setItem(MOCK_FILES_PREFIX + userId, JSON.stringify(updated));
-  } else {
-    try {
-      await deleteDoc(doc(db, "users", userId, "files", fileId));
-    } catch (error: any) {
-      console.error("Failed to delete file from Firestore:", error);
-      throw new Error(error.message || "Gagal menghapus berkas.");
-    }
-  }
-}
 
 

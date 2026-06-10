@@ -57,25 +57,3 @@ export interface MaharItem {
   updatedAt: string;
 }
 
-export interface GuestItem {
-  id: string;
-  name: string;
-  relationship: "Keluarga" | "Sahabat" | "Rekan Kerja" | "Tetangga" | "Lainnya";
-  invitationType: "Digital" | "Cetak";
-  isRsvp: boolean;
-  notes?: string;
-  phoneNumber?: string;
-  address?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface UserFile {
-  id: string;
-  name: string;
-  url: string;
-  type: string;
-  size: number;
-  createdAt: string;
-}
-
