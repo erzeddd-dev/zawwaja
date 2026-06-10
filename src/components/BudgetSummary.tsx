@@ -351,9 +351,9 @@ export default function BudgetSummary({
       {/* ============================================ */}
       <div className="glass-panel animate-fade-up relative" style={{ animationDelay: '0.1s' }}>
         <div className="px-4 pt-4 pb-1 flex items-center justify-between">
-          <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-text-tertiary">
+          <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-text-tertiary">
             Timeline Persiapan Nikah
-          </h3>
+          </h2>
           <span className="text-[9px] text-brand-600 font-bold bg-brand-50/80 px-2 py-0.5 rounded-full border border-brand-100">
             Fase {activePhaseId}/6
           </span>
@@ -407,6 +407,7 @@ export default function BudgetSummary({
                       })
                     }}
                     id={`timeline-node-mobile-${phase.id}`}
+                    aria-label={phase.title}
                   >
                     <Icon size={20} className={isActive ? 'text-brand-600' : 'text-text-disabled'} />
                   </button>
@@ -487,6 +488,7 @@ export default function BudgetSummary({
                       isActive ? 'glass-node-active' : ''
                     }`}
                     id={`timeline-node-${phase.id}`}
+                    aria-label={phase.title}
                   >
                     <Icon size={24} className={`${
                       isActive ? 'text-brand-600' : 'text-text-tertiary'
