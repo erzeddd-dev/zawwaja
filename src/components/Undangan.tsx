@@ -368,7 +368,7 @@ export default function Undangan({ profile }: UndanganProps) {
   // WhatsApp click-to-chat URL generator
   const getWhatsAppUrl = (guest: DigitalGuest) => {
     if (!guest.phoneNumber) return "";
-    const invitationLink = `https://zawwaja.id/undangan/${profile?.uid || "sample"}?to=${encodeURIComponent(guest.name)}`;
+    const invitationLink = `https://zawwaja.app/undangan/${profile?.uid || "sample"}?to=${encodeURIComponent(guest.name)}`;
     const fullText = config.messageTemplate
       .replace(/{nama}/g, guest.name)
       .replace(/{alamat}/g, guest.domicile)
@@ -378,14 +378,14 @@ export default function Undangan({ profile }: UndanganProps) {
   };
 
   const handleCopyLink = (guest: DigitalGuest) => {
-    const invitationLink = `https://zawwaja.id/undangan/${profile?.uid || "sample"}?to=${encodeURIComponent(guest.name)}`;
+    const invitationLink = `https://zawwaja.app/undangan/${profile?.uid || "sample"}?to=${encodeURIComponent(guest.name)}`;
     navigator.clipboard.writeText(invitationLink);
     setCopyStatus(guest.id);
     setTimeout(() => setCopyStatus(null), 2000);
   };
 
   const handleCopyMessage = (guest: DigitalGuest) => {
-    const invitationLink = `https://zawwaja.id/undangan/${profile?.uid || "sample"}?to=${encodeURIComponent(guest.name)}`;
+    const invitationLink = `https://zawwaja.app/undangan/${profile?.uid || "sample"}?to=${encodeURIComponent(guest.name)}`;
     const fullText = config.messageTemplate
       .replace(/{nama}/g, guest.name)
       .replace(/{alamat}/g, guest.domicile)

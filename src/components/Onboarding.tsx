@@ -517,7 +517,7 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
           </div>
 
           <div className="hidden lg:block text-center text-[10px] text-text-tertiary font-sans">
-            <p>Copyright © 2026 Zawwaja.id • All rights reserved by Phronesis Works.</p>
+            <p>Copyright © 2026 Zawwaja.app • All rights reserved by Phronesis Works.</p>
           </div>
         </div>
 
