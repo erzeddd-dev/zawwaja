@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, Suspense, lazy } from "react";
 const Sidebar = lazy(() => import("./components/Sidebar"));
-const Onboarding = lazy(() => import("./components/Onboarding"));
+import Onboarding from "./components/Onboarding";
 const BudgetSummary = lazy(() => import("./components/BudgetSummary"));
 
 const Preparation = lazy(() => import("./components/Preparation"));
@@ -394,15 +394,13 @@ export default function App() {
   // Show onboarding if they aren't authenticated or aren't approved yet (unless they're an admin, who can log straight into the workspace)
   if (!user || (!profile && user.uid !== "TCJDTGcaTZRcBo9jC1JZBOAnWgo2") || (!isApproved && !isAdminUser)) {
     return (
-      <Suspense fallback={<div className="min-h-screen bg-surface-base flex items-center justify-center"><div className="w-8 h-8 border-4 border-brand-200 border-t-brand-600 rounded-full animate-spin"></div></div>}>
-        <Onboarding 
-          onSuccess={handleOnboardingSuccess} 
-          onLogout={handleLogout}
-          profile={profile}
-          userId={user?.uid || null}
-          setUser={setUser}
-        />
-      </Suspense>
+      <Onboarding 
+        onSuccess={handleOnboardingSuccess} 
+        onLogout={handleLogout}
+        profile={profile}
+        userId={user?.uid || null}
+        setUser={setUser}
+      />
     );
   }
 

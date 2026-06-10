@@ -961,15 +961,16 @@ function BudgetSummary({
                   </label>
                   <div className="relative">
                     <span className="absolute left-3 top-2.5 text-text-secondary text-sm font-semibold">Rp</span>
-                    <input
-                      type="number"
-                      required
-                      min={1000000}
-                      step={500000}
-                      value={onboardTotalBudget}
-                      onChange={(e) => setOnboardTotalBudget(Number(e.target.value))}
-                      className="w-full pl-9 pr-3 py-2.5 bg-surface-sunken rounded-lg border border-surface-border focus:outline-none focus:ring-2 focus:ring-brand-600 font-mono text-xs text-text-primary"
-                    />
+                      <input
+                        type="text"
+                        required
+                        value={onboardTotalBudget === 0 ? "" : new Intl.NumberFormat('id-ID').format(onboardTotalBudget)}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/[^0-9]/g, "");
+                          setOnboardTotalBudget(val === "" ? 0 : Number(val));
+                        }}
+                        className="w-full pl-9 pr-3 py-2.5 bg-surface-sunken rounded-lg border border-surface-border focus:outline-none focus:ring-2 focus:ring-brand-600 font-mono text-xs text-text-primary"
+                      />
                   </div>
                 </div>
               </div>
