@@ -444,6 +444,7 @@ export default function App() {
                 onNavigate={(tab) => setCurrentTab(tab)}
                 onSaveProfile={handleSaveProfileFromDashboardOnboard}
                 onSaveChecklistItem={handleSaveChecklistItem}
+                onOpenSettings={() => setCurrentTab("profile")}
               />
             )}
 

@@ -17,7 +17,9 @@ import {
   Mail,
   Gem,
   TrendingUp,
-  Users
+  Users,
+  Settings,
+  Pencil
 } from "lucide-react";
 
 interface BudgetSummaryProps {
@@ -27,6 +29,7 @@ interface BudgetSummaryProps {
   onNavigate: (tab: string) => void;
   onSaveProfile?: (fullName: string, partnerName: string, weddingDate: string, totalBudget: number) => Promise<void>;
   onSaveChecklistItem?: (item: WeddingChecklistItem) => Promise<void>;
+  onOpenSettings?: () => void;
 }
 
 // Timeline phase data structure with icons and navigation targets
@@ -87,8 +90,19 @@ function BudgetSummary({
   maharItems, 
   onNavigate, 
   onSaveProfile,
-  onSaveChecklistItem
+  onSaveChecklistItem,
+  onOpenSettings
 }: BudgetSummaryProps) {
+  // Helper to extract initials for profile avatar
+  const getInitials = (name?: string) => {
+    if (!name) return "P";
+    const parts = name.trim().split(/\s+/);
+    if (parts.length >= 2 && parts[0] && parts[1]) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return parts[0] ? parts[0][0].toUpperCase() : "P";
+  };
+
   // Stats state
   const [daysRemaining, setDaysRemaining] = useState(0);
   const [weeksRemaining, setWeeksRemaining] = useState(0);
@@ -318,13 +332,55 @@ function BudgetSummary({
     <div className="space-y-4 md:space-y-6 relative" id="dashboard-view">
 
       {/* ============================================ */}
-      {/* 1. FLOATING HEADER (compact on mobile)       */}
+      {/* 1. PROFILE HEADER — TikTok-style (mobile)   */}
       {/* ============================================ */}
       <div className="animate-fade-up">
-        {/* Mobile: single-row header with countdown pill */}
-        <div className="flex items-start justify-between gap-3">
+        {/* Mobile: TikTok-style centered profile header */}
+        <div className="md:hidden flex flex-col items-center text-center relative pb-2">
+          {/* Avatar with edit button */}
+          <div className="relative mb-3">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-brand-100 to-brand-200 text-brand-700 flex items-center justify-center font-bold text-2xl border-[3px] border-white shadow-lg shadow-brand-600/10">
+              {getInitials(profile.fullName)}
+            </div>
+            {/* Edit button overlay — like TikTok's edit profile icon */}
+            <button
+              onClick={onOpenSettings}
+              className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-brand-600 text-white flex items-center justify-center shadow-md border-2 border-white hover:bg-brand-700 transition-colors cursor-pointer active:scale-90"
+              title="Edit Profil"
+              id="profile-edit-btn"
+            >
+              <Pencil size={13} />
+            </button>
+          </div>
+
+          {/* Name & Partner */}
+          <h1 className="text-lg font-serif font-bold text-text-primary leading-tight">
+            {profile.fullName || "Pengantin"}
+          </h1>
+          <p className="text-sm text-text-secondary mt-0.5">
+            <span className="text-brand-600">❤</span> {profile.partnerName || "Pasangan"}
+          </p>
+
+          {/* Countdown pill below name */}
+          <div className="mt-3 bg-gradient-to-r from-brand-600 to-brand-700 text-white px-5 py-2 rounded-full shadow-md shadow-brand-800/20 flex items-center gap-2">
+            <Calendar size={14} className="text-brand-200" />
+            <span className="text-sm font-bold">{daysRemaining}</span>
+            <span className="text-xs text-brand-200 font-medium">Hari Menuju Akad</span>
+          </div>
+
+          {/* Email / Role badge */}
+          <div className="mt-2 flex items-center gap-2">
+            <span className="text-[10px] text-text-tertiary">{profile.email}</span>
+            <span className="text-[9px] bg-brand-50 text-brand-600 font-bold uppercase px-2 py-0.5 rounded-full border border-brand-100">
+              {profile.role === "admin" ? "Admin" : "Pasangan Akad"}
+            </span>
+          </div>
+        </div>
+
+        {/* Desktop: Original header layout (unchanged) */}
+        <div className="hidden md:flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
-            <div className="hidden sm:flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">
+            <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">
               <Calendar size={12} />
               <span>{currentDateFormatted}</span>
             </div>
@@ -334,17 +390,6 @@ function BudgetSummary({
             <p className="text-text-secondary text-sm md:text-base mt-1.5">
               dalam <span className="font-bold text-brand-600">{daysRemaining} hari</span> lagi bersama <span className="font-semibold text-brand-600">{profile.partnerName || "Pasangan"}</span>
             </p>
-          </div>
-
-          {/* Floating Countdown Pill — mobile only (Enhanced for Focal Point) */}
-          <div className="md:hidden bg-gradient-to-br from-brand-600 to-brand-800 text-white shadow-xl shadow-brand-900/20 px-4 py-2.5 flex flex-col items-center justify-center text-center shrink-0 animate-countdown border border-brand-500/30" style={{ minWidth: '85px', borderRadius: '16px' }}>
-            <span className="text-[8px] font-bold uppercase tracking-widest text-brand-100 mb-0.5">Menuju Akad</span>
-            <div className="flex items-baseline gap-1">
-              <span className="text-3xl font-display font-black text-white leading-none tracking-tight" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>
-                {daysRemaining}
-              </span>
-              <span className="text-[10px] font-bold text-brand-200 uppercase tracking-wider">hr</span>
-            </div>
           </div>
         </div>
       </div>

@@ -108,24 +108,6 @@ export default memo(function Sidebar({
             </span>
           </button>
         )}
-
-        {/* Profile Mobile Bottom Nav */}
-        <button
-          onClick={() => startTransition(() => setCurrentTab("profile"))}
-          className={`flex flex-col items-center justify-center py-1 flex-1 transition-all cursor-pointer relative ${currentTab === "profile" ? "text-brand-600" : "text-text-secondary hover:text-brand-600"}`}
-          title="Profil"
-          id="nav-item-mobile-profile"
-        >
-          <span className={`absolute top-0 left-1/2 -translate-x-1/2 w-5 h-0.5 rounded-full transition-all duration-300 ${
-            currentTab === "profile" ? 'bg-brand-600 opacity-100' : 'opacity-0'
-          }`} />
-          <div className={`w-5 h-5 rounded-full ${currentTab === "profile" ? "bg-brand-600 text-white border-brand-700" : "bg-brand-50 text-brand-600 border-brand-400/20"} flex items-center justify-center font-extrabold text-[8px] uppercase border shadow-sm mb-0.5 transition-all`}>
-            {getInitials(profile?.fullName)}
-          </div>
-          <span className={`text-[9px] font-sans tracking-tight transition-all ${currentTab === "profile" ? "font-bold" : "font-medium"}`}>
-            Profil
-          </span>
-        </button>
       </div>
 
 
