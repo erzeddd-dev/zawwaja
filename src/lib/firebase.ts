@@ -23,12 +23,6 @@ import {
   onSnapshot,
   writeBatch
 } from 'firebase/firestore';
-import { 
-  getStorage, 
-  ref, 
-  uploadBytes, 
-  getDownloadURL 
-} from 'firebase/storage';
 import firebaseConfig from '../firebase-applet-config.json';
 import { UserProfile, WeddingChecklistItem, VendorItem, MaharItem, ApprovalStatus } from '../types';
 
@@ -40,12 +34,18 @@ let db: any;
 let auth: any;
 let storage: any;
 
+
 if (!isMockMode) {
   try {
     app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
     db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
     auth = getAuth(app);
-    storage = getStorage(app);
+
+    // Lazy-load storage only when needed
+    import('firebase/storage').then(({ getStorage }) => {
+      storage = getStorage(app);
+    });
+
 
     // Validate connection to Firestore as required by firebase-integration skill
     const testConnection = async () => {
@@ -1083,9 +1083,10 @@ export async function uploadPaymentProof(userId: string, file: File): Promise<st
   } else {
     try {
       const fileExtension = file.name.split('.').pop() || 'png';
-      const storageRef = ref(storage, `payment_proofs/${userId}/proof_${Date.now()}.${fileExtension}`);
+      const { ref: storageRef, uploadBytes, getDownloadURL } = await import('firebase/storage');
+      const fileRef = storageRef(storage, `payment_proofs/${userId}/proof_${Date.now()}.${fileExtension}`);
       
-      const snapshot = await uploadBytes(storageRef, file);
+      const snapshot = await uploadBytes(fileRef, file);
       const downloadURL = await getDownloadURL(snapshot.ref);
       
       // Update User profile document directly in Firestore
