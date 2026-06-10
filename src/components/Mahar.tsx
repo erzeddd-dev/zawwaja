@@ -107,154 +107,10 @@ export default function Mahar({ items, onSaveItem, onDeleteItem, onClearAll, onR
           <p className="text-text-secondary text-xs mt-0.5">Pendataan mahar/mas kawin dan pernak-pernik seserahan syar'i beserta kalkulator emas murni</p>
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => setShowAddForm(!showAddForm)}
-            className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold rounded-lg flex items-center shadow-sm cursor-pointer"
-          >
-            <Plus size={16} className="mr-1.5" />
-            Tambah Barang Seserahan
-          </button>
-          
-          <button
-            onClick={onResetDefaults}
-            className="px-3.5 py-2 border border-emerald-200 text-emerald-800 bg-emerald-100/30 hover:bg-emerald-100 text-xs font-semibold rounded-lg flex items-center cursor-pointer"
-          >
-            <RotateCcw size={14} className="mr-1.5" />
-            Muat Default
-          </button>
-
-          <button
-            onClick={onClearAll}
-            className="px-3.5 py-2 border border-rose-200 text-rose-800 bg-rose-50 hover:bg-rose-200 text-xs font-semibold rounded-lg flex items-center cursor-pointer"
-          >
-            <Trash2 size={14} className="mr-1.5" />
-            Kosongkan Daftar
-          </button>
-        </div>
+        {/* Action buttons moved to bottom */}
       </div>
 
-      {/* Interactive Form panel */}
-      {showAddForm && (
-        <form onSubmit={handleAddNewItem} className="bg-surface-raised p-5 rounded-2xl border border-surface-border shadow-md space-y-4">
-          <h3 className="font-bold text-text-primary text-sm font-serif">Tambah Mahar / Seserahan Baru</h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="md:col-span-2">
-              <label className="block text-[10px] uppercase font-bold text-text-secondary mb-1">Deskripsi Barang</label>
-              <input
-                type="text"
-                required
-                placeholder="Contoh: Logam Mulia Mas Kawin, Sajadah, etc..."
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full px-3 py-1.5 text-xs bg-surface-sunken rounded border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
-              />
-            </div>
-            <div>
-              <label className="block text-[10px] uppercase font-bold text-text-secondary mb-1">Brand / Merek / Toko</label>
-              <input
-                type="text"
-                placeholder="Contoh: Antam, Wardah, Zara, dll..."
-                value={brand}
-                onChange={(e) => setBrand(e.target.value)}
-                className="w-full px-3 py-1.5 text-xs bg-surface-sunken rounded border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
-              />
-            </div>
-            <div>
-              <label className="block text-[10px] uppercase font-bold text-text-secondary mb-1">Tautan E-commerce / Link Belanja</label>
-              <input
-                type="url"
-                placeholder="https://tokopedia.com/..."
-                value={ecommerceLink}
-                onChange={(e) => setEcommerceLink(e.target.value)}
-                className="w-full px-3 py-1.5 text-xs bg-surface-sunken rounded border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
-              />
-            </div>
-          </div>
 
-          <div className="p-4 bg-surface-sunken rounded-xl border border-surface-border flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <label className="flex items-center gap-2 cursor-pointer font-bold text-xs text-text-primary">
-                <input
-                  type="checkbox"
-                  checked={isJewelry}
-                  onChange={(e) => setIsJewelry(e.target.checked)}
-                  className="w-4 h-4 rounded border-surface-border text-brand-600 focus:ring-brand-600"
-                />
-                ⚠️ Kategori Emas / Perhiasan Logam Mulia
-              </label>
-              <p className="text-[10px] text-text-secondary">Centang apabila barang ini adalah perhiasan untuk memunculkan hitungan berat gram secara otomatis</p>
-            </div>
-
-            {!isJewelry ? (
-              <div className="w-full md:w-64">
-                <label className="block text-[10px] uppercase font-bold text-text-secondary mb-1">Harga Beli Riil (IDR)</label>
-                <div className="relative">
-                  <span className="absolute left-3 top-2 text-xs font-bold text-text-tertiary">Rp</span>
-                  <input
-                    type="number"
-                    placeholder="Contoh: 750000"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    className="w-full pl-8 pr-3 py-1.5 text-xs bg-surface-base rounded border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
-                  />
-                </div>
-              </div>
-            ) : (
-              <div className="flex gap-3 w-full md:w-auto">
-                <div>
-                  <label className="block text-[10px] uppercase font-bold text-text-secondary mb-1">Berat (Gram)</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    placeholder="Contoh: 5"
-                    value={jewelryWeight}
-                    onChange={(e) => setJewelryWeight(e.target.value)}
-                    className="w-24 px-3 py-1.5 text-xs bg-surface-base rounded border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] uppercase font-bold text-text-secondary mb-1">Harga per Gram</label>
-                  <div className="relative">
-                    <span className="absolute left-2.5 top-2 text-xs text-text-tertiary font-bold">Rp</span>
-                    <input
-                      type="number"
-                      placeholder="Contoh: 1300000"
-                      value={jewelryPricePerGram}
-                      onChange={(e) => setJewelryPricePerGram(e.target.value)}
-                      className="w-36 pl-7 pr-2 py-1.5 text-xs bg-surface-base rounded border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
-                    />
-                  </div>
-                </div>
-                {/* Visual computed feedback */}
-                <div className="bg-text-primary text-surface-base rounded-lg px-3.5 py-1 text-center shrink-0 flex flex-col justify-center">
-                  <span className="text-surface-base text-brand-300 font-semibold uppercase">Estimasi Hasil</span>
-                  <span className="text-xs font-bold font-mono">
-                    {formatIDR((Number(jewelryWeight) || 0) * (Number(jewelryPricePerGram) || 0))}
-                  </span>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="flex justify-end gap-2 pt-2 border-t border-surface-border">
-            <button
-              type="button"
-              onClick={() => setShowAddForm(false)}
-              className="px-4 py-1.5 border border-surface-border text-text-secondary rounded text-xs hover:bg-surface-sunken cursor-pointer"
-            >
-              Batal
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-1.5 bg-brand-700 text-white rounded text-xs font-semibold hover:bg-brand-800 cursor-pointer"
-            >
-              Masukkan ke Daftar
-            </button>
-          </div>
-        </form>
-      )}
 
       {/* Aggregated widgets */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -383,6 +239,154 @@ export default function Mahar({ items, onSaveItem, onDeleteItem, onClearAll, onR
           </div>
         )}
 
+      </div>
+
+      {/* Interactive Form panel */}
+      {showAddForm && (
+        <form onSubmit={handleAddNewItem} className="bg-surface-raised p-5 rounded-2xl border border-surface-border shadow-md space-y-4">
+          <h3 className="font-bold text-text-primary text-sm font-serif">Tambah Mahar / Seserahan Baru</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="md:col-span-2">
+              <label className="block text-[10px] uppercase font-bold text-text-secondary mb-1">Deskripsi Barang</label>
+              <input
+                type="text"
+                required
+                placeholder="Contoh: Logam Mulia Mas Kawin, Sajadah, etc..."
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full px-3 py-1.5 text-xs bg-surface-sunken rounded border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] uppercase font-bold text-text-secondary mb-1">Brand / Merek / Toko</label>
+              <input
+                type="text"
+                placeholder="Contoh: Antam, Wardah, Zara, dll..."
+                value={brand}
+                onChange={(e) => setBrand(e.target.value)}
+                className="w-full px-3 py-1.5 text-xs bg-surface-sunken rounded border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] uppercase font-bold text-text-secondary mb-1">Tautan E-commerce / Link Belanja</label>
+              <input
+                type="url"
+                placeholder="https://tokopedia.com/..."
+                value={ecommerceLink}
+                onChange={(e) => setEcommerceLink(e.target.value)}
+                className="w-full px-3 py-1.5 text-xs bg-surface-sunken rounded border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
+              />
+            </div>
+          </div>
+
+          <div className="p-4 bg-surface-sunken rounded-xl border border-surface-border flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <label className="flex items-center gap-2 cursor-pointer font-bold text-xs text-text-primary">
+                <input
+                  type="checkbox"
+                  checked={isJewelry}
+                  onChange={(e) => setIsJewelry(e.target.checked)}
+                  className="w-4 h-4 rounded border-surface-border text-brand-600 focus:ring-brand-600"
+                />
+                ⚠️ Kategori Emas / Perhiasan Logam Mulia
+              </label>
+              <p className="text-[10px] text-text-secondary">Centang apabila barang ini adalah perhiasan untuk memunculkan hitungan berat gram secara otomatis</p>
+            </div>
+
+            {!isJewelry ? (
+              <div className="w-full md:w-64">
+                <label className="block text-[10px] uppercase font-bold text-text-secondary mb-1">Harga Beli Riil (IDR)</label>
+                <div className="relative">
+                  <span className="absolute left-3 top-2 text-xs font-bold text-text-tertiary">Rp</span>
+                  <input
+                    type="number"
+                    placeholder="Contoh: 750000"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    className="w-full pl-8 pr-3 py-1.5 text-xs bg-surface-base rounded border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="flex gap-3 w-full md:w-auto">
+                <div>
+                  <label className="block text-[10px] uppercase font-bold text-text-secondary mb-1">Berat (Gram)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    placeholder="Contoh: 5"
+                    value={jewelryWeight}
+                    onChange={(e) => setJewelryWeight(e.target.value)}
+                    className="w-24 px-3 py-1.5 text-xs bg-surface-base rounded border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] uppercase font-bold text-text-secondary mb-1">Harga per Gram</label>
+                  <div className="relative">
+                    <span className="absolute left-2.5 top-2 text-xs text-text-tertiary font-bold">Rp</span>
+                    <input
+                      type="number"
+                      placeholder="Contoh: 1300000"
+                      value={jewelryPricePerGram}
+                      onChange={(e) => setJewelryPricePerGram(e.target.value)}
+                      className="w-36 pl-7 pr-2 py-1.5 text-xs bg-surface-base rounded border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
+                    />
+                  </div>
+                </div>
+                {/* Visual computed feedback */}
+                <div className="bg-text-primary text-surface-base rounded-lg px-3.5 py-1 text-center shrink-0 flex flex-col justify-center">
+                  <span className="text-surface-base text-brand-300 font-semibold uppercase">Estimasi Hasil</span>
+                  <span className="text-xs font-bold font-mono">
+                    {formatIDR((Number(jewelryWeight) || 0) * (Number(jewelryPricePerGram) || 0))}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="flex justify-end gap-2 pt-2 border-t border-surface-border">
+            <button
+              type="button"
+              onClick={() => setShowAddForm(false)}
+              className="px-4 py-1.5 border border-surface-border text-text-secondary rounded text-xs hover:bg-surface-sunken cursor-pointer"
+            >
+              Batal
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-1.5 bg-brand-600 text-white shadow rounded text-xs font-semibold hover:bg-brand-700 cursor-pointer"
+            >
+              Masukkan ke Daftar
+            </button>
+          </div>
+        </form>
+      )}
+
+      <div className="flex flex-wrap gap-2 pt-6 pb-2 border-t border-surface-border mt-4 justify-end">
+        <button
+          onClick={() => setShowAddForm(!showAddForm)}
+          className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold rounded-lg flex items-center shadow-sm cursor-pointer"
+        >
+          <Plus size={16} className="mr-1.5" />
+          Tambah Barang Seserahan
+        </button>
+        
+        <button
+          onClick={onResetDefaults}
+          className="px-3.5 py-2 border border-emerald-200 text-emerald-800 bg-emerald-100/30 hover:bg-emerald-100 text-xs font-semibold rounded-lg flex items-center cursor-pointer"
+        >
+          <RotateCcw size={14} className="mr-1.5" />
+          Muat Default
+        </button>
+
+        <button
+          onClick={onClearAll}
+          className="px-3.5 py-2 border border-rose-200 text-rose-800 bg-rose-50 hover:bg-rose-200 text-xs font-semibold rounded-lg flex items-center cursor-pointer"
+        >
+          <Trash2 size={14} className="mr-1.5" />
+          Kosongkan Daftar
+        </button>
       </div>
 
     </div>

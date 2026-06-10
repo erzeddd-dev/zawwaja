@@ -259,78 +259,10 @@ export default React.memo(function Preparation({
           <p className="text-text-secondary text-xs mt-0.5">Kelola kebutuhan administrasi & logistik pernikahan khidmat secara terperinci.</p>
         </div>
 
-        {/* Global Toolbar */}
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => setShowAddCatForm(!showAddCatForm)}
-            disabled={isUpdating}
-            className="px-3.5 py-1.5 bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold rounded-lg flex items-center shadow-xs cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <FolderPlus size={14} className="mr-1.5" />
-            Tambah Kategori
-          </button>
-          
-          <button
-            onClick={async () => {
-              if (window.confirm("Bismillah, yakin ingin memulihkan seluruh item persiapan bawaan ke pengaturan awal?")) {
-                await onResetDefaults();
-                setCategories(defaultCategories);
-              }
-            }}
-            disabled={isUpdating}
-            className="px-3 py-1.5 border border-surface-border text-text-secondary bg-surface-raised hover:bg-surface-sunken text-xs font-semibold rounded-lg flex items-center cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Muat ulang seluruh item default Sharia"
-          >
-            <RotateCcw size={13} className="mr-1.5 text-text-tertiary" />
-            {isUpdating ? "Memproses..." : "Muat Default"}
-          </button>
-
-          <button
-            onClick={onClearAll}
-            disabled={isUpdating}
-            className="px-3 py-1.5 border border-surface-border text-text-secondary hover:text-red-650 bg-surface-raised hover:bg-red-50 text-xs font-semibold rounded-lg flex items-center cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Kosongkan seluruh data pada checklist"
-          >
-            <Trash2 size={13} className="mr-1.5 text-text-tertiary" />
-            Kosongkan Checklist
-          </button>
-
-          <button
-            onClick={handleResetToPresetCategories}
-            disabled={isUpdating}
-            className="px-2 py-1.5 text-text-tertiary hover:text-text-secondary text-xs font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Kembalikan nama-nama kategori ke standar"
-          >
-            Reset Kategori
-          </button>
-        </div>
+        {/* Global Toolbar moved to bottom */}
       </div>
 
-      {/* Dynamic Category Addition Form Inline */}
-      {showAddCatForm && (
-        <form onSubmit={handleAddCategory} className="bg-surface-raised p-4 rounded-xl border border-surface-border shadow-xs max-w-md animate-fade-in space-y-3">
-          <div className="flex items-center justify-between border-b border-surface-border pb-2">
-            <h4 className="text-xs font-bold text-text-secondary uppercase tracking-wider">Tambah Kategori Baru</h4>
-            <button type="button" onClick={() => setShowAddCatForm(false)} className="text-text-tertiary hover:text-stone-600 text-xs">Batal</button>
-          </div>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              required
-              placeholder="Contoh: Mahar & Cincin, Transportasi dsb"
-              value={newCatName}
-              onChange={(e) => setNewCatName(e.target.value)}
-              className="flex-1 px-3 py-1.5 text-xs bg-surface-sunken rounded-lg border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
-            />
-            <button
-              type="submit"
-              className="px-4 py-1.5 bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold rounded-lg transition-colors"
-            >
-              Tambah
-            </button>
-          </div>
-        </form>
-      )}
+
 
       {/* Soft and Compact Summary Card (Anti-Overwhelm Layout) */}
       <div className="bg-surface-sunken/50 border border-surface-border rounded-xl p-4 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -615,6 +547,77 @@ export default React.memo(function Preparation({
             </div>
           );
         })}
+      </div>
+
+      {/* Dynamic Category Addition Form Inline */}
+      {showAddCatForm && (
+        <form onSubmit={handleAddCategory} className="bg-surface-raised p-4 rounded-xl border border-surface-border shadow-xs max-w-md animate-fade-in space-y-3 mb-4">
+          <div className="flex items-center justify-between border-b border-surface-border pb-2">
+            <h4 className="text-xs font-bold text-text-secondary uppercase tracking-wider">Tambah Kategori Baru</h4>
+            <button type="button" onClick={() => setShowAddCatForm(false)} className="text-text-tertiary hover:text-stone-600 text-xs">Batal</button>
+          </div>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              required
+              placeholder="Contoh: Mahar & Cincin, Transportasi dsb"
+              value={newCatName}
+              onChange={(e) => setNewCatName(e.target.value)}
+              className="flex-1 px-3 py-1.5 text-xs bg-surface-sunken rounded-lg border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
+            />
+            <button
+              type="submit"
+              className="px-4 py-1.5 bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold rounded-lg transition-colors"
+            >
+              Tambah
+            </button>
+          </div>
+        </form>
+      )}
+
+      <div className="flex flex-wrap gap-2 pt-6 pb-2 border-t border-surface-border mt-4 justify-end">
+        <button
+          onClick={() => setShowAddCatForm(!showAddCatForm)}
+          disabled={isUpdating}
+          className="px-3.5 py-1.5 bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold rounded-lg flex items-center shadow-xs cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <FolderPlus size={14} className="mr-1.5" />
+          Tambah Kategori
+        </button>
+        
+        <button
+          onClick={async () => {
+            if (window.confirm("Bismillah, yakin ingin memulihkan seluruh item persiapan bawaan ke pengaturan awal?")) {
+              await onResetDefaults();
+              setCategories(defaultCategories);
+            }
+          }}
+          disabled={isUpdating}
+          className="px-3 py-1.5 border border-surface-border text-text-secondary bg-surface-raised hover:bg-surface-sunken text-xs font-semibold rounded-lg flex items-center cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          title="Muat ulang seluruh item default Sharia"
+        >
+          <RotateCcw size={13} className="mr-1.5 text-text-tertiary" />
+          {isUpdating ? "Memproses..." : "Muat Default"}
+        </button>
+
+        <button
+          onClick={onClearAll}
+          disabled={isUpdating}
+          className="px-3 py-1.5 border border-surface-border text-text-secondary hover:text-red-650 bg-surface-raised hover:bg-red-50 text-xs font-semibold rounded-lg flex items-center cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          title="Kosongkan seluruh data pada checklist"
+        >
+          <Trash2 size={13} className="mr-1.5 text-text-tertiary" />
+          Kosongkan Checklist
+        </button>
+
+        <button
+          onClick={handleResetToPresetCategories}
+          disabled={isUpdating}
+          className="px-2 py-1.5 text-text-tertiary hover:text-text-secondary text-xs font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          title="Kembalikan nama-nama kategori ke standar"
+        >
+          Reset Kategori
+        </button>
       </div>
 
     </div>

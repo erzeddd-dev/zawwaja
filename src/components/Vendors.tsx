@@ -87,115 +87,9 @@ export default function Vendors({ vendors, onSaveVendor, onDeleteVendor, onClear
           <p className="text-text-secondary text-xs mt-0.5">Pendataan terpusat portofolio vendor, akun media sosial, dan negosiasi kontrak akad pernikahan</p>
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => setShowAddForm(!showAddForm)}
-            className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold rounded-lg flex items-center shadow-sm cursor-pointer"
-          >
-            <Plus size={16} className="mr-1.5" />
-            Tambah Kontak Vendor
-          </button>
-          
-          <button
-            onClick={onResetDefaults}
-            className="px-3.5 py-2 border border-brand-200 text-brand-800 bg-brand-50 hover:bg-brand-100 text-xs font-semibold rounded-lg flex items-center cursor-pointer"
-          >
-            <RotateCcw size={14} className="mr-1.5" />
-            Muat Default
-          </button>
-
-          <button
-            onClick={onClearAll}
-            className="px-3.5 py-2 border border-rose-200 text-rose-800 bg-rose-50 hover:bg-rose-100 text-xs font-semibold rounded-lg flex items-center cursor-pointer"
-          >
-            <Trash2 size={14} className="mr-1.5" />
-            Hapus Semua Kontak
-          </button>
-        </div>
+        {/* Action buttons moved to bottom */}
       </div>
 
-      {/* Add Custom Vendor Form inline panel */}
-      {showAddForm && (
-        <form onSubmit={handleAddNewVendor} className="bg-surface-raised p-5 rounded-2xl border border-surface-border shadow-md space-y-4">
-          <h3 className="font-bold text-brand-900 text-sm font-serif">Simpan Detail Rekanan Vendor</h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="md:col-span-2">
-              <label className="block text-[10px] uppercase font-bold text-text-secondary mb-1">Nama Perusahaan/Vendor</label>
-              <input
-                type="text"
-                required
-                placeholder="Contoh: Sakinah Catering & Co"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full px-3 py-1.5 text-xs bg-surface-sunken rounded border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
-              />
-            </div>
-            <div>
-              <label className="block text-[10px] uppercase font-bold text-text-secondary mb-1">Kategori</label>
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full px-3 py-1.5 text-xs bg-surface-sunken rounded border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
-              >
-                {categories.filter(c => c !== "Semua").map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-[10px] uppercase font-bold text-text-secondary mb-1">Kontak Telp/WA</label>
-              <input
-                type="text"
-                required
-                placeholder="081xxxxxxxxxx"
-                value={contact}
-                onChange={(e) => setContact(e.target.value)}
-                className="w-full px-3 py-1.5 text-xs bg-surface-sunken rounded border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-              <label className="block text-[10px] uppercase font-bold text-text-secondary mb-1">Instagram (@) atau website link</label>
-              <input
-                type="text"
-                placeholder="Ketik username @sakinah_catering"
-                value={socialMedia}
-                onChange={(e) => setSocialMedia(e.target.value)}
-                className="w-full px-3 py-1.5 text-xs bg-surface-sunken rounded border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
-              />
-            </div>
-            <div className="md:col-span-3">
-              <label className="block text-[10px] uppercase font-bold text-text-secondary mb-1">Catatan Tambahan (Ketentuan DP, Menu, Paket)</label>
-              <input
-                type="text"
-                placeholder="Tulis negosiasi pembayaran, tanggal pelunasan, diskon tambahan..."
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                className="w-full px-3 py-1.5 text-xs bg-surface-sunken rounded border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
-              />
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-2 pt-2 border-t border-surface-border">
-            <button
-              type="button"
-              onClick={() => setShowAddForm(false)}
-              className="px-4 py-1.5 border border-surface-border text-text-secondary rounded text-xs hover:bg-surface-sunken cursor-pointer"
-            >
-              Batal
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-1.5 bg-brand-700 text-white rounded text-xs font-semibold hover:bg-brand-800 cursor-pointer"
-            >
-              Simpan Vendor
-            </button>
-          </div>
-        </form>
-      )}
 
       {/* Filter and Search parameters */}
       <div className="flex flex-col md:flex-row gap-3">
@@ -306,6 +200,115 @@ export default function Vendors({ vendors, onSaveVendor, onDeleteVendor, onClear
           ))}
         </div>
       )}
+
+      {/* Add Custom Vendor Form inline panel */}
+      {showAddForm && (
+        <form onSubmit={handleAddNewVendor} className="bg-surface-raised p-5 rounded-2xl border border-surface-border shadow-md space-y-4">
+          <h3 className="font-bold text-brand-900 text-sm font-serif">Simpan Detail Rekanan Vendor</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="md:col-span-2">
+              <label className="block text-[10px] uppercase font-bold text-text-secondary mb-1">Nama Perusahaan/Vendor</label>
+              <input
+                type="text"
+                required
+                placeholder="Contoh: Sakinah Catering & Co"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full px-3 py-1.5 text-xs bg-surface-sunken rounded border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] uppercase font-bold text-text-secondary mb-1">Kategori</label>
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="w-full px-3 py-1.5 text-xs bg-surface-sunken rounded border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
+              >
+                {categories.filter(c => c !== "Semua").map(cat => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-[10px] uppercase font-bold text-text-secondary mb-1">Kontak Telp/WA</label>
+              <input
+                type="text"
+                required
+                placeholder="081xxxxxxxxxx"
+                value={contact}
+                onChange={(e) => setContact(e.target.value)}
+                className="w-full px-3 py-1.5 text-xs bg-surface-sunken rounded border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+              <label className="block text-[10px] uppercase font-bold text-text-secondary mb-1">Instagram (@) atau website link</label>
+              <input
+                type="text"
+                placeholder="Ketik username @sakinah_catering"
+                value={socialMedia}
+                onChange={(e) => setSocialMedia(e.target.value)}
+                className="w-full px-3 py-1.5 text-xs bg-surface-sunken rounded border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
+              />
+            </div>
+            <div className="md:col-span-3">
+              <label className="block text-[10px] uppercase font-bold text-text-secondary mb-1">Catatan Tambahan (Ketentuan DP, Menu, Paket)</label>
+              <input
+                type="text"
+                placeholder="Tulis negosiasi pembayaran, tanggal pelunasan, diskon tambahan..."
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                className="w-full px-3 py-1.5 text-xs bg-surface-sunken rounded border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-2 border-t border-surface-border">
+            <button
+              type="button"
+              onClick={() => setShowAddForm(false)}
+              className="px-4 py-1.5 border border-surface-border text-text-secondary rounded text-xs hover:bg-surface-sunken cursor-pointer"
+            >
+              Batal
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-1.5 bg-brand-600 text-white shadow rounded text-xs font-semibold hover:bg-brand-700 cursor-pointer"
+            >
+              Simpan Vendor
+            </button>
+          </div>
+        </form>
+      )}
+
+      <div className="flex flex-wrap gap-2 pt-6 pb-2 border-t border-surface-border mt-4 justify-end">
+        <button
+          onClick={() => setShowAddForm(!showAddForm)}
+          className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold rounded-lg flex items-center shadow-sm cursor-pointer"
+        >
+          <Plus size={16} className="mr-1.5" />
+          Tambah Kontak Vendor
+        </button>
+        
+        <button
+          onClick={onResetDefaults}
+          className="px-3.5 py-2 border border-brand-200 text-brand-800 bg-brand-50 hover:bg-brand-100 text-xs font-semibold rounded-lg flex items-center cursor-pointer"
+        >
+          <RotateCcw size={14} className="mr-1.5" />
+          Muat Default
+        </button>
+
+        <button
+          onClick={onClearAll}
+          className="px-3.5 py-2 border border-rose-200 text-rose-800 bg-rose-50 hover:bg-rose-100 text-xs font-semibold rounded-lg flex items-center cursor-pointer"
+        >
+          <Trash2 size={14} className="mr-1.5" />
+          Hapus Semua Kontak
+        </button>
+      </div>
 
     </div>
   );

@@ -1,12 +1,13 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, Suspense, lazy } from "react";
 import Sidebar from "./components/Sidebar";
 import Onboarding from "./components/Onboarding";
 import BudgetSummary from "./components/BudgetSummary";
-import Preparation from "./components/Preparation";
-import Vendors from "./components/Vendors";
-import Mahar from "./components/Mahar";
-import AdminPortal from "./components/AdminPortal";
-import AdminDashboard from "./components/AdminDashboard";
+
+const Preparation = lazy(() => import("./components/Preparation"));
+const Vendors = lazy(() => import("./components/Vendors"));
+const Mahar = lazy(() => import("./components/Mahar"));
+const AdminPortal = lazy(() => import("./components/AdminPortal"));
+const AdminDashboard = lazy(() => import("./components/AdminDashboard"));
 
 
 import { 
@@ -65,7 +66,6 @@ export default function App() {
 
 
   // Settings / Update states
-  const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [settingsFullName, setSettingsFullName] = useState("");
   const [settingsPartnerName, setSettingsPartnerName] = useState("");
   const [settingsWeddingDate, setSettingsWeddingDate] = useState("");
@@ -358,7 +358,6 @@ export default function App() {
         weddingDate: settingsWeddingDate,
         totalBudget: Number(settingsTotalBudget) || 0
       });
-      setShowSettingsModal(false);
       
       // Update local profile representation
       setProfile(prev => prev ? {
@@ -418,84 +417,22 @@ export default function App() {
         setCurrentTab={setCurrentTab} 
         profile={profile}
         onLogout={handleLogout}
-        onOpenSettings={() => setShowSettingsModal(true)}
+        onOpenSettings={() => setCurrentTab("profile")}
       />
 
       {/* 2. Main Work Panel Area */}
       <div className="flex-1 flex flex-col overflow-hidden relative z-[1]">
         
-        {/* Workspace Top Header */}
-        <header className="glass-header px-4 h-16 md:px-8 flex flex-row items-center justify-between z-30 shrink-0 transition-all relative">
-          <div className="flex items-center space-x-2 animate-fade-in min-w-0">
-            <h2 className="text-text-primary font-serif font-semibold text-base sm:text-xl md:text-2xl tracking-wide truncate">
-              {currentTab === "dashboard" && "Dashboard Pelacak Akad"}
-              {currentTab === "checklist" && "Daftar Persiapan Nikah"}
-              {currentTab === "vendors" && "Direktori Rekanan Vendor"}
-              {currentTab === "mahar" && "Daftar Mahar & Seserahan"}
-
-              {currentTab === "admin" && "Panel Verifikasi Administratif"}
-            </h2>
-          </div>
-
-          <div className="flex items-center space-x-2 shrink-0">
-            <div className="relative">
-              <button
-                onClick={() => setShowMobileProfileMenu(!showMobileProfileMenu)}
-                className="w-9 h-9 rounded-full bg-brand-50 text-brand-600 border border-brand-400/20 flex items-center justify-center font-extrabold text-[11px] uppercase cursor-pointer hover:bg-brand-100 transition-all shadow-xs shrink-0"
-                title="Menu Profil & Setelan"
-              >
-                {getInitials(profile?.fullName)}
-              </button>
-
-              {showMobileProfileMenu && (
-                <>
-                  {/* Backdrop to close dropdown when clicking outside */}
-                  <div 
-                    className="fixed inset-0 z-40" 
-                    onClick={() => setShowMobileProfileMenu(false)}
-                  />
-                  <div className="absolute right-0 mt-2 w-56 bg-surface-raised border border-surface-border rounded-xl shadow-xl z-50 p-3.5 animate-in fade-in slide-in-from-top-3 duration-150">
-                    <div className="pb-2.5 border-b border-surface-border mb-2 text-left">
-                      <p className="text-xs font-bold text-text-primary truncate">{profile?.fullName || "Pengantin Baru"}</p>
-                      <p className="text-[10px] text-text-tertiary mt-0.5 truncate">{profile?.email || user?.email}</p>
-                      <span className="inline-block text-[8px] bg-surface-sunken text-text-secondary font-bold uppercase px-2 py-0.5 rounded-full mt-1.5 leading-none">
-                        {profile?.role === "admin" ? "Syar'i Admin" : "Pasangan Akad"}
-                      </span>
-                    </div>
-                    
-                    <div className="space-y-1">
-                      <button
-                        onClick={() => {
-                          setShowMobileProfileMenu(false);
-                          setShowSettingsModal(true);
-                        }}
-                        className="w-full text-left px-2.5 py-2 text-xs text-text-secondary hover:bg-surface-overlay hover:text-brand-600 rounded-lg transition-colors font-medium flex items-center gap-2 cursor-pointer border-0 bg-transparent"
-                      >
-                        <Settings size={14} className="text-text-tertiary shrink-0" />
-                        Ubah Rencana Akad
-                      </button>
-                      <button
-                        onClick={() => {
-                          setShowMobileProfileMenu(false);
-                          handleLogout();
-                        }}
-                        className="w-full text-left px-2.5 py-2 text-xs text-rose-600 hover:bg-rose-50 rounded-lg transition-colors font-medium flex items-center gap-2 cursor-pointer border-0 bg-transparent"
-                      >
-                        <LogOut size={14} className="text-rose-400 shrink-0" />
-                        Keluar / Logout
-                      </button>
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        </header>
-
+        {/* Workspace Top Header Removed */}
         {/* Outer scrolling content block with bottom padding to fit bottom bar on mobile */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 pb-24 md:pb-8">
           <div className="max-w-6xl mx-auto pb-12">
-            
+            <Suspense fallback={
+              <div className="flex flex-col items-center justify-center py-20 text-text-tertiary animate-pulse">
+                <div className="w-8 h-8 border-4 border-brand-200 border-t-brand-600 rounded-full animate-spin mb-4"></div>
+                <p className="text-xs font-semibold">Memuat halaman...</p>
+              </div>
+            }>
             {/* Render Views depending on state */}
             {currentTab === "dashboard" && (
               <BudgetSummary
@@ -552,92 +489,97 @@ export default function App() {
                 }}
               />
             )}
+            </Suspense>
+
+            {currentTab === "profile" && (
+              <div className="max-w-md mx-auto space-y-6 animate-fade-in pt-4">
+                <div className="text-center space-y-2 mb-6">
+                  <div className="w-20 h-20 mx-auto rounded-full bg-brand-100 text-brand-700 flex items-center justify-center font-bold text-2xl border-4 border-brand-50 shadow-md">
+                    {getInitials(profile?.fullName)}
+                  </div>
+                  <h2 className="text-xl font-serif font-bold text-text-primary">{profile?.fullName || "Pengantin"}</h2>
+                  <p className="text-xs text-text-tertiary">{profile?.email || user?.email}</p>
+                  <span className="inline-block text-[10px] bg-brand-50 text-brand-700 font-bold uppercase px-3 py-1 rounded-full mt-2">
+                    {profile?.role === "admin" ? "Syar'i Admin" : "Pasangan Akad"}
+                  </span>
+                </div>
+
+                <div className="bg-surface-raised p-6 rounded-2xl border border-surface-border shadow-sm">
+                  <h3 className="font-serif font-bold text-sm text-text-primary mb-4 border-b border-surface-border pb-2">Ubah Rencana Akad</h3>
+                  <form onSubmit={handleUpdateSettings} className="space-y-4 text-xs">
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-text-tertiary mb-1">Calon Pengantin Pria</label>
+                      <input
+                        type="text"
+                        required
+                        value={settingsFullName}
+                        onChange={(e) => setSettingsFullName(e.target.value)}
+                        className="w-full px-3 py-2 bg-surface-base rounded-xl border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600 text-text-primary"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-text-tertiary mb-1">Calon Pengantin Wanita</label>
+                      <input
+                        type="text"
+                        required
+                        value={settingsPartnerName}
+                        onChange={(e) => setSettingsPartnerName(e.target.value)}
+                        className="w-full px-3 py-2 bg-surface-base rounded-xl border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600 text-text-primary"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-text-tertiary mb-1">Rencana Tanggal Akad Nikah</label>
+                      <input
+                        type="date"
+                        required
+                        value={settingsWeddingDate}
+                        onChange={(e) => setSettingsWeddingDate(e.target.value)}
+                        className="w-full px-3 py-2 bg-surface-base rounded-xl border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600 text-text-primary"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-text-tertiary mb-1">Target Alokasi Anggaran (IDR)</label>
+                      <input
+                        type="text"
+                        required
+                        value={settingsTotalBudget === 0 ? "" : new Intl.NumberFormat('en-US').format(settingsTotalBudget)}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/[^0-9]/g, "");
+                          setSettingsTotalBudget(val === "" ? 0 : Number(val));
+                        }}
+                        className="w-full px-3 py-2 bg-surface-base rounded-xl border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600 font-mono text-text-primary"
+                      />
+                    </div>
+
+                    <div className="pt-2">
+                      <button
+                        type="submit"
+                        disabled={isUpdatingSettings}
+                        className="w-full py-2.5 bg-brand-600 text-white rounded-xl font-bold hover:opacity-90 transition-opacity cursor-pointer shadow-sm text-sm"
+                      >
+                        {isUpdatingSettings ? "Menyimpan..." : "Simpan Perubahan"}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+
+                <button
+                  onClick={handleLogout}
+                  className="w-full py-3 bg-rose-50 text-rose-600 font-bold rounded-xl border border-rose-200 hover:bg-rose-100 flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                >
+                  <LogOut size={18} />
+                  Keluar / Logout
+                </button>
+              </div>
+            )}
 
           </div>
         </main>
 
       </div>
-
-      {/* --- QUICK ONBOARDING PROFILE SETTINGS MODAL --- */}
-      {showSettingsModal && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-50 p-4">
-          <div className="bg-surface-raised rounded-2xl border border-surface-border shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="bg-brand-600 p-4 text-white flex justify-between items-center">
-              <h3 className="font-serif font-bold text-sm">Ubah Rencana Onboarding Akad</h3>
-              <button 
-                onClick={() => setShowSettingsModal(false)}
-                className="p-1 hover:bg-white/10 rounded text-brand-100 hover:text-white"
-              >
-                <X size={16} />
-              </button>
-            </div>
-
-            <form onSubmit={handleUpdateSettings} className="p-6 space-y-4 text-xs">
-              <div>
-                <label className="block text-[10px] font-bold uppercase text-text-tertiary mb-1">Calon Pengantin Pria</label>
-                <input
-                  type="text"
-                  required
-                  value={settingsFullName}
-                  onChange={(e) => setSettingsFullName(e.target.value)}
-                  className="w-full px-3 py-2 bg-surface-base rounded-xl border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600 text-text-primary"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-bold uppercase text-text-tertiary mb-1">Calon Pengantin Wanita</label>
-                <input
-                  type="text"
-                  required
-                  value={settingsPartnerName}
-                  onChange={(e) => setSettingsPartnerName(e.target.value)}
-                  className="w-full px-3 py-2 bg-surface-base rounded-xl border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600 text-text-primary"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-bold uppercase text-text-tertiary mb-1">Rencana Tanggal Akad Nikah</label>
-                <input
-                  type="date"
-                  required
-                  value={settingsWeddingDate}
-                  onChange={(e) => setSettingsWeddingDate(e.target.value)}
-                  className="w-full px-3 py-2 bg-surface-base rounded-xl border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600 text-text-primary"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-bold uppercase text-text-tertiary mb-1">Target Alokasi Anggaran (IDR)</label>
-                <input
-                  type="number"
-                  required
-                  min={100000}
-                  value={settingsTotalBudget}
-                  onChange={(e) => setSettingsTotalBudget(Number(e.target.value))}
-                  className="w-full px-3 py-2 bg-surface-base rounded-xl border border-surface-border focus:outline-none focus:ring-1 focus:ring-brand-600 font-mono text-text-primary"
-                />
-              </div>
-
-              <div className="flex gap-2 pt-4 border-t border-surface-border justify-end">
-                <button
-                  type="button"
-                  onClick={() => setShowSettingsModal(false)}
-                  className="px-4 py-2 border border-surface-border text-text-secondary rounded-xl font-semibold hover:bg-surface-overlay cursor-pointer"
-                >
-                  Batal
-                </button>
-                <button
-                  type="submit"
-                  disabled={isUpdatingSettings}
-                  className="px-4 py-2 bg-brand-600 text-white rounded-xl font-bold hover:opacity-90 transition-opacity cursor-pointer shadow-sm"
-                >
-                  {isUpdatingSettings ? "Menyimpan..." : "Simpan Perubahan"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
     </div>
   );

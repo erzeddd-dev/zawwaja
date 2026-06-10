@@ -333,14 +333,14 @@ export default function BudgetSummary({
             </p>
           </div>
 
-          {/* Floating Countdown Pill — mobile only */}
-          <div className="md:hidden glass-panel px-3 py-1.5 flex flex-col items-center justify-center text-center shrink-0 animate-countdown" style={{ minWidth: '70px', borderRadius: '12px' }}>
-            <span className="text-[6px] font-bold uppercase tracking-wider text-text-tertiary">Menuju Akad</span>
-            <div className="flex items-baseline gap-0.5">
-              <span className="text-xl font-display font-extrabold text-brand-600 leading-none tracking-tight">
+          {/* Floating Countdown Pill — mobile only (Enhanced for Focal Point) */}
+          <div className="md:hidden bg-gradient-to-br from-brand-600 to-brand-800 text-white shadow-xl shadow-brand-900/20 px-4 py-2.5 flex flex-col items-center justify-center text-center shrink-0 animate-countdown border border-brand-500/30" style={{ minWidth: '85px', borderRadius: '16px' }}>
+            <span className="text-[8px] font-bold uppercase tracking-widest text-brand-100 mb-0.5">Menuju Akad</span>
+            <div className="flex items-baseline gap-1">
+              <span className="text-3xl font-display font-black text-white leading-none tracking-tight" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>
                 {daysRemaining}
               </span>
-              <span className="text-[8px] font-bold text-brand-400 uppercase">hr</span>
+              <span className="text-[10px] font-bold text-brand-200 uppercase tracking-wider">hr</span>
             </div>
           </div>
         </div>

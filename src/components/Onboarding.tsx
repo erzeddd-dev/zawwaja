@@ -259,10 +259,10 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
           <div className="hidden lg:block"></div> {/* Spacer to push form to center vertically */}
 
           {/* Form Content Container */}
-          <div className="max-w-md w-full mx-auto my-auto py-6 glass-panel px-6 md:px-8 mt-12 md:mt-auto">
+          <div className="max-w-md w-full mx-auto my-auto py-8 glass-panel px-6 md:px-8 mt-8 md:mt-auto">
             
             {/* Majestic Centered Brand Emblem (No Text Clutter) */}
-            <div className="text-center mb-8 flex justify-center">
+            <div className="text-center mb-6 flex justify-center">
               <img 
                 src="/logo.png" 
                 alt="Zawwaja Premium Emblem" 
