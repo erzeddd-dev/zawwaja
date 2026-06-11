@@ -985,35 +985,36 @@ function BudgetSummary({
       {/* MANDATORY WELCOME MODAL SETUP                */}
       {/* ============================================ */}
       {showWelcomeModal && createPortal(
-        <div className="fixed inset-0 z-[9999] bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-4 md:p-6 overflow-y-auto">
-          <div className="bg-surface-raised rounded-3xl border border-surface-border shadow-2xl w-full max-w-4xl relative overflow-hidden flex flex-col md:flex-row animate-in fade-in zoom-in-95 duration-500">
-            {/* Left Decorator Side (Hidden on Mobile) */}
-            <div className="hidden md:flex md:w-5/12 relative bg-brand-700 overflow-hidden text-white flex-col justify-between p-8">
-              <div className="absolute inset-0 opacity-20">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full mix-blend-overlay filter blur-3xl transform translate-x-1/3 -translate-y-1/3"></div>
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-300 rounded-full mix-blend-overlay filter blur-3xl transform -translate-x-1/3 translate-y-1/3"></div>
+        <div className="fixed inset-0 z-[9999] bg-stone-950/80 backdrop-blur-md overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-4 py-8 md:p-6">
+            <div className="bg-surface-raised rounded-3xl border border-surface-border shadow-2xl w-full max-w-4xl relative overflow-hidden flex flex-col md:flex-row animate-in fade-in zoom-in-95 duration-500 text-left">
+              {/* Left Decorator Side (Hidden on Mobile) */}
+              <div className="hidden md:flex md:w-5/12 relative bg-brand-600 overflow-hidden text-white flex-col justify-between p-8">
+                <div className="absolute inset-0 opacity-20">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full mix-blend-overlay filter blur-3xl transform translate-x-1/3 -translate-y-1/3"></div>
+                  <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-300 rounded-full mix-blend-overlay filter blur-3xl transform -translate-x-1/3 translate-y-1/3"></div>
+                </div>
+                <div className="relative z-10">
+                  <Compass className="w-12 h-12 mb-6 text-emerald-200" />
+                  <h2 className="text-3xl font-serif font-bold mb-4 leading-tight">Mulai Perjalanan Istimewa Anda</h2>
+                  <p className="text-emerald-100/80 text-sm leading-relaxed">
+                    Zawwaja akan menjadi asisten pribadi Anda untuk merencanakan akad impian secara syar'i, terstruktur, dan transparan.
+                  </p>
+                </div>
+                <div className="relative z-10 text-xs font-medium text-emerald-200/60 uppercase tracking-widest">
+                  Gerbang Persiapan Pernikahan
+                </div>
               </div>
-              <div className="relative z-10">
-                <Compass className="w-12 h-12 mb-6 text-emerald-200" />
-                <h2 className="text-3xl font-serif font-bold mb-4 leading-tight">Mulai Perjalanan Istimewa Anda</h2>
-                <p className="text-emerald-100/80 text-sm leading-relaxed">
-                  Zawwaja akan menjadi asisten pribadi Anda untuk merencanakan akad impian secara syar'i, terstruktur, dan transparan.
-                </p>
-              </div>
-              <div className="relative z-10 text-xs font-medium text-emerald-200/60 uppercase tracking-widest">
-                Gerbang Persiapan Pernikahan
-              </div>
-            </div>
 
-            {/* Right Form Side */}
-            <div className="flex-1 p-6 md:p-10 flex flex-col justify-center bg-white">
-              <div className="text-center md:text-left mb-8">
+              {/* Right Form Side */}
+              <div className="flex-1 p-6 pb-8 md:p-10 flex flex-col justify-center bg-white">
+                <div className="text-center md:text-left mb-8">
                 <span className="md:hidden inline-flex items-center gap-1.5 px-3 py-1 mb-4 rounded-full text-[10px] font-bold tracking-wider text-emerald-850 bg-emerald-50 border border-emerald-100 uppercase">
                   Bismillah, Selamat Datang
                 </span>
                 <h2 className="text-2xl md:text-3xl font-serif font-black text-text-primary">Profil Akad</h2>
                 <p className="text-text-secondary text-sm mt-2 leading-relaxed">
-                  Silakan lengkapi informasi Anda berdua untuk menyusun *timeline* dan memantau anggaran.
+                  Silakan lengkapi informasi Anda berdua untuk menyusun linimasa dan memantau anggaran.
                 </p>
               </div>
 
@@ -1115,8 +1116,9 @@ function BudgetSummary({
               </form>
             </div>
           </div>
-        </div>,
-        document.body
+        </div>
+      </div>,
+      document.body
       )}
 
     </div>

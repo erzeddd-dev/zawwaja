@@ -590,7 +590,7 @@ export default function Onboarding({ onSuccess, onLogout, profile, userId, setUs
           
           {/* STEP 3: PAYMENT MODULE */}
           {step === "payment" && (
-            <div className="p-8">
+            <div className="p-3 md:p-8">
               {errorMess && (
                 <div className="mb-4 p-3 bg-rose-50 border border-rose-200 rounded-lg text-rose-700 text-xs flex items-center gap-2">
                   <AlertCircle size={16} />
